@@ -9,6 +9,16 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+function extractJSON(text: string): string {
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) return fenceMatch[1].trim();
+  const objectMatch = text.match(/\{[\s\S]*\}/);
+  if (objectMatch) return objectMatch[0];
+  const arrayMatch = text.match(/\[[\s\S]*\]/);
+  if (arrayMatch) return arrayMatch[0];
+  return text.trim();
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -125,8 +135,8 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
         ],
       });
       
-      const content = response.content[0]?.type === "text" ? response.content[0].text : '{"tasks":[]}';
-      const parsed = JSON.parse(content);
+      const rawContent = response.content[0]?.type === "text" ? response.content[0].text : '{"tasks":[]}';
+      const parsed = JSON.parse(extractJSON(rawContent));
       const proposedTasks: Array<{ content: string; tier: "focus" | "backlog" | "icebox" }> = parsed.tasks || [];
 
       const existingTasks = await storage.getTasks();
@@ -192,8 +202,8 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
         ],
       });
 
-      const content = response.content[0]?.type === "text" ? response.content[0].text : '{"steps":[]}';
-      const parsed = JSON.parse(content);
+      const rawContent = response.content[0]?.type === "text" ? response.content[0].text : '{"steps":[]}';
+      const parsed = JSON.parse(extractJSON(rawContent));
       
       res.json({ steps: parsed.steps || [] });
     } catch (err) {
