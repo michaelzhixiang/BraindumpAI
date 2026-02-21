@@ -126,8 +126,8 @@ export async function registerRoutes(
 User's priorities: ${prioritiesText || "No specific priorities"}.
 Extract every actionable to-do and sort them into exactly one of these tiers:
 - focus: Top-priority, directly advances goals. Do this soon.
-- backlog: Useful but not urgent. Can wait.
-- icebox: Back burner. Park it.
+- backlog: Useful but not urgent. Can wait for now.
+- icebox: Not worth doing right now. Never mind.
 Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}
 Be concise with task content. Extract distinct actionable items only. Return ONLY valid JSON, no other text.`,
         messages: [

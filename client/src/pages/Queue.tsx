@@ -189,7 +189,8 @@ export default function Queue() {
     const currentTask = pendingTasks.find(t => t.id === taskId);
     if (newTier && currentTask && currentTask.tier !== newTier) {
       updateTask({ id: taskId, tier: newTier });
-      toast({ title: `${t("queue.movedTo")} ${newTier}` });
+      const tierLabel = newTier === "focus" ? t("queue.focus") : newTier === "backlog" ? t("queue.backlog") : t("queue.icebox");
+      toast({ title: `${t("queue.movedTo")} ${tierLabel}` });
     }
   };
 
