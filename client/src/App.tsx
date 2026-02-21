@@ -13,6 +13,7 @@ import Dump from "@/pages/Dump";
 import Queue from "@/pages/Queue";
 import { Navigation } from "@/components/Navigation";
 import { Header } from "@/components/Header";
+import { AuroraBackground } from "@/components/AuroraBackground";
 
 function AppContent() {
   const { data: userState, isLoading } = useUserState();
@@ -26,16 +27,15 @@ function AppContent() {
     );
   }
 
-  // Force onboarding if not completed
   if (!userState?.hasOnboarded) {
     return <Onboarding />;
   }
 
-  // Allow access to app
   return (
     <div className="app-container">
+      <AuroraBackground />
       <Header />
-      <div className="flex-1 overflow-y-auto relative">
+      <div className="flex-1 overflow-y-auto relative z-10">
         <Switch>
           <Route path="/" component={Today} />
           <Route path="/today" component={Today} />

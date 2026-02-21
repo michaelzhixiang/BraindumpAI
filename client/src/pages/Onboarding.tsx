@@ -4,6 +4,7 @@ import { useCreatePriorities } from "@/hooks/use-priorities";
 import { useUpdateUserState } from "@/hooks/use-user-state";
 import { ArrowRight, Loader2, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/lib/i18n";
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -11,6 +12,7 @@ export default function Onboarding() {
   const { mutateAsync: createPriorities, isPending: isCreating } = useCreatePriorities();
   const { mutateAsync: updateUserState } = useUpdateUserState();
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const handlePriorityChange = (index: number, value: string) => {
     const newPriorities = [...priorities];
@@ -23,22 +25,23 @@ export default function Onboarding() {
       const validPriorities = priorities.filter(p => p.trim().length > 0);
       
       if (validPriorities.length === 0) {
-        toast({ title: "Please add at least one priority", variant: "destructive" });
+        toast({ title: t("onboarding.addPriority"), variant: "destructive" });
         return;
       }
 
       await createPriorities(validPriorities.map(content => ({ content })));
       await updateUserState({ hasOnboarded: true });
     } catch (error) {
-      toast({ title: "Something went wrong", description: "Please try again", variant: "destructive" });
+      toast({ title: t("onboarding.error"), description: t("onboarding.tryAgain"), variant: "destructive" });
     }
   };
 
   return (
-    <div className="h-screen flex flex-col justify-between p-8 bg-background text-foreground relative">
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 50%)',
-      }} />
+    <div className="h-screen flex flex-col justify-between p-8 bg-background text-foreground relative overflow-hidden">
+      <div className="aurora-container" aria-hidden="true">
+        <div className="aurora-orb aurora-orb-1" />
+        <div className="aurora-orb aurora-orb-2" />
+      </div>
 
       <div className="mt-16 relative z-10">
         <AnimatePresence mode="wait">
@@ -51,11 +54,11 @@ export default function Onboarding() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold tracking-tighter leading-tight">
-                Declutter<br/>
-                <span className="text-muted-foreground">your mind.</span>
+                {t("onboarding.declutter")}<br/>
+                <span className="text-muted-foreground">{t("onboarding.yourMind")}</span>
               </h1>
               <p className="text-base text-muted-foreground leading-relaxed">
-                BrainDump helps you capture thoughts instantly and uses AI to sort them into actionable tasks based on what actually matters to you.
+                {t("onboarding.desc")}
               </p>
             </motion.div>
           ) : (
@@ -67,8 +70,8 @@ export default function Onboarding() {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">What matters most?</h2>
-                <p className="text-muted-foreground text-sm">Define your top 3 life priorities. The AI will use these to sort your tasks.</p>
+                <h2 className="text-2xl font-bold">{t("onboarding.whatMatters")}</h2>
+                <p className="text-muted-foreground text-sm">{t("onboarding.defineTop3")}</p>
               </div>
 
               <div className="space-y-4">
@@ -81,11 +84,12 @@ export default function Onboarding() {
                   >
                     <input
                       type="text"
-                      placeholder={`Priority #${i + 1}`}
+                      placeholder={`${t("onboarding.priority")} #${i + 1}`}
                       value={priority}
                       onChange={(e) => handlePriorityChange(i, e.target.value)}
-                      className="w-full bg-transparent border-b border-white/[0.06] py-4 text-lg focus:outline-none focus:border-[hsl(var(--primary))]/50 transition-colors placeholder:text-muted-foreground/20"
+                      className="w-full bg-transparent border-b border-white/[0.06] py-4 text-lg focus:outline-none focus:border-[#3B82F6]/50 transition-colors placeholder:text-muted-foreground/20"
                       autoFocus={i === 0}
+                      data-testid={`input-priority-${i}`}
                     />
                   </motion.div>
                 ))}
@@ -100,16 +104,18 @@ export default function Onboarding() {
           <button
             onClick={() => setStep(1)}
             className="flex items-center gap-2 text-base font-medium hover:opacity-80 transition-opacity text-foreground/80"
+            data-testid="button-get-started"
           >
-            Get Started <ArrowRight className="w-5 h-5" />
+            {t("onboarding.getStarted")} <ArrowRight className="w-5 h-5" />
           </button>
         ) : (
           <button
             onClick={handleComplete}
             disabled={isCreating}
-            className="bg-[hsl(var(--primary))] text-white px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 shadow-lg shadow-[hsl(var(--primary))]/20"
+            className="bg-[#3B82F6] text-white px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 neon-btn"
+            data-testid="button-all-set"
           >
-            {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Check className="w-5 h-5" /> All Set</>}
+            {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Check className="w-5 h-5" /> {t("onboarding.allSet")}</>}
           </button>
         )}
       </div>

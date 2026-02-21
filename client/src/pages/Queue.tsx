@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/hooks/use-tasks";
 import { Archive, Flame, Snowflake, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/lib/i18n";
 import {
   DndContext,
   DragOverlay,
@@ -23,7 +24,7 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
     <div
       ref={setNodeRef}
       className={`min-h-[48px] rounded-xl transition-all duration-200 ${
-        isOver ? "bg-[hsl(var(--primary))]/[0.04] ring-1 ring-[hsl(var(--primary))]/20" : ""
+        isOver ? "bg-[#3B82F6]/[0.04] ring-1 ring-[#3B82F6]/20" : ""
       }`}
     >
       {children}
@@ -82,7 +83,7 @@ function SortableTaskItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`glass-card p-3 rounded-xl group flex items-center gap-3 ${subTask ? "ml-5 border-l-2 border-l-[hsl(var(--primary))]/10" : ""}`}
+      className={`glass-card p-3 rounded-xl group flex items-center gap-3 neon-border-subtle ${subTask ? "ml-5 border-l-2 border-l-[#3B82F6]/10" : ""}`}
       data-testid={`task-item-${task.id}`}
     >
       <div
@@ -132,7 +133,7 @@ function SortableTaskItem({
 
 function DragOverlayItem({ task }: { task: Task }) {
   return (
-    <div className="glass-card halo-glow p-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-[420px]">
+    <div className="glass-card halo-glow p-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-[420px] neon-glow">
       <div className="text-muted-foreground/30 shrink-0 flex flex-col gap-[2px]">
         <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
         <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
@@ -148,6 +149,7 @@ export default function Queue() {
   const { mutate: updateTask } = useUpdateTask();
   const { mutate: deleteTask } = useDeleteTask();
   const { toast } = useToast();
+  const { t } = useI18n();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
@@ -187,7 +189,7 @@ export default function Queue() {
     const currentTask = pendingTasks.find(t => t.id === taskId);
     if (newTier && currentTask && currentTask.tier !== newTier) {
       updateTask({ id: taskId, tier: newTier });
-      toast({ title: `Moved to ${newTier}` });
+      toast({ title: `${t("queue.movedTo")} ${newTier}` });
     }
   };
 
@@ -207,8 +209,8 @@ export default function Queue() {
         <SortableContext items={items.map(t => t.id.toString())} strategy={verticalListSortingStrategy}>
           <div className="space-y-1.5">
             {items.length === 0 ? (
-              <div className="p-4 rounded-xl border border-dashed border-white/[0.04] text-center text-[10px] text-muted-foreground/30 uppercase tracking-wider">
-                Drag tasks here
+              <div className="p-4 rounded-xl border border-dashed border-white/[0.04] text-center text-[10px] text-muted-foreground/30 uppercase tracking-wider glass-card">
+                {t("queue.dragHere")}
               </div>
             ) : (
               items.map((task) => (
@@ -234,9 +236,9 @@ export default function Queue() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <TierSection title="Focus" icon={Flame} items={focus} tierColor="text-red-400/80" tierId="tier-focus" />
-        <TierSection title="Backlog" icon={Archive} items={backlog} tierColor="text-yellow-400/60" tierId="tier-backlog" />
-        <TierSection title="Icebox" icon={Snowflake} items={icebox} tierColor="text-blue-400/60" tierId="tier-icebox" />
+        <TierSection title={t("queue.focus")} icon={Flame} items={focus} tierColor="text-red-400/80" tierId="tier-focus" />
+        <TierSection title={t("queue.backlog")} icon={Archive} items={backlog} tierColor="text-yellow-400/60" tierId="tier-backlog" />
+        <TierSection title={t("queue.icebox")} icon={Snowflake} items={icebox} tierColor="text-blue-400/60" tierId="tier-icebox" />
 
         <DragOverlay>
           {activeTask ? <DragOverlayItem task={activeTask} /> : null}

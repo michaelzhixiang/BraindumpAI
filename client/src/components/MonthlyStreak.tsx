@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useI18n } from "@/lib/i18n";
 import type { Task } from "@shared/schema";
 
 function getMonthDays(year: number, month: number) {
@@ -10,6 +11,7 @@ function getFirstDayOfWeek(year: number, month: number) {
 }
 
 export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
+  const { t } = useI18n();
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -21,9 +23,9 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
 
   const completedByDay = useMemo(() => {
     const map: Record<number, number> = {};
-    tasks.forEach(t => {
-      if (t.status === "completed" && t.completedAt) {
-        const d = new Date(t.completedAt);
+    tasks.forEach(task => {
+      if (task.status === "completed" && task.completedAt) {
+        const d = new Date(task.completedAt);
         if (d.getFullYear() === year && d.getMonth() === month) {
           const day = d.getDate();
           map[day] = (map[day] || 0) + 1;
@@ -49,12 +51,12 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
   const activeDays = Object.keys(completedByDay).length;
 
   return (
-    <div className="glass-card rounded-2xl p-5 halo-glow" data-testid="monthly-streak">
+    <div className="glass-card rounded-2xl p-5 halo-glow neon-border-subtle" data-testid="monthly-streak">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Monthly Streak</h2>
+        <h2 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t("streak.title")}</h2>
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-          <span>{totalCompleted} done</span>
-          <span>{activeDays} days active</span>
+          <span>{totalCompleted} {t("streak.done")}</span>
+          <span>{activeDays} {t("streak.daysActive")}</span>
         </div>
       </div>
 
@@ -76,20 +78,20 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
             <div
               key={day}
               className={`aspect-square rounded-[3px] transition-colors ${getIntensity(count)} ${
-                isToday ? "ring-1 ring-[hsl(var(--primary))]/40" : ""
+                isToday ? "ring-1 ring-[#3B82F6]/40 neon-dot" : ""
               }`}
-              title={`${monthName} ${day}: ${count} task${count !== 1 ? 's' : ''}`}
+              title={`${monthName} ${day}: ${count} ${count !== 1 ? t("streak.tasks") : t("streak.task")}`}
             />
           );
         })}
       </div>
 
       <div className="flex items-center gap-1.5 mt-3 justify-end">
-        <span className="text-[8px] text-muted-foreground/40">Less</span>
+        <span className="text-[8px] text-muted-foreground/40">{t("streak.less")}</span>
         {[0, 2, 5, 8, 10].map((n, i) => (
           <div key={i} className={`w-2.5 h-2.5 rounded-[2px] ${getIntensity(n)}`} />
         ))}
-        <span className="text-[8px] text-muted-foreground/40">More</span>
+        <span className="text-[8px] text-muted-foreground/40">{t("streak.more")}</span>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Send, Sparkles } from "lucide-react";
 import { useProcessDump } from "@/hooks/use-ai";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n, getAck } from "@/lib/i18n";
 
 interface Message {
   id: string;
@@ -10,19 +11,11 @@ interface Message {
   sender: "user" | "system";
 }
 
-const acks = [
-  "Copy that",
-  "Got it",
-  "Noted",
-  "On the list",
-  "Logged",
-  "Captured",
-];
-
 export default function Dump() {
+  const { t } = useI18n();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { id: "1", text: "What's on your mind? Dump everything here.", sender: "system" }
+    { id: "1", text: t("dump.welcome"), sender: "system" }
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [userDumpTexts, setUserDumpTexts] = useState<string[]>([]);
@@ -44,7 +37,7 @@ export default function Dump() {
     setUserDumpTexts(prev => [...prev, input.trim()]);
     setInput("");
 
-    const ack = acks[Math.floor(Math.random() * acks.length)];
+    const ack = getAck();
     setTimeout(() => {
       setMessages(prev => [...prev, { 
         id: (Date.now() + 1).toString(), 
@@ -58,7 +51,7 @@ export default function Dump() {
 
   const handleSort = async () => {
     if (userDumpTexts.length === 0) {
-      toast({ title: "Nothing to sort yet!", variant: "destructive" });
+      toast({ title: t("dump.nothingToSort"), variant: "destructive" });
       return;
     }
 
@@ -72,18 +65,18 @@ export default function Dump() {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         text: count > 0 
-          ? `Sorted ${count} task${count > 1 ? 's' : ''} into your queue. Check the Queue tab to review.`
-          : "Couldn't extract any actionable tasks. Try being more specific!",
+          ? `${t("dump.sorted")} ${count} task${count > 1 ? 's' : ''} ${t("dump.tasksIntoQueue")}`
+          : t("dump.noTasks"),
         sender: "system"
       }]);
 
       setUserDumpTexts([]);
 
       if (count > 0) {
-        toast({ title: `${count} task${count > 1 ? 's' : ''} added to your queue` });
+        toast({ title: `${count} task${count > 1 ? 's' : ''} ${t("dump.addedToQueue")}` });
       }
     } catch (error) {
-      toast({ title: "AI Brain Freeze", description: "Try again later.", variant: "destructive" });
+      toast({ title: t("dump.brainFreeze"), description: t("dump.tryLater"), variant: "destructive" });
     } finally {
       setIsProcessing(false);
     }
@@ -103,8 +96,8 @@ export default function Dump() {
             <div
               className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.sender === "user"
-                  ? "bg-[hsl(var(--primary))] text-white rounded-tr-sm"
-                  : "glass-card text-foreground/80 rounded-tl-sm"
+                  ? "bg-[#3B82F6] text-white rounded-tr-sm neon-btn"
+                  : "glass-card text-foreground/80 rounded-tl-sm neon-border-subtle"
               }`}
             >
               {msg.text}
@@ -121,10 +114,10 @@ export default function Dump() {
                onClick={handleSort}
                disabled={isProcessing}
                data-testid="button-sort"
-               className="bg-[hsl(var(--primary))] text-white px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg shadow-[hsl(var(--primary))]/20 transition-all hover:shadow-[hsl(var(--primary))]/30"
+               className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 neon-btn transition-all"
              >
                {isProcessing ? <Sparkles className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-               {isProcessing ? "Sorting..." : "Done - Sort My Stuff"}
+               {isProcessing ? t("dump.sorting") : t("dump.sortButton")}
              </button>
            </div>
         )}
@@ -140,16 +133,16 @@ export default function Dump() {
                 handleSend();
               }
             }}
-            placeholder="Type anything..."
+            placeholder={t("dump.placeholder")}
             data-testid="input-dump"
-            className="w-full glass-card rounded-2xl pl-5 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-[hsl(var(--primary))]/30 resize-none min-h-[56px] text-foreground/90 placeholder:text-muted-foreground/30"
+            className="w-full glass-card rounded-2xl pl-5 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#3B82F6]/30 resize-none min-h-[56px] text-foreground/90 placeholder:text-muted-foreground/30 neon-border-subtle"
             rows={1}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim()}
             data-testid="button-send"
-            className="absolute right-2.5 bottom-2.5 p-2 bg-[hsl(var(--primary))] text-white rounded-xl disabled:opacity-20 disabled:bg-white/10 transition-all"
+            className="absolute right-2.5 bottom-2.5 p-2 bg-[#3B82F6] text-white rounded-xl disabled:opacity-20 disabled:bg-white/10 transition-all neon-btn"
           >
             <Send className="w-4 h-4" />
           </button>

@@ -6,6 +6,7 @@ import { useTasks, useUpdateTask, useCreateTasksBulk } from "@/hooks/use-tasks";
 import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
 import { useGenerateNudge, useGenerateBreakdown } from "@/hooks/use-ai";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/lib/i18n";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ export default function Today() {
   const { mutateAsync: generateBreakdown, isPending: isBreakingDown } = useGenerateBreakdown();
   const { mutateAsync: createTasksBulk } = useCreateTasksBulk();
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const [activeNudgeId, setActiveNudgeId] = useState<number | null>(null);
   const [breakdownTaskId, setBreakdownTaskId] = useState<number | null>(null);
@@ -54,8 +56,8 @@ export default function Today() {
     updateUserState({ screenTimeMinutes: (userState?.screenTimeMinutes || 0) + 10 });
     
     toast({
-      title: "+10 min earned",
-      description: "Guilt-free screen time banked.",
+      title: t("today.earnedToast"),
+      description: t("today.earnedDesc"),
     });
   };
 
@@ -96,7 +98,7 @@ export default function Today() {
           parentId: breakdownTaskId,
         }))
       );
-      toast({ title: `${breakdownSteps.length} steps added to your list` });
+      toast({ title: `${breakdownSteps.length} ${t("today.stepsAdded")}` });
       setShowBreakdown(false);
     } catch (e) {
       toast({ title: "Failed to add steps", variant: "destructive" });
@@ -117,16 +119,16 @@ export default function Today() {
     <div className="p-5 space-y-5 pb-32" data-testid="today-page">
       <MonthlyStreak tasks={tasks || []} />
 
-      <div className="glass-card rounded-2xl p-5 relative halo-ambient" data-testid="guilt-free-card">
+      <div className="glass-card rounded-2xl p-5 relative halo-ambient neon-border-subtle" data-testid="guilt-free-card">
         <div className="absolute top-4 right-4 opacity-[0.06]">
           <Clock className="w-16 h-16" />
         </div>
-        <h2 className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold mb-1">Guilt-Free Time</h2>
+        <h2 className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold mb-1">{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
           <span className="text-4xl font-mono font-semibold text-foreground tracking-tighter" data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
-          <span className="text-xs font-medium text-muted-foreground">min</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("today.min")}</span>
         </div>
       </div>
 
@@ -136,9 +138,9 @@ export default function Today() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center py-8 space-y-3"
         >
-          <div className="text-3xl font-semibold">All done for today.</div>
+          <div className="text-3xl font-semibold">{t("today.allDone")}</div>
           <p className="text-muted-foreground text-sm">
-            You earned {completedToday.length * 10} minutes. Go enjoy them.
+            {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
           </p>
         </motion.div>
       )}
@@ -146,14 +148,14 @@ export default function Today() {
       {!allDone && (
         <div>
           <h3 className="text-[10px] font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
-            <span className="w-1.5 h-1.5 bg-[hsl(var(--primary))] rounded-full animate-pulse"></span>
-            Focus
+            <span className="w-1.5 h-1.5 bg-[#3B82F6] rounded-full neon-dot"></span>
+            {t("today.focus")}
           </h3>
           
           <div className="space-y-3">
             {focusTasks.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed">
-                No focus tasks. Dump some thoughts first.
+              <div className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed neon-border-subtle">
+                {t("today.noFocus")}
               </div>
             ) : (
               focusTasks.map((task) => {
@@ -161,13 +163,13 @@ export default function Today() {
                 return (
                   <div key={task.id}>
                     <div
-                      className="glass-card p-4 rounded-xl"
+                      className="glass-card p-4 rounded-xl neon-border-subtle"
                       data-testid={`task-focus-${task.id}`}
                     >
                       <div className="flex items-start gap-3">
                         <button 
                           onClick={() => handleComplete(task.id)}
-                          className="mt-0.5 text-muted-foreground/30 hover:text-[hsl(var(--primary))] transition-colors shrink-0"
+                          className="mt-0.5 text-muted-foreground/30 hover:text-[#3B82F6] transition-colors shrink-0"
                           data-testid={`button-complete-${task.id}`}
                         >
                           <Circle className="w-5 h-5" />
@@ -177,8 +179,8 @@ export default function Today() {
                           <p className="text-sm font-medium leading-relaxed text-foreground/90">{task.content}</p>
                           
                           {task.nudge && (
-                            <div className="text-xs bg-[hsl(var(--primary))]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[hsl(var(--primary))]/30">
-                              <span className="font-semibold mr-1 text-foreground/60">Micro-step:</span> 
+                            <div className="text-xs bg-[#3B82F6]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[#3B82F6]/30">
+                              <span className="font-semibold mr-1 text-foreground/60">{t("today.microStep")}</span> 
                               {task.nudge}
                             </div>
                           )}
@@ -188,23 +190,23 @@ export default function Today() {
                               onClick={() => handleNudge(task.id)}
                               disabled={activeNudgeId === task.id}
                               data-testid={`button-nudge-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                              className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
                             >
-                              {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[hsl(var(--primary))]" /> : <Zap className="w-3 h-3" />}
-                              Nudge Me
+                              {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#3B82F6]" /> : <Zap className="w-3 h-3" />}
+                              {t("today.nudgeMe")}
                             </button>
                             <button
                               onClick={() => handleBreakdown(task)}
                               disabled={breakdownTaskId === task.id && isBreakingDown}
                               data-testid={`button-breakdown-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                              className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
                             >
                               {breakdownTaskId === task.id && isBreakingDown ? (
-                                <ListChecks className="w-3 h-3 animate-pulse text-[hsl(var(--primary))]" />
+                                <ListChecks className="w-3 h-3 animate-pulse text-[#3B82F6]" />
                               ) : (
                                 <ListChecks className="w-3 h-3" />
                               )}
-                              Break It Down
+                              {t("today.breakItDown")}
                             </button>
                           </div>
                         </div>
@@ -220,7 +222,7 @@ export default function Today() {
                           >
                             <button
                               onClick={() => handleComplete(sub.id)}
-                              className="text-muted-foreground/20 hover:text-[hsl(var(--primary))] transition-colors shrink-0"
+                              className="text-muted-foreground/20 hover:text-[#3B82F6] transition-colors shrink-0"
                             >
                               <Circle className="w-4 h-4" />
                             </button>
@@ -239,11 +241,11 @@ export default function Today() {
 
       {completedToday.length > 0 && !allDone && (
         <div className="opacity-30 hover:opacity-70 transition-opacity duration-300">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3 text-muted-foreground">Completed Today</h4>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3 text-muted-foreground">{t("today.completedToday")}</h4>
           <div className="space-y-2">
              {completedToday.map(task => (
                <div key={task.id} className="flex items-center gap-3 text-sm text-muted-foreground/60 line-through">
-                 <CheckCircle2 className="w-4 h-4 text-[hsl(var(--primary))]/30 shrink-0" />
+                 <CheckCircle2 className="w-4 h-4 text-[#3B82F6]/30 shrink-0" />
                  <span className="truncate">{task.content}</span>
                </div>
              ))}
@@ -252,17 +254,17 @@ export default function Today() {
       )}
 
       <Dialog open={showBreakdown} onOpenChange={setShowBreakdown}>
-        <DialogContent className="glass-card border-white/[0.06] text-foreground max-w-[420px]">
+        <DialogContent className="glass-card border-white/[0.06] text-foreground max-w-[420px] neon-border-subtle">
           <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Task Breakdown</DialogTitle>
+            <DialogTitle className="text-base font-semibold">{t("today.breakdown.title")}</DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm">
-              {isBreakingDown ? "Thinking of steps..." : `${breakdownSteps.length} steps to get this done`}
+              {isBreakingDown ? t("today.breakdown.thinking") : `${breakdownSteps.length} ${t("today.breakdown.steps")}`}
             </DialogDescription>
           </DialogHeader>
           
           {isBreakingDown ? (
             <div className="py-8 flex justify-center">
-              <Loader2 className="w-6 h-6 animate-spin text-[hsl(var(--primary))]" />
+              <Loader2 className="w-6 h-6 animate-spin text-[#3B82F6]" />
             </div>
           ) : (
             <div className="space-y-4">
@@ -275,7 +277,7 @@ export default function Today() {
                     transition={{ delay: i * 0.05 }}
                     className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.03]"
                   >
-                    <span className="text-[10px] font-mono text-[hsl(var(--primary))]/50 mt-0.5 w-4 shrink-0 text-right">{i + 1}</span>
+                    <span className="text-[10px] font-mono text-[#3B82F6]/50 mt-0.5 w-4 shrink-0 text-right">{i + 1}</span>
                     <p className="text-sm text-foreground/80">{step}</p>
                   </motion.div>
                 ))}
@@ -283,7 +285,7 @@ export default function Today() {
               <Button
                 onClick={handleAddStepsToList}
                 disabled={isAddingSteps}
-                className="w-full bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/80"
+                className="w-full bg-[#3B82F6] text-white hover:bg-[#3B82F6]/80 neon-btn"
                 data-testid="button-add-steps"
               >
                 {isAddingSteps ? (
@@ -291,7 +293,7 @@ export default function Today() {
                 ) : (
                   <Plus className="w-4 h-4 mr-2" />
                 )}
-                Add All Steps to My List
+                {t("today.breakdown.addAll")}
               </Button>
             </div>
           )}

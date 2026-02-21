@@ -120,7 +120,7 @@ export async function registerRoutes(
       const prioritiesText = prioritiesList.map(p => p.content).join(", ");
       
       const response = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 8192,
         system: `You are an AI that organizes a brain dump into actionable tasks. 
 User's priorities: ${prioritiesText || "No specific priorities"}.
@@ -168,7 +168,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       if (!task) return res.status(404).json({ message: "Task not found" });
 
       const response = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 8192,
         system: "Provide the absolute smallest first step for this task. Something so easy you can't say no. Two minutes or less. Answer with just the step, no intro.",
         messages: [
@@ -194,7 +194,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       if (!task) return res.status(404).json({ message: "Task not found" });
 
       const response = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 8192,
         system: `Break down this task into small, mindless, actionable steps. Each step should be concrete and take no more than a few minutes. Return JSON with format: {"steps": ["step 1", "step 2", ...]}. Aim for 3-7 steps. Keep each step short and action-oriented. Return ONLY valid JSON, no other text.`,
         messages: [
