@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type CreateTaskRequest, type UpdateTaskRequest } from "@shared/routes";
+import { api, buildUrl } from "@shared/routes";
 
 export function useTasks() {
   return useQuery({
@@ -14,11 +14,9 @@ export function useTasks() {
 
 export function useCreateTask() {
   const queryClient = useQueryClient();
-  // Using a generic POST /api/tasks which we assume exists on backend for single creation
-  // If not, we can fallback to bulk creation if that endpoint existed, but here we'll assume standard REST
   return useMutation({
-    mutationFn: async (task: CreateTaskRequest) => {
-      const res = await fetch("/api/tasks", { 
+    mutationFn: async (task: { content: string; tier: string; status: string; parentId?: number }) => {
+      const res = await fetch(api.tasks.create.path, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(task),
@@ -32,10 +30,28 @@ export function useCreateTask() {
   });
 }
 
+export function useCreateTasksBulk() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (tasks: Array<{ content: string; tier: string; status: string; parentId?: number }>) => {
+      const res = await fetch(api.tasks.createMany.path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tasks }),
+      });
+      if (!res.ok) throw new Error("Failed to create tasks");
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.tasks.list.path] });
+    },
+  });
+}
+
 export function useUpdateTask() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: number } & UpdateTaskRequest) => {
+    mutationFn: async ({ id, ...updates }: { id: number; [key: string]: any }) => {
       const url = buildUrl(api.tasks.update.path, { id });
       const res = await fetch(url, {
         method: api.tasks.update.method,

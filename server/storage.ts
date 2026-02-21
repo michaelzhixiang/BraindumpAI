@@ -62,8 +62,12 @@ export class DatabaseStorage implements IStorage {
     return await db.insert(tasks).values(items).returning();
   }
 
-  async updateTask(id: number, updates: UpdateTaskRequest): Promise<Task> {
-    const [updated] = await db.update(tasks).set(updates).where(eq(tasks.id, id)).returning();
+  async updateTask(id: number, updates: UpdateTaskRequest & { completedAt?: string }): Promise<Task> {
+    const dbUpdates: any = { ...updates };
+    if (updates.completedAt) {
+      dbUpdates.completedAt = new Date(updates.completedAt);
+    }
+    const [updated] = await db.update(tasks).set(dbUpdates).where(eq(tasks.id, id)).returning();
     if (!updated) throw new Error("Task not found");
     return updated;
   }

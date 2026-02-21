@@ -115,11 +115,12 @@ export async function registerRoutes(
         messages: [
           { role: "system", content: `You are an AI that organizes a brain dump into actionable tasks. 
 User's priorities: ${prioritiesText || "No specific priorities"}.
-Extract actionable to-dos and sort them into exactly one of these tiers:
-- focus: Top-priority, directly advances goals.
-- backlog: Useful but not urgent.
-- icebox: Back burner.
-Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
+Extract every actionable to-do and sort them into exactly one of these tiers:
+- focus: Top-priority, directly advances goals. Do this soon.
+- backlog: Useful but not urgent. Can wait.
+- icebox: Back burner. Park it.
+Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}
+Be concise with task content. Extract distinct actionable items only.` },
           { role: "user", content: input.dumpText }
         ],
         response_format: { type: "json_object" }
@@ -127,29 +128,34 @@ Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
       
       const content = response.choices[0]?.message?.content || '{"tasks":[]}';
       const parsed = JSON.parse(content);
-      
-      // Prevent duplicates: filter out tasks that already exist by exact content
-      const existingTasks = await storage.getTasksByContent(parsed.tasks.map((t: any) => t.content));
-      const existingContents = new Set(existingTasks.map(t => t.content));
-      const uniqueTasks = parsed.tasks.filter((t: any) => !existingContents.has(t.content));
+      const proposedTasks: Array<{ content: string; tier: "focus" | "backlog" | "icebox" }> = parsed.tasks || [];
 
-      if (uniqueTasks.length > 0) {
-        await storage.createTasks(uniqueTasks);
-      }
+      const existingTasks = await storage.getTasks();
+      const existingContents = new Set(existingTasks.map(t => t.content.toLowerCase().trim()));
       
-      res.json({ tasks: uniqueTasks });
+      const newTasks = proposedTasks.filter(t => !existingContents.has(t.content.toLowerCase().trim()));
+      
+      let savedTasks: any[] = [];
+      if (newTasks.length > 0) {
+        savedTasks = await storage.createTasks(
+          newTasks.map(t => ({ content: t.content, tier: t.tier, status: "pending" as const }))
+        );
+      }
+
+      res.json({ tasks: savedTasks });
     } catch (err) {
+      console.error("Error processing dump:", err);
       if (err instanceof z.ZodError) {
         return res.status(400).json({ message: err.errors[0].message });
       }
-      console.error(err);
       res.status(500).json({ message: "Error processing dump" });
     }
   });
 
   app.post(api.ai.generateNudge.path, async (req, res) => {
     try {
-      const task = await storage.getTasks().then(tasks => tasks.find(t => t.id === Number(req.params.id)));
+      const allTasks = await storage.getTasks();
+      const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
       const response = await openai.chat.completions.create({
@@ -166,19 +172,21 @@ Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
       
       res.json({ nudge });
     } catch (err) {
+      console.error("Error generating nudge:", err);
       res.status(500).json({ message: "Error generating nudge" });
     }
   });
 
   app.post(api.ai.generateBreakdown.path, async (req, res) => {
     try {
-      const task = await storage.getTasks().then(tasks => tasks.find(t => t.id === Number(req.params.id)));
+      const allTasks = await storage.getTasks();
+      const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
       const response = await openai.chat.completions.create({
         model: "gpt-5.2",
         messages: [
-          { role: "system", content: "Break down the following task into exactly 5 simple, actionable steps. Return JSON format: {\"steps\": [\"step 1\", \"step 2\", \"step 3\", \"step 4\", \"step 5\"]}" },
+          { role: "system", content: `Break down this task into small, mindless, actionable steps. Each step should be concrete and take no more than a few minutes. Return JSON with format: {"steps": ["step 1", "step 2", ...]}. Aim for 3-7 steps. Keep each step short and action-oriented.` },
           { role: "user", content: task.content }
         ],
         response_format: { type: "json_object" }
@@ -187,8 +195,9 @@ Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
       const content = response.choices[0]?.message?.content || '{"steps":[]}';
       const parsed = JSON.parse(content);
       
-      res.json(parsed);
+      res.json({ steps: parsed.steps || [] });
     } catch (err) {
+      console.error("Error generating breakdown:", err);
       res.status(500).json({ message: "Error generating breakdown" });
     }
   });

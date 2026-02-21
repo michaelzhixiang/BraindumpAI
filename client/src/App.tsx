@@ -35,7 +35,7 @@ function AppContent() {
   return (
     <div className="app-container">
       <Header />
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 overflow-y-auto relative">
         <Switch>
           <Route path="/" component={Today} />
           <Route path="/today" component={Today} />

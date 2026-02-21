@@ -50,5 +50,3 @@ export type AIProcessedTasksResponse = {
 };
 export type NudgeResponse = { nudge: string };
 
-// Auth/Chat Integration re-exports
-export * from "./models/chat";

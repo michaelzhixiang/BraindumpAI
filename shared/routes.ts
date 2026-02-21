@@ -86,7 +86,8 @@ export const api = {
       input: insertTaskSchema.partial().extend({
         status: z.enum(["pending", "completed"]).optional(),
         nudge: z.string().optional(),
-        parentId: z.number().optional()
+        parentId: z.number().optional(),
+        completedAt: z.string().optional(),
       }),
       responses: {
         200: z.custom<typeof tasks.$inferSelect>(),
