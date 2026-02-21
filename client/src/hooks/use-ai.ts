@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl } from "@shared/routes";
+import type { Task } from "@shared/schema";
 
 export function useProcessDump() {
   const queryClient = useQueryClient();
@@ -28,10 +29,23 @@ export function useGenerateNudge() {
         method: api.ai.generateNudge.method,
       });
       if (!res.ok) throw new Error("Failed to generate nudge");
-      return api.ai.generateNudge.responses[200].parse(await res.json());
+      return { taskId, ...(api.ai.generateNudge.responses[200].parse(await res.json())) };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.tasks.list.path] });
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: [api.tasks.list.path] });
+      const previous = queryClient.getQueryData<Task[]>([api.tasks.list.path]);
+      return { previous };
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData<Task[]>([api.tasks.list.path], (old) => {
+        if (!old) return old;
+        return old.map(t => t.id === data.taskId ? { ...t, nudge: data.nudge } : t);
+      });
+    },
+    onError: (_err, _taskId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData([api.tasks.list.path], context.previous);
+      }
     },
   });
 }

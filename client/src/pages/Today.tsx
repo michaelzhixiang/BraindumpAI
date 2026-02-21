@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { CheckCircle2, Circle, Zap, Clock, ListChecks, Plus, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useTasks, useUpdateTask, useCreateTasksBulk } from "@/hooks/use-tasks";
@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { MonthlyStreak } from "@/components/MonthlyStreak";
 import type { Task } from "@shared/schema";
 
 export default function Today() {
@@ -32,7 +33,7 @@ export default function Today() {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [isAddingSteps, setIsAddingSteps] = useState(false);
 
-  const focusTasks = tasks?.filter(t => t.tier === "focus" && t.status === "pending") || [];
+  const focusTasks = tasks?.filter(t => t.tier === "focus" && t.status === "pending" && !t.parentId) || [];
   const completedToday = tasks?.filter(t => 
     t.status === "completed" && 
     t.completedAt && 
@@ -46,7 +47,7 @@ export default function Today() {
       particleCount: 80,
       spread: 60,
       origin: { y: 0.6 },
-      colors: ['#ffffff', '#a8a8a8', '#555555']
+      colors: ['#8b5cf6', '#a78bfa', '#c4b5fd']
     });
 
     updateTask({ id, status: "completed", completedAt: new Date().toISOString() });
@@ -113,27 +114,29 @@ export default function Today() {
   }
 
   return (
-    <div className="p-6 space-y-8 pb-32" data-testid="today-page">
-      <div className="bg-gradient-to-br from-white/5 to-white/0 border border-white/5 rounded-2xl p-6 relative">
-        <div className="absolute top-4 right-4 opacity-10">
-          <Clock className="w-20 h-20" />
+    <div className="p-5 space-y-5 pb-32" data-testid="today-page">
+      <MonthlyStreak tasks={tasks || []} />
+
+      <div className="glass-card rounded-2xl p-5 relative halo-ambient" data-testid="guilt-free-card">
+        <div className="absolute top-4 right-4 opacity-[0.06]">
+          <Clock className="w-16 h-16" />
         </div>
         <h2 className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold mb-1">Guilt-Free Time</h2>
         <div className="flex items-baseline gap-2">
-          <span className="text-5xl font-mono font-medium text-foreground tracking-tighter" data-testid="text-screen-time">
+          <span className="text-4xl font-mono font-semibold text-foreground tracking-tighter" data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
-          <span className="text-sm font-medium text-muted-foreground">min</span>
+          <span className="text-xs font-medium text-muted-foreground">min</span>
         </div>
       </div>
 
       {allDone && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center py-8 space-y-3"
         >
-          <div className="text-4xl">All done for today.</div>
+          <div className="text-3xl font-semibold">All done for today.</div>
           <p className="text-muted-foreground text-sm">
             You earned {completedToday.length * 10} minutes. Go enjoy them.
           </p>
@@ -142,14 +145,14 @@ export default function Today() {
 
       {!allDone && (
         <div>
-          <h3 className="text-sm font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+          <h3 className="text-[10px] font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
+            <span className="w-1.5 h-1.5 bg-[hsl(var(--primary))] rounded-full animate-pulse"></span>
             Focus
           </h3>
           
           <div className="space-y-3">
             {focusTasks.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground text-sm border border-dashed border-white/10 rounded-xl">
+              <div className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed">
                 No focus tasks. Dump some thoughts first.
               </div>
             ) : (
@@ -157,48 +160,47 @@ export default function Today() {
                 const subTasks = tasks?.filter(t => t.parentId === task.id && t.status === "pending") || [];
                 return (
                   <div key={task.id}>
-                    <motion.div
-                      layout="position"
-                      className="bg-card border border-white/5 p-4 rounded-xl"
+                    <div
+                      className="glass-card p-4 rounded-xl"
                       data-testid={`task-focus-${task.id}`}
                     >
                       <div className="flex items-start gap-3">
                         <button 
                           onClick={() => handleComplete(task.id)}
-                          className="mt-0.5 text-muted-foreground/40 hover:text-green-500 transition-colors shrink-0"
+                          className="mt-0.5 text-muted-foreground/30 hover:text-[hsl(var(--primary))] transition-colors shrink-0"
                           data-testid={`button-complete-${task.id}`}
                         >
                           <Circle className="w-5 h-5" />
                         </button>
                         
-                        <div className="flex-1 space-y-2 min-w-0">
-                          <p className="text-sm font-medium leading-relaxed">{task.content}</p>
+                        <div className="flex-1 space-y-2.5 min-w-0">
+                          <p className="text-sm font-medium leading-relaxed text-foreground/90">{task.content}</p>
                           
                           {task.nudge && (
-                            <div className="text-xs bg-white/5 p-2.5 rounded-lg text-muted-foreground border-l-2 border-primary/30">
-                              <span className="font-bold mr-1 text-foreground/70">Micro-step:</span> 
+                            <div className="text-xs bg-[hsl(var(--primary))]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[hsl(var(--primary))]/30">
+                              <span className="font-semibold mr-1 text-foreground/60">Micro-step:</span> 
                               {task.nudge}
                             </div>
                           )}
                           
-                          <div className="flex gap-2 pt-1 flex-wrap">
+                          <div className="flex gap-2 pt-0.5 flex-wrap">
                             <button 
                               onClick={() => handleNudge(task.id)}
                               disabled={activeNudgeId === task.id}
                               data-testid={`button-nudge-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider bg-secondary px-3 py-1.5 rounded-md text-secondary-foreground flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                              className="text-[10px] uppercase font-bold tracking-wider bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40"
                             >
-                              {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse" /> : <Zap className="w-3 h-3" />}
+                              {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[hsl(var(--primary))]" /> : <Zap className="w-3 h-3" />}
                               Nudge Me
                             </button>
                             <button
                               onClick={() => handleBreakdown(task)}
                               disabled={breakdownTaskId === task.id && isBreakingDown}
                               data-testid={`button-breakdown-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider bg-secondary px-3 py-1.5 rounded-md text-secondary-foreground flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                              className="text-[10px] uppercase font-bold tracking-wider bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40"
                             >
                               {breakdownTaskId === task.id && isBreakingDown ? (
-                                <ListChecks className="w-3 h-3 animate-pulse" />
+                                <ListChecks className="w-3 h-3 animate-pulse text-[hsl(var(--primary))]" />
                               ) : (
                                 <ListChecks className="w-3 h-3" />
                               )}
@@ -207,24 +209,23 @@ export default function Today() {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                     
                     {subTasks.length > 0 && (
-                      <div className="ml-8 mt-1 space-y-1">
+                      <div className="ml-8 mt-1 space-y-0.5">
                         {subTasks.map(sub => (
-                          <motion.div
+                          <div
                             key={sub.id}
-                            layout="position"
-                            className="flex items-center gap-3 py-2 px-3 rounded-lg border-l-2 border-primary/10"
+                            className="flex items-center gap-3 py-2 px-3 rounded-lg"
                           >
                             <button
                               onClick={() => handleComplete(sub.id)}
-                              className="text-muted-foreground/30 hover:text-green-500 transition-colors shrink-0"
+                              className="text-muted-foreground/20 hover:text-[hsl(var(--primary))] transition-colors shrink-0"
                             >
                               <Circle className="w-4 h-4" />
                             </button>
-                            <p className="text-xs text-muted-foreground">{sub.content}</p>
-                          </motion.div>
+                            <p className="text-xs text-muted-foreground/70">{sub.content}</p>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -237,12 +238,12 @@ export default function Today() {
       )}
 
       {completedToday.length > 0 && !allDone && (
-        <div className="opacity-40 hover:opacity-80 transition-opacity duration-300">
+        <div className="opacity-30 hover:opacity-70 transition-opacity duration-300">
           <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3 text-muted-foreground">Completed Today</h4>
           <div className="space-y-2">
              {completedToday.map(task => (
-               <div key={task.id} className="flex items-center gap-3 text-sm text-muted-foreground line-through">
-                 <CheckCircle2 className="w-4 h-4 text-green-500/40 shrink-0" />
+               <div key={task.id} className="flex items-center gap-3 text-sm text-muted-foreground/60 line-through">
+                 <CheckCircle2 className="w-4 h-4 text-[hsl(var(--primary))]/30 shrink-0" />
                  <span className="truncate">{task.content}</span>
                </div>
              ))}
@@ -251,9 +252,9 @@ export default function Today() {
       )}
 
       <Dialog open={showBreakdown} onOpenChange={setShowBreakdown}>
-        <DialogContent className="bg-card border-white/10 text-foreground max-w-[420px]">
+        <DialogContent className="glass-card border-white/[0.06] text-foreground max-w-[420px]">
           <DialogHeader>
-            <DialogTitle className="text-lg">Task Breakdown</DialogTitle>
+            <DialogTitle className="text-base font-semibold">Task Breakdown</DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm">
               {isBreakingDown ? "Thinking of steps..." : `${breakdownSteps.length} steps to get this done`}
             </DialogDescription>
@@ -261,28 +262,28 @@ export default function Today() {
           
           {isBreakingDown ? (
             <div className="py-8 flex justify-center">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              <Loader2 className="w-6 h-6 animate-spin text-[hsl(var(--primary))]" />
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {breakdownSteps.map((step, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="flex items-start gap-3 py-2"
+                    className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.03]"
                   >
-                    <span className="text-xs font-mono text-muted-foreground/50 mt-0.5 w-5 shrink-0">{i + 1}.</span>
-                    <p className="text-sm">{step}</p>
+                    <span className="text-[10px] font-mono text-[hsl(var(--primary))]/50 mt-0.5 w-4 shrink-0 text-right">{i + 1}</span>
+                    <p className="text-sm text-foreground/80">{step}</p>
                   </motion.div>
                 ))}
               </div>
               <Button
                 onClick={handleAddStepsToList}
                 disabled={isAddingSteps}
-                className="w-full"
+                className="w-full bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/80"
                 data-testid="button-add-steps"
               >
                 {isAddingSteps ? (

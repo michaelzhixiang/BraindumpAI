@@ -95,15 +95,16 @@ export default function Dump() {
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.2 }}
             className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
               className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.sender === "user"
-                  ? "bg-primary text-primary-foreground rounded-tr-sm"
-                  : "bg-muted text-foreground rounded-tl-sm"
+                  ? "bg-[hsl(var(--primary))] text-white rounded-tr-sm"
+                  : "glass-card text-foreground/80 rounded-tl-sm"
               }`}
             >
               {msg.text}
@@ -113,14 +114,14 @@ export default function Dump() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pb-24">
+      <div className="absolute bottom-0 left-0 right-0 p-4 pb-24" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 50%, transparent)' }}>
         {userDumpTexts.length > 0 && (
            <div className="flex justify-center mb-4">
              <button
                onClick={handleSort}
                disabled={isProcessing}
                data-testid="button-sort"
-               className="bg-secondary text-secondary-foreground px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg transition-all"
+               className="bg-[hsl(var(--primary))] text-white px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg shadow-[hsl(var(--primary))]/20 transition-all hover:shadow-[hsl(var(--primary))]/30"
              >
                {isProcessing ? <Sparkles className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                {isProcessing ? "Sorting..." : "Done - Sort My Stuff"}
@@ -141,14 +142,14 @@ export default function Dump() {
             }}
             placeholder="Type anything..."
             data-testid="input-dump"
-            className="w-full bg-muted/50 backdrop-blur-md border border-white/5 rounded-3xl pl-5 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-white/20 resize-none min-h-[56px]"
+            className="w-full glass-card rounded-2xl pl-5 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-[hsl(var(--primary))]/30 resize-none min-h-[56px] text-foreground/90 placeholder:text-muted-foreground/30"
             rows={1}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim()}
             data-testid="button-send"
-            className="absolute right-2 bottom-2 p-2 bg-primary text-primary-foreground rounded-full disabled:opacity-30 disabled:bg-muted disabled:text-muted-foreground transition-all"
+            className="absolute right-2.5 bottom-2.5 p-2 bg-[hsl(var(--primary))] text-white rounded-xl disabled:opacity-20 disabled:bg-white/10 transition-all"
           >
             <Send className="w-4 h-4" />
           </button>

@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/hooks/use-tasks";
-import { Archive, Flame, Snowflake, Trash2, Pencil, Check, X } from "lucide-react";
+import { Archive, Flame, Snowflake, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   DndContext,
@@ -23,8 +22,8 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[60px] rounded-xl transition-colors duration-200 ${
-        isOver ? "bg-white/5 ring-1 ring-white/10" : ""
+      className={`min-h-[48px] rounded-xl transition-all duration-200 ${
+        isOver ? "bg-[hsl(var(--primary))]/[0.04] ring-1 ring-[hsl(var(--primary))]/20" : ""
       }`}
     >
       {children}
@@ -43,6 +42,7 @@ function SortableTaskItem({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(task.content);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   const {
     attributes,
@@ -56,12 +56,22 @@ function SortableTaskItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
+    opacity: isDragging ? 0.3 : 1,
   };
 
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
   const handleSaveEdit = () => {
-    if (editValue.trim() && editValue.trim() !== task.content) {
-      onEdit(task.id, editValue.trim());
+    const trimmed = editValue.trim();
+    if (trimmed && trimmed !== task.content) {
+      onEdit(task.id, trimmed);
+    } else {
+      setEditValue(task.content);
     }
     setIsEditing(false);
   };
@@ -72,75 +82,63 @@ function SortableTaskItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-card border border-white/5 p-3 rounded-xl group flex items-center gap-3 touch-none ${subTask ? "ml-6 border-l-2 border-l-primary/20" : ""}`}
+      className={`glass-card p-3 rounded-xl group flex items-center gap-3 ${subTask ? "ml-5 border-l-2 border-l-[hsl(var(--primary))]/10" : ""}`}
       data-testid={`task-item-${task.id}`}
     >
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground shrink-0 flex flex-col gap-0.5"
+        className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 shrink-0 flex flex-col gap-[2px] touch-none py-1"
       >
-        <div className="w-4 h-0.5 bg-current rounded-full" />
-        <div className="w-4 h-0.5 bg-current rounded-full" />
-        <div className="w-4 h-0.5 bg-current rounded-full" />
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
       </div>
 
       {isEditing ? (
-        <div className="flex-1 flex items-center gap-2">
-          <input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSaveEdit();
-              if (e.key === "Escape") setIsEditing(false);
-            }}
-            className="flex-1 bg-transparent border-b border-primary/30 py-1 text-sm focus:outline-none"
-            autoFocus
-          />
-          <button onClick={handleSaveEdit} className="text-green-400 p-1">
-            <Check className="w-4 h-4" />
-          </button>
-          <button onClick={() => setIsEditing(false)} className="text-muted-foreground p-1">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        <input
+          ref={inputRef}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSaveEdit();
+            if (e.key === "Escape") { setEditValue(task.content); setIsEditing(false); }
+          }}
+          onBlur={handleSaveEdit}
+          className="flex-1 bg-transparent text-sm font-medium focus:outline-none text-foreground/90 py-0.5"
+          data-testid={`input-edit-${task.id}`}
+        />
       ) : (
-        <p className="flex-1 text-sm font-medium leading-relaxed">{task.content}</p>
+        <p 
+          className="flex-1 text-sm font-medium leading-relaxed text-foreground/80 cursor-text hover:text-foreground/95 transition-colors"
+          onClick={() => { setEditValue(task.content); setIsEditing(true); }}
+          data-testid={`text-task-${task.id}`}
+        >
+          {task.content}
+        </p>
       )}
 
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        {!isEditing && (
-          <>
-            <button 
-              onClick={() => { setEditValue(task.content); setIsEditing(true); }}
-              className="p-1.5 hover:text-primary rounded transition-colors"
-              title="Edit"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-            <button 
-              onClick={() => onDelete(task.id)}
-              className="p-1.5 hover:text-red-400 rounded transition-colors"
-              title="Delete"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </>
-        )}
-      </div>
+      <button 
+        onClick={() => onDelete(task.id)}
+        className="p-1.5 text-transparent group-hover:text-muted-foreground/30 hover:!text-red-400 rounded transition-all shrink-0"
+        title="Delete"
+        data-testid={`button-delete-${task.id}`}
+      >
+        <Trash2 className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 }
 
 function DragOverlayItem({ task }: { task: Task }) {
   return (
-    <div className="bg-card border border-primary/30 p-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-[420px]">
-      <div className="text-muted-foreground/40 shrink-0 flex flex-col gap-0.5">
-        <div className="w-4 h-0.5 bg-current rounded-full" />
-        <div className="w-4 h-0.5 bg-current rounded-full" />
-        <div className="w-4 h-0.5 bg-current rounded-full" />
+    <div className="glass-card halo-glow p-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-[420px]">
+      <div className="text-muted-foreground/30 shrink-0 flex flex-col gap-[2px]">
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
       </div>
-      <p className="flex-1 text-sm font-medium">{task.content}</p>
+      <p className="flex-1 text-sm font-medium text-foreground/80">{task.content}</p>
     </div>
   );
 }
@@ -154,7 +152,7 @@ export default function Queue() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
+      activationConstraint: { distance: 8 },
     })
   );
 
@@ -201,15 +199,15 @@ export default function Queue() {
 
   const TierSection = ({ title, icon: Icon, items, tierColor, tierId }: { title: string; icon: any; items: Task[]; tierColor: string; tierId: string }) => (
     <div className="space-y-2">
-      <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${tierColor}`}>
-        <Icon className="w-4 h-4" />
-        {title} <span className="opacity-50 ml-1">({items.length})</span>
+      <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest ${tierColor}`}>
+        <Icon className="w-3.5 h-3.5" />
+        {title} <span className="opacity-40 ml-1">({items.length})</span>
       </div>
       <DroppableTierZone id={tierId}>
         <SortableContext items={items.map(t => t.id.toString())} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {items.length === 0 ? (
-              <div className="p-4 rounded-xl border border-dashed border-white/5 text-center text-xs text-muted-foreground">
+              <div className="p-4 rounded-xl border border-dashed border-white/[0.04] text-center text-[10px] text-muted-foreground/30 uppercase tracking-wider">
                 Drag tasks here
               </div>
             ) : (
@@ -229,16 +227,16 @@ export default function Queue() {
   );
 
   return (
-    <div className="p-6 space-y-8 pb-32" data-testid="queue-page">
+    <div className="p-5 space-y-6 pb-32" data-testid="queue-page">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <TierSection title="Focus" icon={Flame} items={focus} tierColor="text-red-400" tierId="tier-focus" />
-        <TierSection title="Backlog" icon={Archive} items={backlog} tierColor="text-yellow-400" tierId="tier-backlog" />
-        <TierSection title="Icebox" icon={Snowflake} items={icebox} tierColor="text-blue-400" tierId="tier-icebox" />
+        <TierSection title="Focus" icon={Flame} items={focus} tierColor="text-red-400/80" tierId="tier-focus" />
+        <TierSection title="Backlog" icon={Archive} items={backlog} tierColor="text-yellow-400/60" tierId="tier-backlog" />
+        <TierSection title="Icebox" icon={Snowflake} items={icebox} tierColor="text-blue-400/60" tierId="tier-icebox" />
 
         <DragOverlay>
           {activeTask ? <DragOverlayItem task={activeTask} /> : null}
