@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Circle, Zap, Clock, Loader2, ArrowRight, Inbox } from "lucide-react";
+import { CheckCircle2, Circle, Zap, Clock, Loader2, Plus, Inbox } from "lucide-react";
 import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
 import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
 import { useGenerateNudge } from "@/hooks/use-ai";
@@ -21,6 +21,7 @@ export default function Today() {
 
   const [activeNudgeId, setActiveNudgeId] = useState<number | null>(null);
   const [completingIds, setCompletingIds] = useState<Set<number>>(new Set());
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
 
   const focusTasks = tasks?.filter(t => t.tier === "focus" && t.status === "pending" && !t.parentId) || [];
   const completedToday = tasks?.filter(t => 
@@ -28,6 +29,7 @@ export default function Today() {
     t.completedAt && 
     new Date(t.completedAt).toDateString() === new Date().toDateString()
   ) || [];
+  const waitingTasks = tasks?.filter(t => t.status === "pending" && (t.tier === "backlog" || t.tier === "icebox")) || [];
 
   const allDone = focusTasks.length === 0 && completedToday.length > 0;
 
@@ -91,28 +93,85 @@ export default function Today() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-8 space-y-4"
+          className="space-y-5"
         >
-          <div className="text-3xl font-semibold">{t("today.allDone")}</div>
-          <p className="text-muted-foreground text-sm">
-            {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
-          </p>
-          <p className="text-muted-foreground/60 text-xs mt-2">
-            {t("today.checkLowerPriority")}
-          </p>
-          <div className="flex gap-3 justify-center mt-3">
+          <div className="text-center py-6 space-y-2">
+            <div className="text-3xl font-semibold">{t("today.allDone")}</div>
+            <p className="text-muted-foreground text-sm">
+              {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
+            </p>
+          </div>
+
+          {waitingTasks.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+                {t("today.pickTasks")}
+              </p>
+              <div className="space-y-1.5">
+                {waitingTasks.map(task => (
+                  <button
+                    key={task.id}
+                    onClick={() => {
+                      setSelectedTaskIds(prev => {
+                        const next = new Set(prev);
+                        if (next.has(task.id)) next.delete(task.id);
+                        else next.add(task.id);
+                        return next;
+                      });
+                    }}
+                    className={`w-full text-left glass-card p-3 rounded-xl flex items-center gap-3 transition-all duration-150 ${
+                      selectedTaskIds.has(task.id)
+                        ? "ring-1 ring-[#3B82F6]/40 bg-[#3B82F6]/[0.06]"
+                        : "neon-border-subtle hover:bg-white/[0.03]"
+                    }`}
+                    data-testid={`button-pick-task-${task.id}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                      selectedTaskIds.has(task.id)
+                        ? "border-[#3B82F6] bg-[#3B82F6]"
+                        : "border-muted-foreground/20"
+                    }`}>
+                      {selectedTaskIds.has(task.id) && (
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground/80 truncate">{task.content}</p>
+                      <span className="text-[9px] uppercase tracking-wider text-muted-foreground/40">
+                        {task.tier === "backlog" ? t("queue.backlog") : t("queue.icebox")}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-3 justify-center pt-2">
             <button
-              onClick={() => setLocation("/queue")}
-              className="text-[10px] uppercase font-bold tracking-wider glass-card px-4 py-2 rounded-lg text-foreground/70 flex items-center gap-1.5 neon-border-subtle"
+              onClick={() => {
+                if (selectedTaskIds.size > 0) {
+                  selectedTaskIds.forEach(id => {
+                    updateTask({ id, tier: "focus" });
+                  });
+                  setSelectedTaskIds(new Set());
+                  toast({ title: `${selectedTaskIds.size} ${selectedTaskIds.size === 1 ? "task" : "tasks"} moved to Focus` });
+                } else {
+                  setLocation("/queue");
+                }
+              }}
+              className="text-[10px] uppercase font-bold tracking-wider bg-[#3B82F6] text-white px-5 py-2.5 rounded-lg flex items-center gap-1.5 neon-btn"
               data-testid="button-view-queue"
             >
-              <ArrowRight className="w-3 h-3" />
-              {t("today.viewQueue")}
+              <Plus className="w-3 h-3" />
+              {selectedTaskIds.size > 0
+                ? `${t("today.focus")} (${selectedTaskIds.size})`
+                : t("today.viewQueue")}
             </button>
             <button
               onClick={() => setLocation("/dump")}
-              className="text-[10px] uppercase font-bold tracking-wider bg-[#3B82F6] text-white px-4 py-2 rounded-lg flex items-center gap-1.5 neon-btn"
-              data-testid="button-add-more"
+              className="text-[10px] uppercase font-bold tracking-wider glass-card px-4 py-2.5 rounded-lg text-muted-foreground/50 flex items-center gap-1.5 neon-border-subtle hover:text-muted-foreground/70 transition-colors"
+              data-testid="button-dump-more"
             >
               <Inbox className="w-3 h-3" />
               {t("today.addMore")}

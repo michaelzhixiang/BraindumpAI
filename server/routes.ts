@@ -167,10 +167,22 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
+      const nudgeNum = (task.nudgeCount || 0) + 1;
+      const previousNudge = task.nudge || "";
+
+      let systemPrompt: string;
+      if (nudgeNum === 1) {
+        systemPrompt = `You are a productivity coach. Give the absolute smallest first step for this task. Something so easy the user can't say no. Two minutes or less. Answer with just the step, no intro or explanation.`;
+      } else if (nudgeNum >= 5) {
+        systemPrompt = `You are a productivity coach. This is nudge #${nudgeNum} for this task. The user has been working through progressive steps. The previous step was: "${previousNudge}". Now give them the step that brings this task to roughly 60% completion. Assume they completed all previous steps. This should be a meaningful next action that gets the bulk of the work done. Answer with just the step, no intro.`;
+      } else {
+        systemPrompt = `You are a productivity coach. This is nudge #${nudgeNum} for this task. The user already completed the previous step: "${previousNudge}". Now give them the NEXT logical step that builds on what they've already done. Each nudge should progress the task further toward completion. By nudge 5, the task should be roughly 60% done. Answer with just the next step, no intro or explanation.`;
+      }
+
       const response = await anthropic.messages.create({
         model: "claude-haiku-4-5",
         max_tokens: 8192,
-        system: "Provide the absolute smallest first step for this task. Something so easy you can't say no. Two minutes or less. Answer with just the step, no intro.",
+        system: systemPrompt,
         messages: [
           { role: "user", content: task.content }
         ],
@@ -178,7 +190,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
 
       const nudge = response.content[0]?.type === "text" ? response.content[0].text : "Just open the file.";
       
-      await storage.updateTask(task.id, { nudge });
+      await storage.updateTask(task.id, { nudge, nudgeCount: nudgeNum });
       
       res.json({ nudge });
     } catch (err) {

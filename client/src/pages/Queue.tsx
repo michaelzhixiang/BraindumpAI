@@ -1,19 +1,21 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, type PanInfo } from "framer-motion";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/hooks/use-tasks";
-import { Archive, Flame, Snowflake, Trash2, Pencil } from "lucide-react";
+import { Archive, Flame, Snowflake, Trash2, Pencil, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
   PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
+  type DragOverEvent,
+  pointerWithin,
+  rectIntersection,
 } from "@dnd-kit/core";
 import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -26,7 +28,7 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
     <div
       ref={setNodeRef}
       className={`min-h-[48px] rounded-xl transition-all duration-150 ${
-        isOver ? "bg-[#3B82F6]/[0.04] ring-1 ring-[#3B82F6]/20" : ""
+        isOver ? "bg-[#3B82F6]/[0.06] ring-1 ring-[#3B82F6]/20" : ""
       }`}
     >
       {children}
@@ -34,10 +36,10 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
   );
 }
 
-const SWIPE_THRESHOLD = 80;
+const SWIPE_THRESHOLD = 60;
 const ACTION_WIDTH = 140;
 
-function SwipeableTaskItem({
+function TaskItem({
   task,
   onDelete,
   onEdit,
@@ -58,6 +60,7 @@ function SwipeableTaskItem({
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -66,7 +69,8 @@ function SwipeableTaskItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.3 : 1,
+    opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 50 : "auto" as any,
   };
 
   useEffect(() => {
@@ -101,13 +105,12 @@ function SwipeableTaskItem({
   };
 
   const canSwipe = !isEditing && !isDndActive && !isDragging;
-  const subTask = task.parentId != null;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative overflow-hidden rounded-xl ${subTask ? "ml-5" : ""}`}
+      className="relative overflow-hidden rounded-xl"
       data-testid={`task-item-${task.id}`}
     >
       <div className="absolute right-0 top-0 bottom-0 flex items-stretch z-0">
@@ -144,23 +147,17 @@ function SwipeableTaskItem({
         onDragEnd={handleSwipeEnd}
         animate={{ x: isRevealed ? -ACTION_WIDTH : 0 }}
         transition={{ type: "spring", stiffness: 500, damping: 35 }}
-        className="relative z-10 glass-card p-3 flex items-center gap-3 neon-border-subtle"
+        className="relative z-10 glass-card p-3 flex items-center gap-2 neon-border-subtle"
         onClick={() => { if (isRevealed) setIsRevealed(false); }}
       >
         <div
+          ref={setActivatorNodeRef}
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 shrink-0 flex flex-col gap-[2px] touch-none py-1"
-          onPointerDown={(e) => {
-            if (isRevealed) {
-              e.preventDefault();
-              setIsRevealed(false);
-            }
-          }}
+          className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 shrink-0 touch-none p-1.5 -m-1"
+          data-testid={`drag-handle-${task.id}`}
         >
-          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+          <GripVertical className="w-4 h-4" />
         </div>
 
         {isEditing ? (
@@ -191,15 +188,19 @@ function SwipeableTaskItem({
 
 function DragOverlayItem({ task }: { task: Task }) {
   return (
-    <div className="glass-card halo-glow p-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-[420px] neon-glow">
-      <div className="text-muted-foreground/30 shrink-0 flex flex-col gap-[2px]">
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+    <div className="glass-card halo-glow p-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-[420px] neon-glow">
+      <div className="text-muted-foreground/30 shrink-0">
+        <GripVertical className="w-4 h-4" />
       </div>
       <p className="flex-1 text-sm font-medium text-foreground/80">{task.content}</p>
     </div>
   );
+}
+
+function customCollisionDetection(args: any) {
+  const pointerCollisions = pointerWithin(args);
+  if (pointerCollisions.length > 0) return pointerCollisions;
+  return rectIntersection(args);
 }
 
 export default function Queue() {
@@ -212,10 +213,10 @@ export default function Queue() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
+      activationConstraint: { distance: 5 },
     }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 200, tolerance: 5 },
+      activationConstraint: { delay: 150, tolerance: 5 },
     })
   );
 
@@ -236,7 +237,7 @@ export default function Queue() {
 
     const overId = over.id.toString();
     const taskId = Number(active.id);
-    
+
     let newTier: "focus" | "backlog" | "icebox" | null = null;
 
     if (overId === "tier-focus") newTier = "focus";
@@ -278,7 +279,7 @@ export default function Queue() {
               </div>
             ) : (
               items.map((task) => (
-                <SwipeableTaskItem
+                <TaskItem
                   key={task.id}
                   task={task}
                   onDelete={(id) => deleteTask(id)}
@@ -297,7 +298,7 @@ export default function Queue() {
     <div className="p-5 space-y-6 pb-32" data-testid="queue-page">
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={customCollisionDetection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >

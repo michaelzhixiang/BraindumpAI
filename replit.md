@@ -45,7 +45,10 @@ client/src/lib/i18n.ts  - Internationalization (EN/ZH translations)
 - Swipe-left gesture on Queue items reveals Edit/Delete action buttons
 - Fixed DnD vs swipe conflict: drag handle triggers DnD, card body triggers swipe, auto-closes revealed items on drag start
 - Improved DnD sensors: TouchSensor with delay activation, faster drop animation
-- Renamed "Guilt-Free Time" to "Guilt-Free Screen Time" in both languages
+- Progressive nudges: each nudge builds on the previous one, ~60% task completion by nudge 5
+- "All done" state shows inline task picker from backlog/icebox, blue "View Queue" CTA, grey "Dump Some More"
+- Renamed "Guilt-Free Screen Time" to "Guilt-Free Social Media Time" in both languages
+- DnD uses setActivatorNodeRef for drag handle separation from swipe, custom collision detection
 - Uninstalled canvas-confetti package
 - Upgraded AI model to claude-haiku-4-5 (Claude 3.5 Haiku retired Feb 19, 2026)
 - Added EN/中文 language toggle with full i18n support
