@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 
 export const userState = pgTable("user_state", {
   id: serial("id").primaryKey(),
@@ -21,11 +22,12 @@ export const tasks = pgTable("tasks", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
   nudge: text("nudge"), // Smallest first step from AI
+  parentId: integer("parent_id"), // For sub-tasks/steps
 });
 
 export const insertUserStateSchema = createInsertSchema(userState);
 export const insertPrioritySchema = createInsertSchema(priorities).omit({ id: true });
-export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true, completedAt: true, nudge: true });
+export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true, completedAt: true, nudge: true, parentId: true });
 
 // Explicit Types
 export type UserState = typeof userState.$inferSelect;
@@ -39,7 +41,7 @@ export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type UpdateUserStateRequest = Partial<UserState>;
 export type CreatePriorityRequest = InsertPriority;
 export type CreateTaskRequest = InsertTask;
-export type UpdateTaskRequest = Partial<InsertTask> & { status?: "pending" | "completed", nudge?: string };
+export type UpdateTaskRequest = Partial<InsertTask> & { status?: "pending" | "completed", nudge?: string, parentId?: number };
 export type ProcessBrainDumpRequest = { dumpText: string, priorities: string[] };
 
 // Response Types
@@ -48,3 +50,5 @@ export type AIProcessedTasksResponse = {
 };
 export type NudgeResponse = { nudge: string };
 
+// Auth/Chat Integration re-exports (if needed, but keeping separate models for now)
+export * from "./models/chat";

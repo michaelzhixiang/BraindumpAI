@@ -5,7 +5,7 @@ import {
   type InsertPriority, type InsertTask,
   type UpdateUserStateRequest, type UpdateTaskRequest
 } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // UserState
@@ -18,10 +18,11 @@ export interface IStorage {
 
   // Tasks
   getTasks(): Promise<Task[]>;
-  createTask(task: InsertTask): Promise<Task>;
-  createTasks(items: InsertTask[]): Promise<Task[]>;
+  createTask(task: InsertTask & { parentId?: number }): Promise<Task>;
+  createTasks(items: (InsertTask & { parentId?: number })[]): Promise<Task[]>;
   updateTask(id: number, updates: UpdateTaskRequest): Promise<Task>;
   deleteTask(id: number): Promise<void>;
+  getTasksByContent(contents: string[]): Promise<Task[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -51,12 +52,12 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(tasks);
   }
 
-  async createTask(task: InsertTask): Promise<Task> {
+  async createTask(task: InsertTask & { parentId?: number }): Promise<Task> {
     const [created] = await db.insert(tasks).values(task).returning();
     return created;
   }
 
-  async createTasks(items: InsertTask[]): Promise<Task[]> {
+  async createTasks(items: (InsertTask & { parentId?: number })[]): Promise<Task[]> {
     if (items.length === 0) return [];
     return await db.insert(tasks).values(items).returning();
   }
@@ -69,6 +70,11 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTask(id: number): Promise<void> {
     await db.delete(tasks).where(eq(tasks.id, id));
+  }
+
+  async getTasksByContent(contents: string[]): Promise<Task[]> {
+    if (contents.length === 0) return [];
+    return await db.select().from(tasks).where(inArray(tasks.content, contents));
   }
 }
 

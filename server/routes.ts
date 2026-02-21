@@ -128,11 +128,21 @@ Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
       const content = response.choices[0]?.message?.content || '{"tasks":[]}';
       const parsed = JSON.parse(content);
       
-      res.json(parsed);
+      // Prevent duplicates: filter out tasks that already exist by exact content
+      const existingTasks = await storage.getTasksByContent(parsed.tasks.map((t: any) => t.content));
+      const existingContents = new Set(existingTasks.map(t => t.content));
+      const uniqueTasks = parsed.tasks.filter((t: any) => !existingContents.has(t.content));
+
+      if (uniqueTasks.length > 0) {
+        await storage.createTasks(uniqueTasks);
+      }
+      
+      res.json({ tasks: uniqueTasks });
     } catch (err) {
       if (err instanceof z.ZodError) {
         return res.status(400).json({ message: err.errors[0].message });
       }
+      console.error(err);
       res.status(500).json({ message: "Error processing dump" });
     }
   });
@@ -157,6 +167,29 @@ Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}` },
       res.json({ nudge });
     } catch (err) {
       res.status(500).json({ message: "Error generating nudge" });
+    }
+  });
+
+  app.post(api.ai.generateBreakdown.path, async (req, res) => {
+    try {
+      const task = await storage.getTasks().then(tasks => tasks.find(t => t.id === Number(req.params.id)));
+      if (!task) return res.status(404).json({ message: "Task not found" });
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-5.2",
+        messages: [
+          { role: "system", content: "Break down the following task into exactly 5 simple, actionable steps. Return JSON format: {\"steps\": [\"step 1\", \"step 2\", \"step 3\", \"step 4\", \"step 5\"]}" },
+          { role: "user", content: task.content }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const content = response.choices[0]?.message?.content || '{"steps":[]}';
+      const parsed = JSON.parse(content);
+      
+      res.json(parsed);
+    } catch (err) {
+      res.status(500).json({ message: "Error generating breakdown" });
     }
   });
 

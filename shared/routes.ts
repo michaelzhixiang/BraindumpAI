@@ -65,7 +65,7 @@ export const api = {
     create: {
       method: 'POST' as const,
       path: '/api/tasks' as const,
-      input: insertTaskSchema,
+      input: insertTaskSchema.extend({ parentId: z.number().optional() }),
       responses: {
         201: z.custom<typeof tasks.$inferSelect>(),
       },
@@ -74,7 +74,7 @@ export const api = {
       method: 'POST' as const,
       path: '/api/tasks/bulk' as const,
       input: z.object({
-        tasks: z.array(insertTaskSchema)
+        tasks: z.array(insertTaskSchema.extend({ parentId: z.number().optional() }))
       }),
       responses: {
         201: z.array(z.custom<typeof tasks.$inferSelect>()),
@@ -85,7 +85,8 @@ export const api = {
       path: '/api/tasks/:id' as const,
       input: insertTaskSchema.partial().extend({
         status: z.enum(["pending", "completed"]).optional(),
-        nudge: z.string().optional()
+        nudge: z.string().optional(),
+        parentId: z.number().optional()
       }),
       responses: {
         200: z.custom<typeof tasks.$inferSelect>(),
@@ -122,6 +123,14 @@ export const api = {
       path: '/api/ai/nudge/:id' as const,
       responses: {
         200: z.object({ nudge: z.string() }),
+        404: errorSchemas.notFound
+      }
+    },
+    generateBreakdown: {
+      method: 'POST' as const,
+      path: '/api/ai/breakdown/:id' as const,
+      responses: {
+        200: z.object({ steps: z.array(z.string()) }),
         404: errorSchemas.notFound
       }
     }
