@@ -1,23 +1,13 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Zap, Clock, ListChecks, Plus, Loader2 } from "lucide-react";
-import confetti from "canvas-confetti";
-import { useTasks, useUpdateTask, useCreateTasksBulk } from "@/hooks/use-tasks";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle2, Circle, Zap, Clock, Loader2, ArrowRight, Inbox } from "lucide-react";
+import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
 import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
-import { useGenerateNudge, useGenerateBreakdown } from "@/hooks/use-ai";
+import { useGenerateNudge } from "@/hooks/use-ai";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
 import { useLocation } from "wouter";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { MonthlyStreak } from "@/components/MonthlyStreak";
-import type { Task } from "@shared/schema";
 
 export default function Today() {
   const { data: tasks, isLoading } = useTasks();
@@ -25,17 +15,12 @@ export default function Today() {
   const { mutate: updateTask } = useUpdateTask();
   const { mutate: updateUserState } = useUpdateUserState();
   const { mutateAsync: generateNudge } = useGenerateNudge();
-  const { mutateAsync: generateBreakdown, isPending: isBreakingDown } = useGenerateBreakdown();
-  const { mutateAsync: createTasksBulk } = useCreateTasksBulk();
   const { toast } = useToast();
   const { t } = useI18n();
   const [, setLocation] = useLocation();
 
   const [activeNudgeId, setActiveNudgeId] = useState<number | null>(null);
-  const [breakdownTaskId, setBreakdownTaskId] = useState<number | null>(null);
-  const [breakdownSteps, setBreakdownSteps] = useState<string[]>([]);
-  const [showBreakdown, setShowBreakdown] = useState(false);
-  const [isAddingSteps, setIsAddingSteps] = useState(false);
+  const [completingIds, setCompletingIds] = useState<Set<number>>(new Set());
 
   const focusTasks = tasks?.filter(t => t.tier === "focus" && t.status === "pending" && !t.parentId) || [];
   const completedToday = tasks?.filter(t => 
@@ -47,20 +32,23 @@ export default function Today() {
   const allDone = focusTasks.length === 0 && completedToday.length > 0;
 
   const handleComplete = (id: number) => {
-    confetti({
-      particleCount: 80,
-      spread: 60,
-      origin: { y: 0.6 },
-      colors: ['#3B82F6', '#60A5FA', '#93C5FD']
-    });
+    setCompletingIds(prev => new Set(prev).add(id));
 
-    updateTask({ id, status: "completed", completedAt: new Date().toISOString() });
-    updateUserState({ screenTimeMinutes: (userState?.screenTimeMinutes || 0) + 10 });
-    
-    toast({
-      title: t("today.earnedToast"),
-      description: t("today.earnedDesc"),
-    });
+    setTimeout(() => {
+      updateTask({ id, status: "completed", completedAt: new Date().toISOString() });
+      updateUserState({ screenTimeMinutes: (userState?.screenTimeMinutes || 0) + 10 });
+      
+      toast({
+        title: t("today.earnedToast"),
+        description: t("today.earnedDesc"),
+      });
+
+      setCompletingIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 400);
   };
 
   const handleNudge = async (id: number) => {
@@ -71,41 +59,6 @@ export default function Today() {
       toast({ title: "Failed to generate nudge", variant: "destructive" });
     } finally {
       setActiveNudgeId(null);
-    }
-  };
-
-  const handleBreakdown = async (task: Task) => {
-    setBreakdownTaskId(task.id);
-    setBreakdownSteps([]);
-    setShowBreakdown(true);
-    try {
-      const result = await generateBreakdown(task.id);
-      setBreakdownSteps(result.steps);
-    } catch (e) {
-      toast({ title: "Failed to break down task", variant: "destructive" });
-      setShowBreakdown(false);
-    }
-  };
-
-  const handleAddStepsToList = async () => {
-    if (!breakdownTaskId || breakdownSteps.length === 0) return;
-    setIsAddingSteps(true);
-    try {
-      const task = tasks?.find(t => t.id === breakdownTaskId);
-      await createTasksBulk(
-        breakdownSteps.map(step => ({
-          content: step,
-          tier: task?.tier || "focus",
-          status: "pending" as const,
-          parentId: breakdownTaskId,
-        }))
-      );
-      toast({ title: `${breakdownSteps.length} ${t("today.stepsAdded")}` });
-      setShowBreakdown(false);
-    } catch (e) {
-      toast({ title: "Failed to add steps", variant: "destructive" });
-    } finally {
-      setIsAddingSteps(false);
     }
   };
 
@@ -138,12 +91,33 @@ export default function Today() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-8 space-y-3"
+          className="text-center py-8 space-y-4"
         >
           <div className="text-3xl font-semibold">{t("today.allDone")}</div>
           <p className="text-muted-foreground text-sm">
             {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
           </p>
+          <p className="text-muted-foreground/60 text-xs mt-2">
+            {t("today.checkLowerPriority")}
+          </p>
+          <div className="flex gap-3 justify-center mt-3">
+            <button
+              onClick={() => setLocation("/queue")}
+              className="text-[10px] uppercase font-bold tracking-wider glass-card px-4 py-2 rounded-lg text-foreground/70 flex items-center gap-1.5 neon-border-subtle"
+              data-testid="button-view-queue"
+            >
+              <ArrowRight className="w-3 h-3" />
+              {t("today.viewQueue")}
+            </button>
+            <button
+              onClick={() => setLocation("/dump")}
+              className="text-[10px] uppercase font-bold tracking-wider bg-[#3B82F6] text-white px-4 py-2 rounded-lg flex items-center gap-1.5 neon-btn"
+              data-testid="button-add-more"
+            >
+              <Inbox className="w-3 h-3" />
+              {t("today.addMore")}
+            </button>
+          </div>
         </motion.div>
       )}
 
@@ -164,82 +138,72 @@ export default function Today() {
                 {t("today.noFocus")}
               </div>
             ) : (
-              focusTasks.map((task) => {
-                const subTasks = tasks?.filter(t => t.parentId === task.id && t.status === "pending") || [];
-                return (
-                  <div key={task.id}>
-                    <div
-                      className="glass-card p-4 rounded-xl neon-border-subtle"
-                      data-testid={`task-focus-${task.id}`}
+              <AnimatePresence>
+                {focusTasks.map((task) => {
+                  const isCompleting = completingIds.has(task.id);
+                  return (
+                    <motion.div
+                      key={task.id}
+                      layout
+                      exit={{ opacity: 0, x: 60, height: 0, marginBottom: 0 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
                     >
-                      <div className="flex items-start gap-3">
-                        <button 
-                          onClick={() => handleComplete(task.id)}
-                          className="mt-0.5 text-muted-foreground/30 hover:text-[#3B82F6] transition-colors shrink-0"
-                          data-testid={`button-complete-${task.id}`}
-                        >
-                          <Circle className="w-5 h-5" />
-                        </button>
-                        
-                        <div className="flex-1 space-y-2.5 min-w-0">
-                          <p className="text-sm font-medium leading-relaxed text-foreground/90">{task.content}</p>
+                      <div
+                        className={`glass-card p-4 rounded-xl neon-border-subtle transition-all duration-300 ${isCompleting ? "opacity-50 scale-[0.98]" : ""}`}
+                        data-testid={`task-focus-${task.id}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <button 
+                            onClick={() => handleComplete(task.id)}
+                            disabled={isCompleting}
+                            className="mt-0.5 text-muted-foreground/30 hover:text-[#3B82F6] transition-all shrink-0"
+                            data-testid={`button-complete-${task.id}`}
+                          >
+                            {isCompleting ? (
+                              <motion.div
+                                initial={{ scale: 0.8 }}
+                                animate={{ scale: 1 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <CheckCircle2 className="w-5 h-5 text-[#3B82F6]" />
+                              </motion.div>
+                            ) : (
+                              <Circle className="w-5 h-5" />
+                            )}
+                          </button>
                           
-                          {task.nudge && (
-                            <div className="text-xs bg-[#3B82F6]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[#3B82F6]/30">
-                              <span className="font-semibold mr-1 text-foreground/60">{t("today.microStep")}</span> 
-                              {task.nudge}
-                            </div>
-                          )}
-                          
-                          <div className="flex gap-2 pt-0.5 flex-wrap">
-                            <button 
-                              onClick={() => handleNudge(task.id)}
-                              disabled={activeNudgeId === task.id}
-                              data-testid={`button-nudge-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
-                            >
-                              {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#3B82F6]" /> : <Zap className="w-3 h-3" />}
-                              {t("today.nudgeMe")}
-                            </button>
-                            <button
-                              onClick={() => handleBreakdown(task)}
-                              disabled={breakdownTaskId === task.id && isBreakingDown}
-                              data-testid={`button-breakdown-${task.id}`}
-                              className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
-                            >
-                              {breakdownTaskId === task.id && isBreakingDown ? (
-                                <ListChecks className="w-3 h-3 animate-pulse text-[#3B82F6]" />
-                              ) : (
-                                <ListChecks className="w-3 h-3" />
-                              )}
-                              {t("today.breakItDown")}
-                            </button>
+                          <div className="flex-1 space-y-2.5 min-w-0">
+                            <p className={`text-sm font-medium leading-relaxed transition-all duration-300 ${isCompleting ? "line-through text-muted-foreground/40" : "text-foreground/90"}`}>
+                              {task.content}
+                            </p>
+                            
+                            {task.nudge && (
+                              <div className="text-xs bg-[#3B82F6]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[#3B82F6]/30">
+                                <span className="font-semibold mr-1 text-foreground/60">{t("today.microStep")}</span> 
+                                {task.nudge}
+                              </div>
+                            )}
+                            
+                            {!isCompleting && (
+                              <div className="flex gap-2 pt-0.5 flex-wrap">
+                                <button 
+                                  onClick={() => handleNudge(task.id)}
+                                  disabled={activeNudgeId === task.id}
+                                  data-testid={`button-nudge-${task.id}`}
+                                  className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
+                                >
+                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#3B82F6]" /> : <Zap className="w-3 h-3" />}
+                                  {t("today.nudgeMe")}
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    {subTasks.length > 0 && (
-                      <div className="ml-8 mt-1 space-y-0.5">
-                        {subTasks.map(sub => (
-                          <div
-                            key={sub.id}
-                            className="flex items-center gap-3 py-2 px-3 rounded-lg"
-                          >
-                            <button
-                              onClick={() => handleComplete(sub.id)}
-                              className="text-muted-foreground/20 hover:text-[#3B82F6] transition-colors shrink-0"
-                            >
-                              <Circle className="w-4 h-4" />
-                            </button>
-                            <p className="text-xs text-muted-foreground/70">{sub.content}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             )}
           </div>
         </div>
@@ -258,53 +222,6 @@ export default function Today() {
           </div>
         </div>
       )}
-
-      <Dialog open={showBreakdown} onOpenChange={setShowBreakdown}>
-        <DialogContent className="glass-card border-white/[0.06] text-foreground max-w-[420px] neon-border-subtle">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">{t("today.breakdown.title")}</DialogTitle>
-            <DialogDescription className="text-muted-foreground text-sm">
-              {isBreakingDown ? t("today.breakdown.thinking") : `${breakdownSteps.length} ${t("today.breakdown.steps")}`}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {isBreakingDown ? (
-            <div className="py-8 flex justify-center">
-              <Loader2 className="w-6 h-6 animate-spin text-[#3B82F6]" />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="space-y-1">
-                {breakdownSteps.map((step, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.03]"
-                  >
-                    <span className="text-[10px] font-mono text-[#3B82F6]/50 mt-0.5 w-4 shrink-0 text-right">{i + 1}</span>
-                    <p className="text-sm text-foreground/80">{step}</p>
-                  </motion.div>
-                ))}
-              </div>
-              <Button
-                onClick={handleAddStepsToList}
-                disabled={isAddingSteps}
-                className="w-full bg-[#3B82F6] text-white hover:bg-[#3B82F6]/80 neon-btn"
-                data-testid="button-add-steps"
-              >
-                {isAddingSteps ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {t("today.breakdown.addAll")}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

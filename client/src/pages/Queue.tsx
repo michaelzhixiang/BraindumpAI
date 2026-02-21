@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { motion, type PanInfo } from "framer-motion";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/hooks/use-tasks";
-import { Archive, Flame, Snowflake, Trash2 } from "lucide-react";
+import { Archive, Flame, Snowflake, Trash2, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -8,6 +9,7 @@ import {
   DragOverlay,
   closestCenter,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
@@ -23,7 +25,7 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[48px] rounded-xl transition-all duration-200 ${
+      className={`min-h-[48px] rounded-xl transition-all duration-150 ${
         isOver ? "bg-[#3B82F6]/[0.04] ring-1 ring-[#3B82F6]/20" : ""
       }`}
     >
@@ -32,19 +34,26 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
   );
 }
 
-function SortableTaskItem({ 
-  task, 
-  onDelete, 
+const SWIPE_THRESHOLD = 80;
+const ACTION_WIDTH = 140;
+
+function SwipeableTaskItem({
+  task,
+  onDelete,
   onEdit,
-}: { 
-  task: Task; 
+  isDndActive,
+}: {
+  task: Task;
   onDelete: (id: number) => void;
   onEdit: (id: number, content: string) => void;
+  isDndActive: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(task.content);
+  const [isRevealed, setIsRevealed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+  const { t } = useI18n();
+
   const {
     attributes,
     listeners,
@@ -67,6 +76,12 @@ function SortableTaskItem({
     }
   }, [isEditing]);
 
+  useEffect(() => {
+    if (isDndActive && isRevealed) {
+      setIsRevealed(false);
+    }
+  }, [isDndActive, isRevealed]);
+
   const handleSaveEdit = () => {
     const trimmed = editValue.trim();
     if (trimmed && trimmed !== task.content) {
@@ -77,56 +92,99 @@ function SortableTaskItem({
     setIsEditing(false);
   };
 
+  const handleSwipeEnd = (_: any, info: PanInfo) => {
+    if (info.offset.x < -SWIPE_THRESHOLD) {
+      setIsRevealed(true);
+    } else {
+      setIsRevealed(false);
+    }
+  };
+
+  const canSwipe = !isEditing && !isDndActive && !isDragging;
   const subTask = task.parentId != null;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`glass-card p-3 rounded-xl group flex items-center gap-3 neon-border-subtle ${subTask ? "ml-5 border-l-2 border-l-[#3B82F6]/10" : ""}`}
+      className={`relative overflow-hidden rounded-xl ${subTask ? "ml-5" : ""}`}
       data-testid={`task-item-${task.id}`}
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 shrink-0 flex flex-col gap-[2px] touch-none py-1"
-      >
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
-        <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+      <div className="absolute right-0 top-0 bottom-0 flex items-stretch z-0">
+        <button
+          onClick={() => {
+            setIsRevealed(false);
+            setEditValue(task.content);
+            setIsEditing(true);
+          }}
+          className="w-[70px] flex items-center justify-center bg-[#3B82F6]/20 text-[#3B82F6]"
+          data-testid={`button-edit-${task.id}`}
+        >
+          <div className="flex flex-col items-center gap-1">
+            <Pencil className="w-4 h-4" />
+            <span className="text-[9px] font-bold uppercase">{t("queue.edit")}</span>
+          </div>
+        </button>
+        <button
+          onClick={() => onDelete(task.id)}
+          className="w-[70px] flex items-center justify-center bg-red-500/20 text-red-400"
+          data-testid={`button-delete-${task.id}`}
+        >
+          <div className="flex flex-col items-center gap-1">
+            <Trash2 className="w-4 h-4" />
+            <span className="text-[9px] font-bold uppercase">{t("queue.delete")}</span>
+          </div>
+        </button>
       </div>
 
-      {isEditing ? (
-        <input
-          ref={inputRef}
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSaveEdit();
-            if (e.key === "Escape") { setEditValue(task.content); setIsEditing(false); }
-          }}
-          onBlur={handleSaveEdit}
-          className="flex-1 bg-transparent text-sm font-medium focus:outline-none text-foreground/90 py-0.5"
-          data-testid={`input-edit-${task.id}`}
-        />
-      ) : (
-        <p 
-          className="flex-1 text-sm font-medium leading-relaxed text-foreground/80 cursor-text hover:text-foreground/95 transition-colors"
-          onClick={() => { setEditValue(task.content); setIsEditing(true); }}
-          data-testid={`text-task-${task.id}`}
-        >
-          {task.content}
-        </p>
-      )}
-
-      <button 
-        onClick={() => onDelete(task.id)}
-        className="p-1.5 text-transparent group-hover:text-muted-foreground/30 hover:!text-red-400 rounded transition-all shrink-0"
-        title="Delete"
-        data-testid={`button-delete-${task.id}`}
+      <motion.div
+        drag={canSwipe ? "x" : false}
+        dragConstraints={{ left: -ACTION_WIDTH, right: 0 }}
+        dragElastic={0.1}
+        onDragEnd={handleSwipeEnd}
+        animate={{ x: isRevealed ? -ACTION_WIDTH : 0 }}
+        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+        className="relative z-10 glass-card p-3 flex items-center gap-3 neon-border-subtle"
+        onClick={() => { if (isRevealed) setIsRevealed(false); }}
       >
-        <Trash2 className="w-3.5 h-3.5" />
-      </button>
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 shrink-0 flex flex-col gap-[2px] touch-none py-1"
+          onPointerDown={(e) => {
+            if (isRevealed) {
+              e.preventDefault();
+              setIsRevealed(false);
+            }
+          }}
+        >
+          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+          <div className="w-3.5 h-[1.5px] bg-current rounded-full" />
+        </div>
+
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSaveEdit();
+              if (e.key === "Escape") { setEditValue(task.content); setIsEditing(false); }
+            }}
+            onBlur={handleSaveEdit}
+            className="flex-1 bg-transparent text-sm font-medium focus:outline-none text-foreground/90 py-0.5"
+            data-testid={`input-edit-${task.id}`}
+          />
+        ) : (
+          <p
+            className="flex-1 text-sm font-medium leading-relaxed text-foreground/80"
+            data-testid={`text-task-${task.id}`}
+          >
+            {task.content}
+          </p>
+        )}
+      </motion.div>
     </div>
   );
 }
@@ -155,6 +213,9 @@ export default function Queue() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
     })
   );
 
@@ -200,6 +261,8 @@ export default function Queue() {
 
   if (isLoading) return null;
 
+  const isDndActive = activeTask !== null;
+
   const TierSection = ({ title, icon: Icon, items, tierColor, tierId }: { title: string; icon: any; items: Task[]; tierColor: string; tierId: string }) => (
     <div className="space-y-2">
       <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest ${tierColor}`}>
@@ -215,11 +278,12 @@ export default function Queue() {
               </div>
             ) : (
               items.map((task) => (
-                <SortableTaskItem
+                <SwipeableTaskItem
                   key={task.id}
                   task={task}
                   onDelete={(id) => deleteTask(id)}
                   onEdit={handleEdit}
+                  isDndActive={isDndActive}
                 />
               ))
             )}
@@ -241,7 +305,7 @@ export default function Queue() {
         <TierSection title={t("queue.backlog")} icon={Archive} items={backlog} tierColor="text-yellow-400/60" tierId="tier-backlog" />
         <TierSection title={t("queue.icebox")} icon={Snowflake} items={icebox} tierColor="text-blue-400/60" tierId="tier-icebox" />
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={{ duration: 150, easing: "ease-out" }}>
           {activeTask ? <DragOverlayItem task={activeTask} /> : null}
         </DragOverlay>
       </DndContext>

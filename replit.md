@@ -38,22 +38,23 @@ client/src/lib/i18n.ts  - Internationalization (EN/ZH translations)
 - `GET /api/tasks`, `POST /api/tasks`, `POST /api/tasks/bulk`, `PATCH /api/tasks/:id`, `DELETE /api/tasks/:id`
 - `POST /api/ai/process-dump` - AI sorts brain dump text into tasks (auto-saves, deduplicates)
 - `POST /api/ai/nudge/:id` - Generate micro-step for a task
-- `POST /api/ai/breakdown/:id` - Generate 3-7 step breakdown for a task
-
 ## Recent Changes
+- Removed "Break It Down" button; Today page now only has "Nudge Me"
+- Added "all done" state on Today page with CTAs to Queue and Dump
+- Replaced heavy confetti with subtle framer-motion completion animation (fade+slide)
+- Swipe-left gesture on Queue items reveals Edit/Delete action buttons
+- Fixed DnD vs swipe conflict: drag handle triggers DnD, card body triggers swipe, auto-closes revealed items on drag start
+- Improved DnD sensors: TouchSensor with delay activation, faster drop animation
+- Renamed "Guilt-Free Time" to "Guilt-Free Screen Time" in both languages
+- Uninstalled canvas-confetti package
+- Upgraded AI model to claude-haiku-4-5 (Claude 3.5 Haiku retired Feb 19, 2026)
 - Added EN/中文 language toggle with full i18n support
 - Changed title from "BrainDump" to "BrainDump AI"
-- Switched AI model to Claude 3.5 Haiku for faster responses
-- Added animated aurora background with floating blue orbs
+- Animated aurora background with floating blue orbs
 - Enhanced glassmorphism: frosted glass with blur, neon blue glow borders
-- Added neon-dot, neon-btn, neon-border-subtle, neon-glow CSS utility classes
 - Neon blue (#3B82F6) color theme throughout
 - MonthlyStreak heatmap component (GitHub-style)
-- Optimistic nudge updates to prevent task list jumping
-- Click-to-edit inline task editing in Queue (no pencil icon)
-- Raycast-inspired dark UI with glass-morphism cards and halo glow effects
 - Drag-and-drop between tiers using @dnd-kit
-- "Break It Down" feature with sub-task creation
 - Duplicate task prevention in processDump
 
 ## Running
