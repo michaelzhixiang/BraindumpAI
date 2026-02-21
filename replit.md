@@ -7,7 +7,7 @@ BrainDump AI is a minimal, mobile-first dark-mode web app for overthinkers. It h
 - **Frontend**: React + Vite, wouter routing, framer-motion animations, @dnd-kit drag-and-drop, shadcn/ui components
 - **Backend**: Express.js + TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **AI**: Anthropic Claude (claude-3-5-haiku) via @anthropic-ai/sdk — optimized for speed
+- **AI**: Anthropic Claude (claude-haiku-4-5) via @anthropic-ai/sdk — optimized for speed
 - **Styling**: Tailwind CSS, dark-mode only, max-width 480px centered "phone frame"
 - **i18n**: Custom lightweight i18n system with English/Chinese toggle (client/src/lib/i18n.ts)
 
