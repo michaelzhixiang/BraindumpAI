@@ -14,7 +14,7 @@
   --popover: 228 12% 7%;
   --popover-foreground: 0 0% 95%;
 
-  --primary: 265 90% 65%;
+  --primary: 217 91% 60%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 228 10% 12%;
@@ -23,7 +23,7 @@
   --muted: 228 10% 12%;
   --muted-foreground: 228 8% 55%;
 
-  --accent: 265 90% 65%;
+  --accent: 217 91% 60%;
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 62.8% 30.6%;
@@ -31,7 +31,7 @@
 
   --border: 228 10% 14%;
   --input: 228 10% 14%;
-  --ring: 265 90% 65%;
+  --ring: 217 91% 60%;
 
   --radius: 0.75rem;
 
@@ -69,7 +69,7 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.1), transparent);
+    background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(96,165,250,0.1), transparent);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -87,7 +87,7 @@
     left: -20%;
     right: -20%;
     bottom: -40%;
-    background: radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 70%);
     pointer-events: none;
     z-index: -1;
   }
@@ -113,5 +113,5 @@
 }
 .app-container {
   @apply w-full max-w-[480px] bg-background min-h-screen relative overflow-hidden flex flex-col;
-  box-shadow: 0 0 120px -20px rgba(139,92,246,0.08);
+  box-shadow: 0 0 120px -20px rgba(59,130,246,0.08);
 }

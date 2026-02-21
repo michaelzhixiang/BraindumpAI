@@ -3,11 +3,10 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export async function registerRoutes(
@@ -110,23 +109,23 @@ export async function registerRoutes(
       const prioritiesList = await storage.getPriorities();
       const prioritiesText = prioritiesList.map(p => p.content).join(", ");
       
-      const response = await openai.chat.completions.create({
-        model: "gpt-5.2",
-        messages: [
-          { role: "system", content: `You are an AI that organizes a brain dump into actionable tasks. 
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 8192,
+        system: `You are an AI that organizes a brain dump into actionable tasks. 
 User's priorities: ${prioritiesText || "No specific priorities"}.
 Extract every actionable to-do and sort them into exactly one of these tiers:
 - focus: Top-priority, directly advances goals. Do this soon.
 - backlog: Useful but not urgent. Can wait.
 - icebox: Back burner. Park it.
 Return JSON with format: {"tasks": [{"content": "...", "tier": "focus"}]}
-Be concise with task content. Extract distinct actionable items only.` },
+Be concise with task content. Extract distinct actionable items only. Return ONLY valid JSON, no other text.`,
+        messages: [
           { role: "user", content: input.dumpText }
         ],
-        response_format: { type: "json_object" }
       });
       
-      const content = response.choices[0]?.message?.content || '{"tasks":[]}';
+      const content = response.content[0]?.type === "text" ? response.content[0].text : '{"tasks":[]}';
       const parsed = JSON.parse(content);
       const proposedTasks: Array<{ content: string; tier: "focus" | "backlog" | "icebox" }> = parsed.tasks || [];
 
@@ -158,15 +157,16 @@ Be concise with task content. Extract distinct actionable items only.` },
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-5.2",
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 8192,
+        system: "Provide the absolute smallest first step for this task. Something so easy you can't say no. Two minutes or less. Answer with just the step, no intro.",
         messages: [
-          { role: "system", content: "Provide the absolute smallest first step for this task. Something so easy you can't say no. Two minutes or less. Answer with just the step, no intro." },
           { role: "user", content: task.content }
-        ]
+        ],
       });
 
-      const nudge = response.choices[0]?.message?.content || "Just open the file.";
+      const nudge = response.content[0]?.type === "text" ? response.content[0].text : "Just open the file.";
       
       await storage.updateTask(task.id, { nudge });
       
@@ -183,16 +183,16 @@ Be concise with task content. Extract distinct actionable items only.` },
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-5.2",
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 8192,
+        system: `Break down this task into small, mindless, actionable steps. Each step should be concrete and take no more than a few minutes. Return JSON with format: {"steps": ["step 1", "step 2", ...]}. Aim for 3-7 steps. Keep each step short and action-oriented. Return ONLY valid JSON, no other text.`,
         messages: [
-          { role: "system", content: `Break down this task into small, mindless, actionable steps. Each step should be concrete and take no more than a few minutes. Return JSON with format: {"steps": ["step 1", "step 2", ...]}. Aim for 3-7 steps. Keep each step short and action-oriented.` },
           { role: "user", content: task.content }
         ],
-        response_format: { type: "json_object" }
       });
 
-      const content = response.choices[0]?.message?.content || '{"steps":[]}';
+      const content = response.content[0]?.type === "text" ? response.content[0].text : '{"steps":[]}';
       const parsed = JSON.parse(content);
       
       res.json({ steps: parsed.steps || [] });

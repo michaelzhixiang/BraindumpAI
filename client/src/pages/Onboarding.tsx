@@ -37,7 +37,7 @@ export default function Onboarding() {
   return (
     <div className="h-screen flex flex-col justify-between p-8 bg-background text-foreground relative">
       <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 50%)',
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 50%)',
       }} />
 
       <div className="mt-16 relative z-10">

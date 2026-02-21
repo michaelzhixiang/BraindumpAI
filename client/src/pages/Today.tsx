@@ -47,7 +47,7 @@ export default function Today() {
       particleCount: 80,
       spread: 60,
       origin: { y: 0.6 },
-      colors: ['#8b5cf6', '#a78bfa', '#c4b5fd']
+      colors: ['#3B82F6', '#60A5FA', '#93C5FD']
     });
 
     updateTask({ id, status: "completed", completedAt: new Date().toISOString() });

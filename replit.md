@@ -7,7 +7,7 @@ BrainDump is a minimal, mobile-first dark-mode web app for overthinkers. It help
 - **Frontend**: React + Vite, wouter routing, framer-motion animations, @dnd-kit drag-and-drop, shadcn/ui components
 - **Backend**: Express.js + TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **AI**: OpenAI via Replit AI Integrations (gpt-5.2)
+- **AI**: Anthropic Claude (claude-sonnet-4) via @anthropic-ai/sdk
 - **Styling**: Tailwind CSS, dark-mode only, max-width 480px centered "phone frame"
 
 ## Key Features
@@ -21,7 +21,7 @@ BrainDump is a minimal, mobile-first dark-mode web app for overthinkers. It help
 ```
 shared/schema.ts      - Drizzle schema (userState, priorities, tasks)
 shared/routes.ts      - API route definitions with Zod validation
-server/routes.ts      - Express route handlers + OpenAI AI logic
+server/routes.ts      - Express route handlers + Anthropic Claude AI logic
 server/storage.ts     - Database CRUD operations
 client/src/pages/     - Onboarding, Today, Dump, Queue pages
 client/src/hooks/     - use-tasks, use-ai, use-user-state, use-priorities
@@ -37,11 +37,14 @@ client/src/components/ - Header, Navigation
 - `POST /api/ai/breakdown/:id` - Generate 3-7 step breakdown for a task
 
 ## Recent Changes
-- Auto-save tasks from AI processing (no confirmation screen)
+- Switched AI from OpenAI to Anthropic Claude (claude-sonnet-4)
+- Changed color theme from purple to neon blue (#3B82F6)
+- Added MonthlyStreak heatmap component (GitHub-style)
+- Optimistic nudge updates to prevent task list jumping
+- Click-to-edit inline task editing in Queue (no pencil icon)
+- Raycast-inspired dark UI with glass-morphism cards and halo glow effects
 - Drag-and-drop between tiers using @dnd-kit
-- Removed all confirmation dialogs
 - Added "Break It Down" feature with sub-task creation
-- Inline task editing in Queue
 - Duplicate task prevention in processDump
 
 ## Running
