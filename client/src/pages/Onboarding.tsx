@@ -2,9 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { useCreatePriorities } from "@/hooks/use-priorities";
 import { useUpdateUserState } from "@/hooks/use-user-state";
-import { ArrowRight, Loader2, Check, Target, Brain, Zap, Trophy } from "lucide-react";
+import { ArrowRight, Loader2, Check, Target, Brain, Zap, Trophy, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { useLocation } from "wouter";
 
 const TOTAL_INTRO_PAGES = 5;
 const SWIPE_THRESHOLD = 50;
@@ -16,7 +17,8 @@ export default function Onboarding() {
   const { mutateAsync: createPriorities, isPending: isCreating } = useCreatePriorities();
   const { mutateAsync: updateUserState } = useUpdateUserState();
   const { toast } = useToast();
-  const { t } = useI18n();
+  const { t, lang, toggle } = useI18n();
+  const [, setLocation] = useLocation();
 
   const isPrioritiesPage = page === TOTAL_INTRO_PAGES;
 
@@ -58,6 +60,7 @@ export default function Onboarding() {
       }
       await createPriorities(validPriorities.map(content => ({ content })));
       await updateUserState({ hasOnboarded: true });
+      setLocation("/dump");
     } catch (error) {
       toast({ title: t("onboarding.error"), description: t("onboarding.tryAgain"), variant: "destructive" });
     }
@@ -82,6 +85,17 @@ export default function Onboarding() {
         <div className="aurora-band aurora-band-1" />
         <div className="aurora-band aurora-band-2" />
         <div className="aurora-band aurora-band-3" />
+      </div>
+
+      <div className="flex justify-end px-6 pt-4 relative z-10">
+        <button
+          onClick={toggle}
+          className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-muted-foreground hover:text-foreground/80 transition-all neon-border-subtle"
+          data-testid="button-onboarding-lang-toggle"
+        >
+          <Languages className="w-3.5 h-3.5" />
+          {lang === "en" ? "中文" : "EN"}
+        </button>
       </div>
 
       <div className="flex-1 flex flex-col justify-center px-8 relative z-10">

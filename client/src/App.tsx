@@ -37,7 +37,7 @@ function AppContent() {
       <Header />
       <div className="flex-1 overflow-y-auto relative z-10">
         <Switch>
-          <Route path="/" component={Today} />
+          <Route path="/" component={Dump} />
           <Route path="/today" component={Today} />
           <Route path="/dump" component={Dump} />
           <Route path="/queue" component={Queue} />

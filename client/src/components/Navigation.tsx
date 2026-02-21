@@ -18,7 +18,7 @@ export function Navigation() {
       <div className="w-full max-w-[480px] border-t border-white/[0.04] pb-6 pt-2 px-8" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 60%, transparent)' }}>
         <ul className="flex justify-between items-center relative glass-card rounded-2xl p-1 neon-border-subtle">
           {tabs.map((tab) => {
-            const isActive = location === tab.href || (location === "/" && tab.href === "/today");
+            const isActive = location === tab.href || (location === "/" && tab.href === "/dump");
             return (
               <li key={tab.href} className="flex-1">
                 <Link href={tab.href} className="flex flex-col items-center justify-center py-2.5 group relative rounded-xl transition-colors">

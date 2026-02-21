@@ -7,6 +7,7 @@ import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
 import { useGenerateNudge, useGenerateBreakdown } from "@/hooks/use-ai";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { useLocation } from "wouter";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ export default function Today() {
   const { mutateAsync: createTasksBulk } = useCreateTasksBulk();
   const { toast } = useToast();
   const { t } = useI18n();
+  const [, setLocation] = useLocation();
 
   const [activeNudgeId, setActiveNudgeId] = useState<number | null>(null);
   const [breakdownTaskId, setBreakdownTaskId] = useState<number | null>(null);
@@ -154,7 +156,11 @@ export default function Today() {
           
           <div className="space-y-3">
             {focusTasks.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed neon-border-subtle">
+              <div
+                className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed neon-border-subtle cursor-pointer hover:bg-white/[0.03] hover:text-muted-foreground/80 transition-all"
+                onClick={() => setLocation("/dump")}
+                data-testid="button-go-to-dump"
+              >
                 {t("today.noFocus")}
               </div>
             ) : (
