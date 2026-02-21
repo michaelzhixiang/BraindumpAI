@@ -131,8 +131,8 @@
 
 .aurora-band-1 {
   width: 600px;
-  height: 120px;
-  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.18) 30%, rgba(96,165,250,0.12) 60%, transparent);
+  height: 130px;
+  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.30) 30%, rgba(96,165,250,0.20) 60%, transparent);
   top: 12%;
   left: -80px;
   transform: rotate(-8deg);
@@ -141,8 +141,8 @@
 
 .aurora-band-2 {
   width: 550px;
-  height: 100px;
-  background: linear-gradient(90deg, transparent, rgba(37,99,235,0.14) 25%, rgba(59,130,246,0.10) 55%, transparent);
+  height: 110px;
+  background: linear-gradient(90deg, transparent, rgba(37,99,235,0.25) 25%, rgba(59,130,246,0.16) 55%, transparent);
   top: 45%;
   left: -60px;
   transform: rotate(5deg);
@@ -151,8 +151,8 @@
 
 .aurora-band-3 {
   width: 500px;
-  height: 90px;
-  background: linear-gradient(90deg, transparent, rgba(96,165,250,0.12) 35%, rgba(59,130,246,0.08) 65%, transparent);
+  height: 100px;
+  background: linear-gradient(90deg, transparent, rgba(96,165,250,0.22) 35%, rgba(59,130,246,0.14) 65%, transparent);
   bottom: 18%;
   left: -40px;
   transform: rotate(-3deg);
