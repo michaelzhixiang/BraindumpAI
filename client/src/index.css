@@ -81,6 +81,10 @@
     box-shadow: 0 0 16px rgba(59,130,246,0.4), 0 0 48px rgba(59,130,246,0.15);
   }
 
+  .neon-pulse {
+    animation: neon-pulse-anim 2.5s ease-in-out infinite;
+  }
+
   .halo-glow {
     position: relative;
   }
@@ -157,6 +161,11 @@
   left: -40px;
   transform: rotate(-3deg);
   animation: aurora-wave-3 40s ease-in-out infinite;
+}
+
+@keyframes neon-pulse-anim {
+  0%, 100% { box-shadow: 0 0 24px rgba(59,130,246,0.5); }
+  50% { box-shadow: 0 0 36px rgba(59,130,246,0.7), 0 0 60px rgba(59,130,246,0.25); }
 }
 
 @keyframes aurora-wave-1 {

@@ -1,11 +1,11 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useUserState } from "@/hooks/use-user-state";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/Onboarding";
@@ -17,23 +17,62 @@ import { Navigation } from "@/components/Navigation";
 import { Header } from "@/components/Header";
 import { AuroraBackground } from "@/components/AuroraBackground";
 
+function LoadingScreen() {
+  return (
+    <div className="app-container">
+      <AuroraBackground />
+      <div className="flex-1 flex items-center justify-center relative z-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center gap-3"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-3 h-3 rounded-full bg-[#3B82F6] neon-dot" />
+            <span className="text-lg font-bold tracking-tight text-foreground/80">BrainDump AI</span>
+          </div>
+          <div className="flex gap-1">
+            {[0, 1, 2].map(i => (
+              <motion.div
+                key={i}
+                className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]"
+                animate={{ opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 function AuthenticatedContent() {
   const { data: userState, isLoading } = useUserState();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!userState?.hasOnboarded) {
-    return <Onboarding />;
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Onboarding />
+      </motion.div>
+    );
   }
 
   return (
-    <div className="app-container">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="app-container"
+    >
       <AuroraBackground />
       <Header />
       <div className="flex-1 overflow-y-auto relative z-10">
@@ -46,7 +85,7 @@ function AuthenticatedContent() {
         </Switch>
       </div>
       <Navigation />
-    </div>
+    </motion.div>
   );
 }
 
@@ -54,18 +93,34 @@ function AppContent() {
   const { isLoading, isAuthenticated } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
-  if (!isAuthenticated) {
-    return <Landing />;
-  }
-
-  return <AuthenticatedContent />;
+  return (
+    <AnimatePresence mode="wait">
+      {!isAuthenticated ? (
+        <motion.div
+          key="landing"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Landing />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="app"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <AuthenticatedContent />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 function App() {
