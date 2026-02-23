@@ -47,14 +47,16 @@ All endpoints require authentication (isAuthenticated middleware). Data is scope
 - `/api/login`, `/api/logout`, `/api/callback` - Auth flow routes
 
 ## Recent Changes
+- Used 100dvh instead of 100vh for proper mobile browser viewport handling
+- Dump tab input moved to bottom using flexbox (messages flex-1, input shrink-0 at bottom)
+- Exit/logout button now shows confirmation dialog ("Do you want to exit?") before logging out
+- Bottom tab bar made more compact (smaller icons, labels, padding; no safe-area padding)
+- Navigation changed from fixed-position to in-flow (shrink-0) for proper flex layout
 - Added multi-user authentication with Replit Auth (Google SSO, GitHub, Apple, email)
 - Added userId columns to userState, priorities, tasks tables for per-user data isolation
 - Created landing page for logged-out users with feature cards and Get Started CTA
-- Added logout button to Header
-- All API routes protected with isAuthenticated middleware
 - Progressive nudges: each nudge builds on the previous one, ~60% task completion by nudge 5
 - "All done" state shows inline task picker from backlog/icebox, blue "View Queue" CTA, grey "Dump Some More"
-- Renamed "Guilt-Free Screen Time" to "Guilt-Free Social Media Time" in both languages
 - DnD uses setActivatorNodeRef for drag handle separation from swipe, custom collision detection
 
 ## Running

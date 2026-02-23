@@ -75,7 +75,7 @@ function AuthenticatedContent() {
     >
       <AuroraBackground />
       <Header />
-      <div className="flex-1 overflow-y-auto relative z-10">
+      <div className="flex-1 min-h-0 overflow-y-auto relative z-10">
         <Switch>
           <Route path="/" component={Dump} />
           <Route path="/today" component={Today} />

@@ -83,8 +83,8 @@ export default function Dump() {
   };
 
   return (
-    <div className="flex flex-col h-full relative" data-testid="dump-page">
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-44">
+    <div className="flex flex-col h-full" data-testid="dump-page">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-4">
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -107,9 +107,9 @@ export default function Dump() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4 pb-24" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 50%, transparent)' }}>
+      <div className="shrink-0 p-4 pt-2" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 50%, transparent)' }}>
         {userDumpTexts.length > 0 && (
-           <div className="flex justify-center mb-4">
+           <div className="flex justify-center mb-3">
              <button
                onClick={handleSort}
                disabled={isProcessing}

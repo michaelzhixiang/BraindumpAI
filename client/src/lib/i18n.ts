@@ -90,6 +90,9 @@ const translations: Record<string, Record<Lang, string>> = {
   "landing.feature3": { en: "Earn Social Media Time", zh: "做任务换刷手机" },
   "landing.feature3.desc": { en: "Complete tasks, earn guilt-free scrolling. +10 min per task finished.", zh: "完成任务就能心安理得地刷手机。每个任务 +10 分钟。" },
   "header.logout": { en: "Logout", zh: "退出" },
+  "exit.confirm": { en: "Do you want to exit the page?", zh: "确定要退出吗？" },
+  "exit.yes": { en: "Yes, exit", zh: "确定退出" },
+  "exit.cancel": { en: "Cancel", zh: "取消" },
 };
 
 const acks: Record<Lang, string[]> = {

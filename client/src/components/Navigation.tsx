@@ -14,28 +14,28 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-safe">
-      <div className="w-full max-w-[480px] border-t border-white/[0.04] pb-6 pt-2 px-8" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 60%, transparent)' }}>
-        <ul className="flex justify-between items-center relative glass-card rounded-2xl p-1 neon-border-subtle">
+    <nav className="shrink-0 relative z-50">
+      <div className="border-t border-white/[0.04] pb-1 pt-1 px-4">
+        <ul className="flex justify-between items-center relative glass-card rounded-xl p-0.5 neon-border-subtle">
           {tabs.map((tab) => {
             const isActive = location === tab.href || (location === "/" && tab.href === "/dump");
             return (
               <li key={tab.href} className="flex-1">
-                <Link href={tab.href} className="flex flex-col items-center justify-center py-2.5 group relative rounded-xl transition-colors">
+                <Link href={tab.href} className="flex flex-col items-center justify-center py-1.5 group relative rounded-lg transition-colors">
                   {isActive && (
                     <motion.div
                       layoutId="nav-pill"
-                      className="absolute inset-0 bg-[#3B82F6]/[0.08] rounded-xl neon-border-subtle"
+                      className="absolute inset-0 bg-[#3B82F6]/[0.08] rounded-lg neon-border-subtle"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
                   <tab.icon
-                    className={`w-5 h-5 transition-colors duration-200 relative z-10 ${
+                    className={`w-4 h-4 transition-colors duration-200 relative z-10 ${
                       isActive ? "text-[#3B82F6]" : "text-muted-foreground/50 group-hover:text-muted-foreground"
                     }`}
                     strokeWidth={isActive ? 2 : 1.5}
                   />
-                  <span className={`text-[10px] mt-1 font-medium transition-colors duration-200 relative z-10 ${
+                  <span className={`text-[9px] mt-0.5 font-medium transition-colors duration-200 relative z-10 ${
                     isActive ? "text-foreground/90" : "text-muted-foreground/40"
                   }`}>
                     {tab.label}
