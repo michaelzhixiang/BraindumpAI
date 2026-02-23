@@ -9,7 +9,7 @@ BrainDump AI is a minimal, mobile-first dark-mode web app for overthinkers. It h
 - **Database**: PostgreSQL with Drizzle ORM
 - **Auth**: Replit Auth (OIDC) — supports Google, GitHub, Apple, email/password login
 - **AI**: Anthropic Claude (claude-haiku-4-5) via @anthropic-ai/sdk — optimized for speed
-- **Styling**: Tailwind CSS, dark-mode only, max-width 480px centered "phone frame"
+- **Styling**: Tailwind CSS, dark-mode only, full-width layout
 - **i18n**: Custom lightweight i18n system with English/Chinese toggle (client/src/lib/i18n.ts)
 
 ## Key Features

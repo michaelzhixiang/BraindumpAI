@@ -205,12 +205,11 @@
 }
 
 #root {
-  @apply flex justify-center;
+  @apply w-full;
   min-height: 100dvh;
-  background: hsl(228 12% 3%);
+  background: hsl(var(--background));
 }
 .app-container {
-  @apply w-full max-w-[480px] bg-background relative overflow-hidden flex flex-col;
+  @apply w-full bg-background relative overflow-hidden flex flex-col;
   min-height: 100dvh;
-  box-shadow: 0 0 120px -20px rgba(59,130,246,0.08);
 }
