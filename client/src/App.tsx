@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useUserState } from "@/hooks/use-user-state";
+import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 
 import NotFound from "@/pages/not-found";
@@ -11,13 +12,13 @@ import Onboarding from "@/pages/Onboarding";
 import Today from "@/pages/Today";
 import Dump from "@/pages/Dump";
 import Queue from "@/pages/Queue";
+import Landing from "@/pages/Landing";
 import { Navigation } from "@/components/Navigation";
 import { Header } from "@/components/Header";
 import { AuroraBackground } from "@/components/AuroraBackground";
 
-function AppContent() {
+function AuthenticatedContent() {
   const { data: userState, isLoading } = useUserState();
-  const [location] = useLocation();
 
   if (isLoading) {
     return (
@@ -47,6 +48,24 @@ function AppContent() {
       <Navigation />
     </div>
   );
+}
+
+function AppContent() {
+  const { isLoading, isAuthenticated } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Landing />;
+  }
+
+  return <AuthenticatedContent />;
 }
 
 function App() {

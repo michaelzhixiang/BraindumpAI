@@ -67,6 +67,16 @@ const translations: Record<string, Record<Lang, string>> = {
   "onboarding.addPriority": { en: "Please add at least one priority", zh: "请添加至少一个优先事项" },
   "onboarding.error": { en: "Something went wrong", zh: "出了点问题" },
   "onboarding.tryAgain": { en: "Please try again", zh: "请再试一次" },
+  "landing.tagline": { en: "A to-do list for ambitious overthinkers.", zh: "专为有抱负的过度思考者打造的待办清单。" },
+  "landing.subtitle": { en: "Dump your thoughts. AI sorts them. Get nudged into action.", zh: "倾倒你的想法。AI帮你排序。被推动去行动。" },
+  "landing.login": { en: "Get Started", zh: "开始使用" },
+  "landing.feature1": { en: "AI-Powered Sorting", zh: "AI驱动排序" },
+  "landing.feature1.desc": { en: "Dump everything on your mind. AI sorts it into Focus, Can Wait, and Never Mind.", zh: "倾倒你脑中的一切。AI将其分为专注、可以等和算了吧。" },
+  "landing.feature2": { en: "Micro-Step Nudges", zh: "微步骤推动" },
+  "landing.feature2.desc": { en: "Stuck? Get a tiny step so easy you can't say no. Progress, not perfection.", zh: "卡住了？获得一个小到无法拒绝的步骤。进步，而非完美。" },
+  "landing.feature3": { en: "Earn Social Media Time", zh: "赢得社交媒体时间" },
+  "landing.feature3.desc": { en: "Complete tasks, earn guilt-free scrolling. +10 min per task finished.", zh: "完成任务，赢得无负罪感的刷手机时间。每完成一个任务+10分钟。" },
+  "header.logout": { en: "Logout", zh: "退出" },
 };
 
 const acks: Record<Lang, string[]> = {

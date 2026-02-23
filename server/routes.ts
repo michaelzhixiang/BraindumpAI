@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
+import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -19,20 +20,31 @@ function extractJSON(text: string): string {
   return text.trim();
 }
 
+function getUserId(req: any): string {
+  const userId = req.user?.claims?.sub;
+  if (!userId) throw new Error("User ID not found in session");
+  return userId;
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  
-  app.get(api.userState.get.path, async (req, res) => {
-    const state = await storage.getUserState();
+
+  await setupAuth(app);
+  registerAuthRoutes(app);
+
+  app.get(api.userState.get.path, isAuthenticated, async (req, res) => {
+    const userId = getUserId(req);
+    const state = await storage.getUserState(userId);
     res.json(state);
   });
 
-  app.patch(api.userState.update.path, async (req, res) => {
+  app.patch(api.userState.update.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.userState.update.input.parse(req.body);
-      const state = await storage.updateUserState(input);
+      const state = await storage.updateUserState(userId, input);
       res.json(state);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -42,15 +54,17 @@ export async function registerRoutes(
     }
   });
 
-  app.get(api.priorities.list.path, async (req, res) => {
-    const items = await storage.getPriorities();
+  app.get(api.priorities.list.path, isAuthenticated, async (req, res) => {
+    const userId = getUserId(req);
+    const items = await storage.getPriorities(userId);
     res.json(items);
   });
 
-  app.post(api.priorities.createMany.path, async (req, res) => {
+  app.post(api.priorities.createMany.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.priorities.createMany.input.parse(req.body);
-      const items = await storage.createPriorities(input.priorities);
+      const items = await storage.createPriorities(userId, input.priorities);
       res.status(201).json(items);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -60,15 +74,17 @@ export async function registerRoutes(
     }
   });
 
-  app.get(api.tasks.list.path, async (req, res) => {
-    const items = await storage.getTasks();
+  app.get(api.tasks.list.path, isAuthenticated, async (req, res) => {
+    const userId = getUserId(req);
+    const items = await storage.getTasks(userId);
     res.json(items);
   });
 
-  app.post(api.tasks.create.path, async (req, res) => {
+  app.post(api.tasks.create.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.tasks.create.input.parse(req.body);
-      const item = await storage.createTask(input);
+      const item = await storage.createTask(userId, input);
       res.status(201).json(item);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -78,10 +94,11 @@ export async function registerRoutes(
     }
   });
 
-  app.post(api.tasks.createMany.path, async (req, res) => {
+  app.post(api.tasks.createMany.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.tasks.createMany.input.parse(req.body);
-      const items = await storage.createTasks(input.tasks);
+      const items = await storage.createTasks(userId, input.tasks);
       res.status(201).json(items);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -91,10 +108,11 @@ export async function registerRoutes(
     }
   });
 
-  app.patch(api.tasks.update.path, async (req, res) => {
+  app.patch(api.tasks.update.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.tasks.update.input.parse(req.body);
-      const item = await storage.updateTask(Number(req.params.id), input);
+      const item = await storage.updateTask(userId, Number(req.params.id), input);
       res.json(item);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -104,19 +122,21 @@ export async function registerRoutes(
     }
   });
 
-  app.delete(api.tasks.delete.path, async (req, res) => {
+  app.delete(api.tasks.delete.path, isAuthenticated, async (req, res) => {
     try {
-      await storage.deleteTask(Number(req.params.id));
+      const userId = getUserId(req);
+      await storage.deleteTask(userId, Number(req.params.id));
       res.status(204).send();
     } catch (err) {
       res.status(404).json({ message: "Not found" });
     }
   });
 
-  app.post(api.ai.processDump.path, async (req, res) => {
+  app.post(api.ai.processDump.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = getUserId(req);
       const input = api.ai.processDump.input.parse(req.body);
-      const prioritiesList = await storage.getPriorities();
+      const prioritiesList = await storage.getPriorities(userId);
       const prioritiesText = prioritiesList.map(p => p.content).join(", ");
       
       const response = await anthropic.messages.create({
@@ -139,7 +159,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       const parsed = JSON.parse(extractJSON(rawContent));
       const proposedTasks: Array<{ content: string; tier: "focus" | "backlog" | "icebox" }> = parsed.tasks || [];
 
-      const existingTasks = await storage.getTasks();
+      const existingTasks = await storage.getTasks(userId);
       const existingContents = new Set(existingTasks.map(t => t.content.toLowerCase().trim()));
       
       const newTasks = proposedTasks.filter(t => !existingContents.has(t.content.toLowerCase().trim()));
@@ -147,6 +167,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       let savedTasks: any[] = [];
       if (newTasks.length > 0) {
         savedTasks = await storage.createTasks(
+          userId,
           newTasks.map(t => ({ content: t.content, tier: t.tier, status: "pending" as const }))
         );
       }
@@ -161,9 +182,10 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
     }
   });
 
-  app.post(api.ai.generateNudge.path, async (req, res) => {
+  app.post(api.ai.generateNudge.path, isAuthenticated, async (req, res) => {
     try {
-      const allTasks = await storage.getTasks();
+      const userId = getUserId(req);
+      const allTasks = await storage.getTasks(userId);
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
@@ -190,7 +212,7 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
 
       const nudge = response.content[0]?.type === "text" ? response.content[0].text : "Just open the file.";
       
-      await storage.updateTask(task.id, { nudge, nudgeCount: nudgeNum });
+      await storage.updateTask(userId, task.id, { nudge, nudgeCount: nudgeNum });
       
       res.json({ nudge });
     } catch (err) {
@@ -199,9 +221,10 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
     }
   });
 
-  app.post(api.ai.generateBreakdown.path, async (req, res) => {
+  app.post(api.ai.generateBreakdown.path, isAuthenticated, async (req, res) => {
     try {
-      const allTasks = await storage.getTasks();
+      const userId = getUserId(req);
+      const allTasks = await storage.getTasks(userId);
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
