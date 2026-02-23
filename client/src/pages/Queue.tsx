@@ -295,7 +295,7 @@ export default function Queue() {
   );
 
   return (
-    <div className="p-5 space-y-6 pb-32" data-testid="queue-page">
+    <div className="flex-1 overflow-y-auto p-5 space-y-6 pb-8" data-testid="queue-page">
       <DndContext
         sensors={sensors}
         collisionDetection={customCollisionDetection}

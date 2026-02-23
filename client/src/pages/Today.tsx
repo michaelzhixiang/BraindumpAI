@@ -66,14 +66,14 @@ export default function Today() {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="p-5 space-y-5 pb-32" data-testid="today-page">
+    <div className="flex-1 overflow-y-auto p-5 space-y-5 pb-8" data-testid="today-page">
       <MonthlyStreak tasks={tasks || []} />
 
       <div className="glass-card rounded-2xl p-5 relative halo-ambient neon-border-subtle" data-testid="guilt-free-card">

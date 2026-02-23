@@ -25,9 +25,31 @@ export default function Dump() {
   const { mutateAsync: processDump } = useProcessDump();
   const { toast } = useToast();
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport || !containerRef.current) return;
+
+    const onResize = () => {
+      if (containerRef.current) {
+        const offsetTop = viewport.offsetTop;
+        containerRef.current.style.height = `${viewport.height}px`;
+        containerRef.current.style.transform = `translateY(${offsetTop}px)`;
+      }
+    };
+
+    viewport.addEventListener("resize", onResize);
+    viewport.addEventListener("scroll", onResize);
+    return () => {
+      viewport.removeEventListener("resize", onResize);
+      viewport.removeEventListener("scroll", onResize);
+    };
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -83,7 +105,7 @@ export default function Dump() {
   };
 
   return (
-    <div className="flex flex-col h-full" data-testid="dump-page">
+    <div ref={containerRef} className="flex flex-col flex-1" data-testid="dump-page">
       <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-4">
         {messages.map((msg) => (
           <motion.div
