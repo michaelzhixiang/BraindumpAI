@@ -51,7 +51,7 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
   const activeDays = Object.keys(completedByDay).length;
 
   return (
-    <div className="glass-card rounded-2xl p-5 halo-glow neon-border-subtle" data-testid="monthly-streak">
+    <div className="glass-card rounded-2xl p-5 halo-glow neon-border-subtle max-w-[600px] mx-auto" data-testid="monthly-streak">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{t("streak.title")}</h2>
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
@@ -66,18 +66,18 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
 
       <div className="grid grid-cols-7 gap-[3px]">
         {["S","M","T","W","T","F","S"].map((d, i) => (
-          <div key={i} className="text-[8px] text-center text-muted-foreground/40 font-medium pb-1">{d}</div>
+          <div key={i} className="text-[8px] md:text-[9px] text-center text-muted-foreground/40 font-medium pb-1">{d}</div>
         ))}
         {cells.map((day, i) => {
           if (day === null) {
-            return <div key={`empty-${i}`} className="aspect-square" />;
+            return <div key={`empty-${i}`} className="aspect-square max-h-[72px]" />;
           }
           const count = completedByDay[day] || 0;
           const isToday = day === today;
           return (
             <div
               key={day}
-              className={`aspect-square rounded-[3px] transition-colors ${getIntensity(count)} ${
+              className={`aspect-square max-h-[72px] rounded-[3px] transition-colors ${getIntensity(count)} ${
                 isToday ? "ring-1 ring-[#3B82F6]/40 neon-dot" : ""
               }`}
               title={`${monthName} ${day}: ${count} ${count !== 1 ? t("streak.tasks") : t("streak.task")}`}
