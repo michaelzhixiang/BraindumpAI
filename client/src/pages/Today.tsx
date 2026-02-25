@@ -193,7 +193,7 @@ export default function Today() {
           <div className="space-y-0">
             {focusTasks.length === 0 ? (
               <div
-                className="text-center py-12 rounded-lg border border-dashed cursor-pointer transition-colors font-body italic"
+                className="text-center py-12 rounded-lg border border-dashed cursor-pointer transition-colors"
                 style={{ color: 'var(--paper-subtle)', fontSize: '0.9rem', borderColor: 'var(--paper-border)', background: 'var(--paper-card-bg)' }}
                 onClick={() => setLocation("/dump")}
                 data-testid="button-go-to-dump"
