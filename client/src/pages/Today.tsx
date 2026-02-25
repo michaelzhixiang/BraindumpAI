@@ -67,7 +67,7 @@ export default function Today() {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#9e9484]" />
       </div>
     );
   }
@@ -76,16 +76,22 @@ export default function Today() {
     <div className="flex-1 overflow-y-auto p-5 space-y-5 pb-8" data-testid="today-page">
       <MonthlyStreak tasks={tasks || []} />
 
-      <div className="glass-card rounded-2xl p-5 relative halo-ambient neon-border-subtle" data-testid="guilt-free-card">
+      <div className="paper-card rounded-lg p-5 relative fade-up" data-testid="guilt-free-card">
         <div className="absolute top-4 right-4 opacity-[0.06]">
           <Clock className="w-16 h-16" />
         </div>
-        <h2 className="text-muted-foreground text-[10px] uppercase tracking-widest font-bold mb-1">{t("today.guiltFreeTime")}</h2>
+        <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] text-[#9e9484] mb-1">{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-mono font-semibold text-foreground tracking-tighter" data-testid="text-screen-time">
+          <span className="text-[2rem] font-serif font-bold text-[#2b2520] tracking-tighter" data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
-          <span className="text-xs font-medium text-muted-foreground">{t("today.min")}</span>
+          <span className="font-mono text-[0.65rem] text-[#9e9484]">{t("today.min")}</span>
+        </div>
+        <div className="mt-3 h-[3px] bg-[#e0d8cc] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#2b2520] rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(100, ((userState?.screenTimeMinutes || 0) / 120) * 100)}%` }}
+          />
         </div>
       </div>
 
@@ -96,15 +102,15 @@ export default function Today() {
           className="space-y-5"
         >
           <div className="text-center py-6 space-y-2">
-            <div className="text-3xl font-semibold">{t("today.allDone")}</div>
-            <p className="text-muted-foreground text-sm">
+            <div className="text-3xl font-serif font-bold text-[#2b2520]">{t("today.allDone")}</div>
+            <p className="text-[#9e9484] text-sm">
               {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
             </p>
           </div>
 
           {waitingTasks.length > 0 && (
             <div className="space-y-3">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium text-[#9e9484]">
                 {t("today.pickTasks")}
               </p>
               <div className="space-y-1.5">
@@ -119,25 +125,25 @@ export default function Today() {
                         return next;
                       });
                     }}
-                    className={`w-full text-left glass-card p-3 rounded-xl flex items-center gap-3 transition-all duration-150 ${
+                    className={`w-full text-left paper-card p-3 rounded-lg flex items-center gap-3 transition-all duration-150 ${
                       selectedTaskIds.has(task.id)
-                        ? "ring-1 ring-[#3B82F6]/40 bg-[#3B82F6]/[0.06]"
-                        : "neon-border-subtle hover:bg-white/[0.03]"
+                        ? "border-[#2b2520]"
+                        : "hover:bg-[#efe8dd]"
                     }`}
                     data-testid={`button-pick-task-${task.id}`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                    <div className={`w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                       selectedTaskIds.has(task.id)
-                        ? "border-[#3B82F6] bg-[#3B82F6]"
-                        : "border-muted-foreground/20"
+                        ? "border-[#2b2520] bg-[#2b2520]"
+                        : "border-[#c5baa8]"
                     }`}>
                       {selectedTaskIds.has(task.id) && (
-                        <CheckCircle2 className="w-4 h-4 text-white" />
+                        <CheckCircle2 className="w-4 h-4 text-[#f6f1eb]" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground/80 truncate">{task.content}</p>
-                      <span className="text-[9px] uppercase tracking-wider text-muted-foreground/40">
+                      <p className="text-[1.05rem] font-normal text-[#2b2520] leading-[1.45] truncate">{task.content}</p>
+                      <span className="font-mono text-[0.6rem] uppercase tracking-[1px] text-[#b5a998]">
                         {task.tier === "backlog" ? t("queue.backlog") : t("queue.icebox")}
                       </span>
                     </div>
@@ -160,7 +166,7 @@ export default function Today() {
                   setLocation("/queue");
                 }
               }}
-              className="text-[10px] uppercase font-bold tracking-wider bg-[#3B82F6] text-white px-5 py-2.5 rounded-lg flex items-center gap-1.5 neon-btn"
+              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-btn px-5 py-2.5 rounded-lg flex items-center gap-1.5"
               data-testid="button-view-queue"
             >
               <Plus className="w-3 h-3" />
@@ -170,7 +176,7 @@ export default function Today() {
             </button>
             <button
               onClick={() => setLocation("/dump")}
-              className="text-[10px] uppercase font-bold tracking-wider glass-card px-4 py-2.5 rounded-lg text-muted-foreground/50 flex items-center gap-1.5 neon-border-subtle hover:text-muted-foreground/70 transition-colors"
+              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-card px-4 py-2.5 rounded-lg text-[#9e9484] flex items-center gap-1.5 hover:text-[#2b2520] transition-colors"
               data-testid="button-dump-more"
             >
               <Inbox className="w-3 h-3" />
@@ -181,16 +187,16 @@ export default function Today() {
       )}
 
       {!allDone && (
-        <div>
-          <h3 className="text-[10px] font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
-            <span className="w-1.5 h-1.5 bg-[#3B82F6] rounded-full neon-dot"></span>
+        <div className="fade-up">
+          <h3 className="font-mono text-[0.6rem] font-medium mb-4 flex items-center gap-2 uppercase tracking-[1.5px] text-[#9e9484]">
+            <span className="w-1.5 h-1.5 bg-[#2b2520] rounded-full"></span>
             {t("today.focus")}
           </h3>
           
-          <div className="space-y-3">
+          <div className="space-y-0">
             {focusTasks.length === 0 ? (
               <div
-                className="text-center py-12 text-muted-foreground/60 text-sm glass-card rounded-xl border-dashed neon-border-subtle cursor-pointer hover:bg-white/[0.03] hover:text-muted-foreground/80 transition-all"
+                className="text-center py-12 text-[#c5baa8] text-sm paper-card rounded-lg border-dashed cursor-pointer hover:bg-[#efe8dd] transition-colors"
                 onClick={() => setLocation("/dump")}
                 data-testid="button-go-to-dump"
               >
@@ -208,14 +214,14 @@ export default function Today() {
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     >
                       <div
-                        className={`glass-card p-4 rounded-xl neon-border-subtle transition-all duration-300 ${isCompleting ? "opacity-50 scale-[0.98]" : ""}`}
+                        className={`py-4 border-b border-[#e8e0d4] transition-all duration-300 ${isCompleting ? "opacity-50" : ""}`}
                         data-testid={`task-focus-${task.id}`}
                       >
                         <div className="flex items-start gap-3">
                           <button 
                             onClick={() => handleComplete(task.id)}
                             disabled={isCompleting}
-                            className="mt-0.5 text-muted-foreground/30 hover:text-[#3B82F6] transition-all shrink-0"
+                            className="mt-0.5 shrink-0 transition-colors"
                             data-testid={`button-complete-${task.id}`}
                           >
                             {isCompleting ? (
@@ -224,21 +230,25 @@ export default function Today() {
                                 animate={{ scale: 1 }}
                                 transition={{ duration: 0.2 }}
                               >
-                                <CheckCircle2 className="w-5 h-5 text-[#3B82F6]" />
+                                <div className="w-[22px] h-[22px] rounded-full bg-[#2b2520] flex items-center justify-center">
+                                  <CheckCircle2 className="w-4 h-4 text-[#f6f1eb]" />
+                                </div>
                               </motion.div>
                             ) : (
-                              <Circle className="w-5 h-5" />
+                              <div className="w-[22px] h-[22px] rounded-full border-2 border-[#c5baa8]" />
                             )}
                           </button>
                           
                           <div className="flex-1 space-y-2.5 min-w-0">
-                            <p className={`text-sm font-medium leading-relaxed transition-all duration-300 ${isCompleting ? "line-through text-muted-foreground/40" : "text-foreground/90"}`}>
+                            <p className={`text-[1.05rem] font-normal leading-[1.45] transition-all duration-300 ${isCompleting ? "line-through text-[#b5a998]" : "text-[#2b2520]"}`}
+                              style={isCompleting ? { textDecorationColor: '#c5baa8' } : undefined}
+                            >
                               {task.content}
                             </p>
                             
                             {task.nudge && (
-                              <div className="text-xs bg-[#3B82F6]/[0.06] p-2.5 rounded-lg text-muted-foreground border-l-2 border-[#3B82F6]/30">
-                                <span className="font-semibold mr-1 text-foreground/60">{t("today.microStep")}</span> 
+                              <div className="text-sm bg-[#efe8dd] p-2.5 rounded-lg text-[#5c4f3d] border-l-2 border-[#2b2520]">
+                                <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] text-[#9e9484] mr-1">{t("today.microStep")}</span> 
                                 {task.nudge}
                               </div>
                             )}
@@ -249,9 +259,9 @@ export default function Today() {
                                   onClick={() => handleNudge(task.id)}
                                   disabled={activeNudgeId === task.id}
                                   data-testid={`button-nudge-${task.id}`}
-                                  className="text-[10px] uppercase font-bold tracking-wider glass-card hover:bg-white/[0.08] px-3 py-1.5 rounded-lg text-foreground/70 flex items-center gap-1.5 transition-colors disabled:opacity-40 neon-border-subtle"
+                                  className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] border border-[#ddd5c8] hover:bg-[#efe8dd] px-3 py-1.5 rounded-lg text-[#5c4f3d] flex items-center gap-1.5 transition-colors disabled:opacity-40"
                                 >
-                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#3B82F6]" /> : <Zap className="w-3 h-3" />}
+                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#2b2520]" /> : <Zap className="w-3 h-3" />}
                                   {t("today.nudgeMe")}
                                 </button>
                               </div>
@@ -269,12 +279,14 @@ export default function Today() {
       )}
 
       {completedToday.length > 0 && !allDone && (
-        <div className="opacity-30 hover:opacity-70 transition-opacity duration-300">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3 text-muted-foreground">{t("today.completedToday")}</h4>
+        <div className="opacity-50 hover:opacity-80 transition-opacity duration-300 fade-up">
+          <h4 className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3 text-[#9e9484]">{t("today.completedToday")}</h4>
           <div className="space-y-2">
              {completedToday.map(task => (
-               <div key={task.id} className="flex items-center gap-3 text-sm text-muted-foreground/60 line-through">
-                 <CheckCircle2 className="w-4 h-4 text-[#3B82F6]/30 shrink-0" />
+               <div key={task.id} className="flex items-center gap-3 text-sm line-through text-[#b5a998]" style={{ textDecorationColor: '#c5baa8' }}>
+                 <div className="w-4 h-4 rounded-full bg-[#2b2520] flex items-center justify-center shrink-0">
+                   <CheckCircle2 className="w-3 h-3 text-[#f6f1eb]" />
+                 </div>
                  <span className="truncate">{task.content}</span>
                </div>
              ))}

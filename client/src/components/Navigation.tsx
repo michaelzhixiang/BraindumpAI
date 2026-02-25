@@ -14,9 +14,9 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="shrink-0 relative z-50">
-      <div className="border-t border-white/[0.04] pb-1 pt-1 px-4">
-        <ul className="flex justify-between items-center relative glass-card rounded-xl p-0.5 neon-border-subtle">
+    <nav className="shrink-0 relative z-50 bg-[#f5efe7] border-t border-[#ddd5c8]">
+      <div className="pb-1 pt-1 px-4">
+        <ul className="flex justify-between items-center relative p-0.5">
           {tabs.map((tab) => {
             const isActive = location === tab.href || (location === "/" && tab.href === "/dump");
             return (
@@ -25,18 +25,18 @@ export function Navigation() {
                   {isActive && (
                     <motion.div
                       layoutId="nav-pill"
-                      className="absolute inset-0 bg-[#3B82F6]/[0.08] rounded-lg neon-border-subtle"
+                      className="absolute inset-0 bg-[#e8dfd3] rounded-lg"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
                   <tab.icon
                     className={`w-4 h-4 transition-colors duration-200 relative z-10 ${
-                      isActive ? "text-[#3B82F6]" : "text-muted-foreground/50 group-hover:text-muted-foreground"
+                      isActive ? "text-[#2b2520]" : "text-[#c5baa8] group-hover:text-[#9e9484]"
                     }`}
                     strokeWidth={isActive ? 2 : 1.5}
                   />
-                  <span className={`text-[9px] mt-0.5 font-medium transition-colors duration-200 relative z-10 ${
-                    isActive ? "text-foreground/90" : "text-muted-foreground/40"
+                  <span className={`font-mono text-[0.6rem] tracking-[0.5px] mt-0.5 transition-colors duration-200 relative z-10 ${
+                    isActive ? "text-[#2b2520] font-medium" : "text-[#c5baa8]"
                   }`}>
                     {tab.label}
                   </span>

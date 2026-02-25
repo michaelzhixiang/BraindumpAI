@@ -116,10 +116,10 @@ export default function Dump() {
             className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+              className={`max-w-[80%] px-4 py-3 rounded-2xl text-[1.05rem] leading-[1.45] ${
                 msg.sender === "user"
-                  ? "bg-[#3B82F6] text-white rounded-tr-sm neon-btn"
-                  : "glass-card text-foreground/80 rounded-tl-sm neon-border-subtle"
+                  ? "bg-[#2b2520] text-[#f6f1eb] rounded-tr-sm"
+                  : "paper-card text-[#2b2520] rounded-tl-sm"
               }`}
             >
               {msg.text}
@@ -129,14 +129,14 @@ export default function Dump() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="shrink-0 p-4 pt-2" style={{ background: 'linear-gradient(to top, hsl(228 12% 4%) 50%, transparent)' }}>
+      <div className="shrink-0 p-4 pt-2 bg-[#f5efe7]">
         {userDumpTexts.length > 0 && (
            <div className="flex justify-center mb-3">
              <button
                onClick={handleSort}
                disabled={isProcessing}
                data-testid="button-sort"
-               className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 neon-btn transition-all"
+               className="paper-btn px-5 py-2.5 rounded-full font-mono text-[0.65rem] font-medium uppercase tracking-[1px] flex items-center gap-2 transition-opacity"
              >
                {isProcessing ? <Sparkles className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                {isProcessing ? t("dump.sorting") : t("dump.sortButton")}
@@ -157,14 +157,14 @@ export default function Dump() {
             }}
             placeholder={t("dump.placeholder")}
             data-testid="input-dump"
-            className="w-full glass-card rounded-2xl pl-5 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#3B82F6]/30 resize-none min-h-[56px] text-foreground/90 placeholder:text-muted-foreground/30 neon-border-subtle"
+            className="w-full paper-card rounded-2xl pl-5 pr-14 py-4 text-[1.05rem] leading-[1.45] focus:outline-none focus:border-[#2b2520] resize-none min-h-[56px] text-[#2b2520] placeholder:text-[#c5baa8]"
             rows={1}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim()}
             data-testid="button-send"
-            className="absolute right-2.5 bottom-2.5 p-2 bg-[#3B82F6] text-white rounded-xl disabled:opacity-20 disabled:bg-white/10 transition-all neon-btn"
+            className="absolute right-2.5 bottom-2.5 p-2 paper-btn rounded-xl disabled:opacity-20 disabled:bg-[#e0d8cc] transition-opacity"
           >
             <Send className="w-4 h-4" />
           </button>

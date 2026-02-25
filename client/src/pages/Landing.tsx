@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Brain, Sparkles, Timer, ArrowRight, Languages } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { AuroraBackground } from "@/components/AuroraBackground";
 
 export default function Landing() {
   const { t, lang, toggle } = useI18n();
@@ -14,8 +13,7 @@ export default function Landing() {
 
   return (
     <div className="app-container">
-      <AuroraBackground />
-      <div className="flex-1 overflow-y-auto relative z-10 flex flex-col items-center justify-center px-6 py-12">
+      <div className="flex-1 overflow-y-auto relative z-10 flex flex-col items-center justify-center px-6 py-12 max-w-[480px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -27,9 +25,9 @@ export default function Landing() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-              className="w-3 h-3 rounded-full bg-[#3B82F6] neon-dot"
+              className="w-3 h-3 rounded-full bg-[#2b2520]"
             />
-            <h1 className="text-2xl font-bold tracking-tight text-foreground" data-testid="text-landing-title">
+            <h1 className="text-[1.9rem] font-serif font-bold tracking-tight text-[#2b2520]" data-testid="text-landing-title">
               BrainDump AI
             </h1>
           </div>
@@ -38,7 +36,7 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-base text-foreground/80 text-center max-w-[320px] mb-1.5"
+            className="text-base text-[#2b2520] text-center max-w-[320px] mb-1.5"
             data-testid="text-landing-tagline"
           >
             {t("landing.tagline")}
@@ -47,7 +45,7 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-sm text-muted-foreground text-center max-w-[280px] mb-8"
+            className="text-sm text-[#9e9484] text-center max-w-[280px] mb-8"
           >
             {t("landing.subtitle")}
           </motion.p>
@@ -59,7 +57,7 @@ export default function Landing() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full bg-[#3B82F6] hover:bg-[#2563EB] text-white font-bold text-base transition-colors neon-pulse mb-10"
+          className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full paper-btn font-serif font-bold text-base mb-10"
           data-testid="button-login"
         >
           {t("landing.login")}
@@ -78,15 +76,15 @@ export default function Landing() {
               initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.7 + i * 0.1, duration: 0.4 }}
-              className="glass-card p-4 rounded-xl flex items-start gap-3"
+              className="paper-card p-4 rounded-lg flex items-start gap-3"
               data-testid={`card-feature-${i}`}
             >
-              <div className="w-9 h-9 rounded-lg bg-[#3B82F6]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <f.icon className="w-4 h-4 text-[#3B82F6]" />
+              <div className="w-9 h-9 rounded-lg bg-[#e8dfd3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <f.icon className="w-4 h-4 text-[#5c4f3d]" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-0.5">{f.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                <h3 className="text-sm font-semibold text-[#2b2520] mb-0.5">{f.title}</h3>
+                <p className="text-xs text-[#9e9484] leading-relaxed">{f.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -97,7 +95,7 @@ export default function Landing() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
           onClick={toggle}
-          className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-muted-foreground hover:text-foreground/80 transition-all neon-border-subtle"
+          className="flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-3 py-1.5 rounded-lg border border-[#ddd5c8] text-[#9e9484] hover:text-[#2b2520] transition-colors"
           data-testid="button-landing-lang"
         >
           <Languages className="w-3.5 h-3.5" />

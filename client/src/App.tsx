@@ -15,27 +15,25 @@ import Queue from "@/pages/Queue";
 import Landing from "@/pages/Landing";
 import { Navigation } from "@/components/Navigation";
 import { Header } from "@/components/Header";
-import { AuroraBackground } from "@/components/AuroraBackground";
 
 function LoadingScreen() {
   return (
     <div className="app-container">
-      <AuroraBackground />
-      <div className="flex-1 flex items-center justify-center relative z-10">
+      <div className="flex-1 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="flex flex-col items-center gap-3"
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-3 h-3 rounded-full bg-[#3B82F6] neon-dot" />
-            <span className="text-lg font-bold tracking-tight text-foreground/80">BrainDump AI</span>
+            <div className="w-3 h-3 rounded-full bg-[#2b2520]" />
+            <span className="text-lg font-serif font-bold tracking-tight text-[#2b2520]">BrainDump AI</span>
           </div>
           <div className="flex gap-1">
             {[0, 1, 2].map(i => (
               <motion.div
                 key={i}
-                className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]"
+                className="w-1.5 h-1.5 rounded-full bg-[#2b2520]"
                 animate={{ opacity: [0.2, 1, 0.2] }}
                 transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
               />
@@ -73,7 +71,6 @@ function AuthenticatedContent() {
       transition={{ duration: 0.3 }}
       className="app-container"
     >
-      <AuroraBackground />
       <Header />
       <div className="flex-1 min-h-0 flex flex-col relative z-10">
         <Switch>

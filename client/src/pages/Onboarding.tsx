@@ -39,8 +39,8 @@ function DumpDemo() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="flex justify-end"
         >
-          <div className="glass-card neon-border-subtle rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%]">
-            <p className="text-sm text-foreground/90">{msg.text}</p>
+          <div className="paper-card rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%]">
+            <p className="text-sm text-[#2b2520]">{msg.text}</p>
           </div>
         </motion.div>
       ))}
@@ -50,12 +50,12 @@ function DumpDemo() {
         transition={{ delay: 0.2 }}
         className="flex items-center gap-2 pt-1"
       >
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#3B82F6]/30 to-transparent" />
-        <div className="flex items-center gap-1 text-[10px] text-[#3B82F6] font-medium">
+        <div className="h-px flex-1 bg-[#ddd5c8]" />
+        <div className="flex items-center gap-1 font-mono text-[0.6rem] text-[#5c4f3d] font-medium">
           <Send className="w-3 h-3" />
           {t("onboarding.demo.sorting")}
         </div>
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#3B82F6]/30 to-transparent" />
+        <div className="h-px flex-1 bg-[#ddd5c8]" />
       </motion.div>
     </div>
   );
@@ -75,9 +75,9 @@ function SortDemo() {
   }, []);
 
   const tiers = [
-    { label: t("queue.focus"), color: "#3B82F6", items: [t("onboarding.demo.sort1")] },
-    { label: t("queue.backlog"), color: "#F59E0B", items: [t("onboarding.demo.sort2")] },
-    { label: t("queue.icebox"), color: "#6B7280", items: [t("onboarding.demo.sort3")] },
+    { label: t("queue.focus"), color: "#5c4f3d", items: [t("onboarding.demo.sort1")] },
+    { label: t("queue.backlog"), color: "#9e9484", items: [t("onboarding.demo.sort2")] },
+    { label: t("queue.icebox"), color: "#b5a998", items: [t("onboarding.demo.sort3")] },
   ];
 
   return (
@@ -90,11 +90,11 @@ function SortDemo() {
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tier.color, boxShadow: `0 0 8px ${tier.color}50` }} />
-            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: tier.color }}>{tier.label}</span>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tier.color }} />
+            <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px]" style={{ color: tier.color }}>{tier.label}</span>
           </div>
-          <div className="glass-card rounded-xl px-4 py-3 neon-border-subtle">
-            <p className="text-sm text-foreground/80">{tier.items[0]}</p>
+          <div className="paper-card rounded-lg px-4 py-3">
+            <p className="text-sm text-[#2b2520]">{tier.items[0]}</p>
           </div>
         </motion.div>
       ))}
@@ -113,16 +113,16 @@ function NudgeDemo() {
 
   return (
     <div className="space-y-4 w-full max-w-[300px] mx-auto">
-      <div className="glass-card rounded-xl p-4 neon-border-subtle">
-        <p className="text-sm font-medium text-foreground mb-3">{t("onboarding.demo.nudgeTask")}</p>
+      <div className="paper-card rounded-lg p-4">
+        <p className="text-sm font-medium text-[#2b2520] mb-3">{t("onboarding.demo.nudgeTask")}</p>
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={showNudge ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="border-l-2 border-[#3B82F6] pl-3 py-1">
-            <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">{t("today.microStep")}</p>
-            <p className="text-sm text-foreground/70">{t("onboarding.demo.nudgeStep")}</p>
+          <div className="border-l-2 border-[#2b2520] pl-3 py-1">
+            <p className="font-mono text-[0.6rem] font-medium text-[#5c4f3d] uppercase tracking-[1px] mb-1">{t("today.microStep")}</p>
+            <p className="text-sm text-[#5c4f3d]">{t("onboarding.demo.nudgeStep")}</p>
           </div>
         </motion.div>
       </div>
@@ -130,9 +130,9 @@ function NudgeDemo() {
         initial={{ opacity: 0 }}
         animate={showNudge ? { opacity: 1 } : { opacity: 0 }}
         transition={{ delay: 0.4 }}
-        className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground"
+        className="flex items-center justify-center gap-1.5 text-xs text-[#9e9484]"
       >
-        <Sparkles className="w-3.5 h-3.5 text-[#3B82F6]" />
+        <Sparkles className="w-3.5 h-3.5 text-[#5c4f3d]" />
         {t("onboarding.demo.nudgeHint")}
       </motion.div>
     </div>
@@ -154,8 +154,8 @@ function RewardDemo() {
 
   return (
     <div className="space-y-5 w-full max-w-[300px] mx-auto flex flex-col items-center">
-      <div className="glass-card rounded-2xl p-5 neon-glow w-full text-center">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#3B82F6] mb-2">
+      <div className="paper-card rounded-lg p-5 w-full text-center">
+        <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[1.5px] text-[#9e9484] mb-2">
           {t("today.guiltFreeTime")}
         </p>
         <motion.div
@@ -163,10 +163,10 @@ function RewardDemo() {
           initial={{ scale: 1.3, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="text-4xl font-bold text-foreground tabular-nums"
+          className="text-[2rem] font-serif font-bold text-[#2b2520] tabular-nums"
         >
           {count}
-          <span className="text-lg text-muted-foreground ml-1">{t("today.min")}</span>
+          <span className="text-lg text-[#9e9484] ml-1">{t("today.min")}</span>
         </motion.div>
       </div>
       <div className="flex gap-2">
@@ -176,13 +176,13 @@ function RewardDemo() {
             initial={{ opacity: 0.2, scale: 0.8 }}
             animate={count >= i * 10 ? { opacity: 1, scale: 1 } : { opacity: 0.2, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className="w-10 h-10 rounded-xl glass-card flex items-center justify-center"
+            className="w-10 h-10 rounded-lg paper-card flex items-center justify-center"
           >
-            <Check className={`w-5 h-5 ${count >= i * 10 ? "text-[#3B82F6]" : "text-muted-foreground/20"}`} />
+            <Check className={`w-5 h-5 ${count >= i * 10 ? "text-[#2b2520]" : "text-[#c5baa8]"}`} />
           </motion.div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground text-center">{t("onboarding.demo.rewardHint")}</p>
+      <p className="text-xs text-[#9e9484] text-center">{t("onboarding.demo.rewardHint")}</p>
     </div>
   );
 }
@@ -209,8 +209,8 @@ function StreakDemo() {
 
   return (
     <div className="space-y-4 w-full max-w-[300px] mx-auto">
-      <div className="glass-card rounded-xl p-4 neon-border-subtle">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">{t("streak.title")}</p>
+      <div className="paper-card rounded-lg p-4">
+        <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] text-[#9e9484] mb-3">{t("streak.title")}</p>
         <div className="grid grid-cols-7 gap-1.5">
           {days.map((day, i) => (
             <motion.div
@@ -221,17 +221,17 @@ function StreakDemo() {
               className="aspect-square rounded-sm"
               style={{
                 backgroundColor: day.intensity === 3
-                  ? "rgba(59,130,246,0.7)"
+                  ? "#2b2520"
                   : day.intensity === 2
-                    ? "rgba(59,130,246,0.4)"
+                    ? "#b5a998"
                     : day.intensity === 1
-                      ? "rgba(59,130,246,0.2)"
-                      : "rgba(255,255,255,0.04)",
+                      ? "#e8dfd3"
+                      : "#f0e9df",
               }}
             />
           ))}
         </div>
-        <div className="flex justify-between mt-3 text-[10px] text-muted-foreground">
+        <div className="flex justify-between mt-3 font-mono text-[0.6rem] text-[#9e9484]">
           <span>15 {t("streak.daysActive")}</span>
           <span>42 {t("streak.done")}</span>
         </div>
@@ -336,17 +336,11 @@ export default function Onboarding() {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-background text-foreground relative overflow-hidden" data-testid="onboarding-page">
-      <div className="aurora-container" aria-hidden="true">
-        <div className="aurora-band aurora-band-1" />
-        <div className="aurora-band aurora-band-2" />
-        <div className="aurora-band aurora-band-3" />
-      </div>
-
+    <div className="h-screen flex flex-col bg-[#f5efe7] text-[#2b2520] relative overflow-hidden" data-testid="onboarding-page">
       <div className="flex justify-end px-6 pt-4 relative z-10">
         <button
           onClick={toggle}
-          className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-muted-foreground hover:text-foreground/80 transition-all neon-border-subtle"
+          className="flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg border border-[#ddd5c8] text-[#9e9484] hover:text-[#2b2520] transition-colors"
           data-testid="button-onboarding-lang-toggle"
         >
           <Languages className="w-3.5 h-3.5" />
@@ -354,7 +348,7 @@ export default function Onboarding() {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center px-8 relative z-10">
+      <div className="flex-1 flex flex-col justify-center px-8 relative z-10 max-w-[480px] mx-auto w-full">
         <AnimatePresence mode="wait" custom={direction}>
           {!isPrioritiesPage && page < pages.length && (
             <motion.div
@@ -379,8 +373,8 @@ export default function Onboarding() {
                     transition={{ delay: 0.1, duration: 0.4 }}
                     className="flex items-center gap-2.5"
                   >
-                    <div className="w-3 h-3 rounded-full bg-[#3B82F6] neon-dot" />
-                    <h1 className="text-3xl font-bold tracking-tighter" data-testid="text-app-title">
+                    <div className="w-3 h-3 rounded-full bg-[#2b2520]" />
+                    <h1 className="text-[1.9rem] font-serif font-bold tracking-tighter text-[#2b2520]" data-testid="text-app-title">
                       {pages[0].title}
                     </h1>
                   </motion.div>
@@ -388,7 +382,7 @@ export default function Onboarding() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className="text-lg text-muted-foreground leading-relaxed font-medium"
+                    className="text-lg text-[#9e9484] leading-relaxed font-medium"
                     data-testid="text-catchphrase"
                   >
                     {pages[0].subtitle}
@@ -397,10 +391,10 @@ export default function Onboarding() {
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-xl font-bold tracking-tight" data-testid={`text-feature-title-${page}`}>
+                    <h2 className="text-xl font-serif font-bold tracking-tight text-[#2b2520]" data-testid={`text-feature-title-${page}`}>
                       {pages[page].title}
                     </h2>
-                    <p className="text-sm text-muted-foreground leading-relaxed" data-testid={`text-feature-desc-${page}`}>
+                    <p className="text-sm text-[#9e9484] leading-relaxed" data-testid={`text-feature-desc-${page}`}>
                       {pages[page].subtitle}
                     </p>
                   </div>
@@ -424,8 +418,8 @@ export default function Onboarding() {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h2 className="text-xl font-bold" data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
-                <p className="text-muted-foreground text-sm">{t("onboarding.defineTop3")}</p>
+                <h2 className="text-xl font-serif font-bold text-[#2b2520]" data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
+                <p className="text-[#9e9484] text-sm">{t("onboarding.defineTop3")}</p>
               </div>
 
               <div className="space-y-4">
@@ -441,7 +435,7 @@ export default function Onboarding() {
                       placeholder={`${t("onboarding.priority")} #${i + 1}`}
                       value={priority}
                       onChange={(e) => handlePriorityChange(i, e.target.value)}
-                      className="w-full bg-transparent border-b border-white/[0.06] py-4 text-lg focus:outline-none focus:border-[#3B82F6]/50 transition-colors placeholder:text-muted-foreground/20"
+                      className="w-full bg-transparent border-b border-[#ddd5c8] py-4 text-lg text-[#2b2520] focus:outline-none focus:border-[#2b2520] transition-colors placeholder:text-[#c5baa8]"
                       autoFocus={i === 0}
                       data-testid={`input-priority-${i}`}
                     />
@@ -453,7 +447,7 @@ export default function Onboarding() {
         </AnimatePresence>
       </div>
 
-      <div className="px-8 pb-10 relative z-10 space-y-5">
+      <div className="px-8 pb-10 relative z-10 space-y-5 max-w-[480px] mx-auto w-full">
         {!isPrioritiesPage && (
           <div className="flex justify-center gap-1.5">
             {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
@@ -461,10 +455,10 @@ export default function Onboarding() {
                 key={i}
                 animate={{
                   width: i === page ? 24 : 6,
-                  backgroundColor: i === page ? "#3B82F6" : "rgba(255,255,255,0.12)",
+                  backgroundColor: i === page ? "#2b2520" : "#ddd5c8",
                 }}
                 transition={{ duration: 0.3 }}
-                className={`h-1 rounded-full ${i === page ? "neon-dot" : ""}`}
+                className="h-1 rounded-full"
               />
             ))}
           </div>
@@ -473,13 +467,13 @@ export default function Onboarding() {
         <div className="flex justify-between items-center">
           {!isPrioritiesPage ? (
             <>
-              <p className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">
+              <p className="font-mono text-[0.6rem] text-[#c5baa8] uppercase tracking-[1.5px]">
                 {t("onboarding.swipeHint")}
               </p>
               {page < TOTAL_PAGES - 2 ? (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity text-foreground/80"
+                  className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity text-[#2b2520]"
                   data-testid="button-next"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -487,7 +481,7 @@ export default function Onboarding() {
               ) : (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-opacity text-[#3B82F6]"
+                  className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-opacity text-[#2b2520]"
                   data-testid="button-lets-go"
                 >
                   {t("onboarding.letsGo")} <ArrowRight className="w-5 h-5" />
@@ -498,7 +492,7 @@ export default function Onboarding() {
             <button
               onClick={handleComplete}
               disabled={isCreating}
-              className="w-full bg-[#3B82F6] text-white py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 neon-btn"
+              className="w-full paper-btn py-4 rounded-full font-serif font-bold flex items-center justify-center gap-2 disabled:opacity-50"
               data-testid="button-all-set"
             >
               {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Check className="w-5 h-5" /> {t("onboarding.allSet")}</>}
