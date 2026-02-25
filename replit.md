@@ -23,16 +23,17 @@ All colors use CSS custom properties (--paper-*) defined in index.css for automa
 - **Tertiary/disabled**: #c5baa8
 - **Borders**: #ddd5c8
 - **Active/hover**: #e8dfd3
-- **Today cell**: bg #2b2520, text #f6f1eb (inverted)
+- **Today cell**: bg #3c2f20 (dark brown ink stamp), text #f6f1eb (inverted), border-radius 8px
 
-### Dark Mode
-- **Background**: #1a1a1f (dark charcoal)
-- **Primary text**: #e8e0d4 (warm light)
-- **Secondary text**: #8a8078
-- **Tertiary/disabled**: #5a524a
-- **Borders**: #2e2e35
-- **Active/hover**: #2a2a32
-- **Today cell**: bg #e8e0d4, text #1a1a1f (inverted)
+### Dark Mode (warm dark leather, not blue-black)
+- **Background**: #1c1915 (warm dark brown)
+- **Card backgrounds**: #242019
+- **Primary text**: #e8dfd3
+- **Secondary text**: #8a7e6e
+- **Tertiary/disabled**: #5c5347
+- **Borders**: #332e27
+- **Active/hover**: #332e27
+- **Today cell**: bg #e8dfd3, text #1c1915 (inverted)
 
 ### Typography
 - **Headings**: Source Serif 4, Georgia, serif — weight 700 (app title 1.9rem), weight 600 sections

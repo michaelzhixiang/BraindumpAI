@@ -32,12 +32,12 @@ export function Navigation() {
                   )}
                   <tab.icon
                     className="w-4 h-4 transition-colors duration-200 relative z-10"
-                    style={{ color: isActive ? 'var(--paper-fg)' : 'var(--paper-tertiary)' }}
+                    style={{ color: isActive ? 'var(--paper-fg)' : 'var(--paper-subtle)' }}
                     strokeWidth={isActive ? 2 : 1.5}
                   />
                   <span
                     className="font-mono text-[0.6rem] tracking-[0.5px] mt-0.5 transition-colors duration-200 relative z-10"
-                    style={{ color: isActive ? 'var(--paper-fg)' : 'var(--paper-tertiary)', fontWeight: isActive ? 500 : 400 }}
+                    style={{ color: isActive ? 'var(--paper-fg)' : 'var(--paper-subtle)', fontWeight: isActive ? 500 : 400 }}
                   >
                     {tab.label}
                   </span>

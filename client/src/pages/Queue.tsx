@@ -280,7 +280,7 @@ export default function Queue() {
           <div>
             {items.length === 0 ? (
               <div
-                className="p-4 rounded-lg border border-dashed text-center font-mono text-[0.6rem] uppercase tracking-[1px]"
+                className="p-4 rounded-lg border border-dashed text-center font-serif italic text-sm"
                 style={{ borderColor: 'var(--paper-border)', color: 'var(--paper-tertiary)' }}
               >
                 {t("queue.dragHere")}

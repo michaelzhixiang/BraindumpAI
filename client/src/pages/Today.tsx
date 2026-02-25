@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Circle, Zap, Clock, Loader2, Plus, Inbox } from "lucide-react";
+import { CheckCircle2, Circle, Zap, Loader2, Plus, Inbox } from "lucide-react";
 import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
 import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
 import { useGenerateNudge } from "@/hooks/use-ai";
@@ -76,10 +76,7 @@ export default function Today() {
     <div className="flex-1 overflow-y-auto p-5 space-y-5 pb-8" data-testid="today-page">
       <MonthlyStreak tasks={tasks || []} />
 
-      <div className="paper-card rounded-lg p-5 relative fade-up" data-testid="guilt-free-card">
-        <div className="absolute top-4 right-4 opacity-[0.06]">
-          <Clock className="w-16 h-16" />
-        </div>
+      <div className="rounded-lg p-5 relative fade-up" style={{ border: '1px dashed var(--paper-border)', background: 'var(--paper-card-bg)' }} data-testid="guilt-free-card">
         <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
           <span className="text-[2rem] font-serif font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-screen-time">
@@ -196,8 +193,8 @@ export default function Today() {
           <div className="space-y-0">
             {focusTasks.length === 0 ? (
               <div
-                className="text-center py-12 text-sm paper-card rounded-lg border-dashed cursor-pointer transition-colors"
-                style={{ color: 'var(--paper-tertiary)' }}
+                className="text-center py-12 rounded-lg border border-dashed cursor-pointer transition-colors font-serif italic"
+                style={{ color: 'var(--paper-subtle)', fontSize: '0.9rem', borderColor: 'var(--paper-border)', background: 'var(--paper-card-bg)' }}
                 onClick={() => setLocation("/dump")}
                 data-testid="button-go-to-dump"
               >

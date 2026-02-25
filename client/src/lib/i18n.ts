@@ -45,7 +45,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "queue.focus": { en: "Focus", zh: "重点" },
   "queue.backlog": { en: "Can Wait", zh: "不急" },
   "queue.icebox": { en: "Never Mind", zh: "算了" },
-  "queue.dragHere": { en: "Drag tasks here", zh: "拖到这里" },
+  "queue.dragHere": { en: "drag tasks here", zh: "拖到这里" },
   "queue.movedTo": { en: "Moved to", zh: "已移到" },
   "queue.edit": { en: "Edit", zh: "编辑" },
   "queue.delete": { en: "Delete", zh: "删除" },

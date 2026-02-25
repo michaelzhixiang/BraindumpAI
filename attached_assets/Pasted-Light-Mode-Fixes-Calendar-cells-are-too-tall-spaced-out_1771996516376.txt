@@ -1,0 +1,27 @@
+Light Mode Fixes:
+
+Calendar cells are too tall/spaced out — the monthly streak grid takes up way too much vertical space. Reduce the calendar cell size so each row is more compact. Reduce gap between rows. The calendar should feel like a compact widget, not dominate the entire screen.
+Today's highlight (day 25) — the black square is too harsh and blocky. Change it to a rounded square (border-radius: 8px) with background #3c2f20 (dark brown) instead of pure black. It should feel like an ink stamp, not a UI button.
+"GUILT-FREE SOCIAL MEDIA TIME" section — the clock icon on the right feels like a placeholder. Either remove it or replace it with a minimal progress ring. Also the section border should use a dashed border style (border: 1px dashed #ddd5c8) to feel more like a notebook sketch.
+"No focus tasks. Dump some thoughts first." — the dashed border box around this is good, but make the text slightly larger (0.9rem) and use the serif font (Source Serif 4) in italic for warmth. Color should be #b5a998.
+Bottom nav active tab — the beige/cream highlight pill on the active tab is nice. Make sure the active tab text is #2b2520 (dark brown) and inactive tabs are #b5a998.
+Queue page — "DRAG TASKS HERE" text should be in Source Serif 4 italic, not monospace caps. Change to something softer like "drag tasks here" in lowercase italic, color #c5baa8.
+Dump page — the input box at the bottom needs a warmer border. Use border: 1px solid #ddd5c8 with background #faf5ed. The send button should be #2b2520 background with #f5efe7 icon color.
+
+Dark Mode Fixes:
+
+The dark mode is still the old dark theme — it needs to match the Paper & Ink aesthetic but inverted. Use these dark mode colors:
+
+Page background: #1c1915 (warm dark brown, NOT blue-black)
+Card backgrounds: #242019
+Borders: #332e27
+Primary text: #e8dfd3
+Secondary text: #8a7e6e
+Tertiary text: #5c5347
+Today highlight: #e8dfd3 background with #1c1915 text
+Active calendar days: #332e27 background
+Progress bar fill: #e8dfd3
+The dark mode should feel like writing on dark brown leather, NOT a tech dark mode
+
+
+Font consistency — make sure BOTH modes use Source Serif 4 for headings and body text, and IBM Plex Mono for labels/metadata. The dark mode screenshots still look like they're using the old sans-serif fonts.

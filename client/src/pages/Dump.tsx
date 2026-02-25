@@ -158,8 +158,8 @@ export default function Dump() {
             }}
             placeholder={t("dump.placeholder")}
             data-testid="input-dump"
-            className="w-full paper-card rounded-2xl pl-5 pr-14 py-4 text-[1.05rem] leading-[1.45] focus:outline-none resize-none min-h-[56px]"
-            style={{ color: 'var(--paper-fg)', borderColor: 'var(--paper-border)' }}
+            className="w-full rounded-2xl pl-5 pr-14 py-4 text-[1.05rem] leading-[1.45] focus:outline-none resize-none min-h-[56px]"
+            style={{ color: 'var(--paper-fg)', border: '1px solid var(--paper-border)', background: 'var(--paper-input-bg)', borderRadius: '16px' }}
             rows={1}
           />
           <button

@@ -57,8 +57,8 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
   const activeDays = Object.keys(completedByDay).length;
 
   return (
-    <div className="paper-card rounded-lg p-5 max-w-[600px] mx-auto" data-testid="monthly-streak">
-      <div className="flex items-center justify-between mb-4">
+    <div className="paper-card rounded-lg p-4 max-w-[600px] mx-auto" data-testid="monthly-streak">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</h2>
         <div className="flex items-center gap-3 font-mono text-[0.6rem]" style={{ color: 'var(--paper-secondary)' }}>
           <span>{totalCompleted} {t("streak.done")}</span>
@@ -66,38 +66,38 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
         </div>
       </div>
 
-      <div className="mb-3">
+      <div className="mb-2">
         <span className="text-xs font-medium" style={{ color: 'var(--paper-muted)' }}>{monthName} {year}</span>
       </div>
 
-      <div className="grid grid-cols-7 gap-[3px]">
+      <div className="grid grid-cols-7 gap-[2px]">
         {["S","M","T","W","T","F","S"].map((d, i) => (
-          <div key={i} className="font-mono text-[0.6rem] text-center font-medium pb-1" style={{ color: 'var(--paper-subtle)' }}>{d}</div>
+          <div key={i} className="font-mono text-[0.55rem] text-center font-medium pb-0.5" style={{ color: 'var(--paper-subtle)' }}>{d}</div>
         ))}
         {cells.map((day, i) => {
           if (day === null) {
-            return <div key={`empty-${i}`} className="aspect-square max-h-[72px]" />;
+            return <div key={`empty-${i}`} className="aspect-square max-h-[36px]" />;
           }
           const count = completedByDay[day] || 0;
           const isToday = day === today;
           return (
             <div
               key={day}
-              className="aspect-square max-h-[72px] rounded-[6px] transition-colors flex items-center justify-center"
+              className="aspect-square max-h-[36px] rounded-lg transition-colors flex items-center justify-center"
               style={isToday
-                ? { background: 'var(--paper-today-bg)', color: 'var(--paper-today-fg)' }
+                ? { background: 'var(--paper-today-bg)', color: 'var(--paper-today-fg)', borderRadius: '8px' }
                 : { ...getIntensityStyle(count), ...getTextColorStyle(count) }
               }
               title={`${monthName} ${day}: ${count} ${count !== 1 ? t("streak.tasks") : t("streak.task")}`}
             >
-              <span className="font-mono text-[0.65rem]">{day}</span>
+              <span className="font-mono text-[0.6rem]">{day}</span>
             </div>
           );
         })}
       </div>
 
-      <div className="flex items-center gap-1.5 mt-3 justify-end">
-        <span className="font-mono text-[0.6rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.less")}</span>
+      <div className="flex items-center gap-1.5 mt-2 justify-end">
+        <span className="font-mono text-[0.55rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.less")}</span>
         {[0, 2, 5, 8, 10].map((n, i) => (
           <div
             key={i}
@@ -108,7 +108,7 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
             }}
           />
         ))}
-        <span className="font-mono text-[0.6rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.more")}</span>
+        <span className="font-mono text-[0.55rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.more")}</span>
       </div>
     </div>
   );
