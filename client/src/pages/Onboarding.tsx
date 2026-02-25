@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { useCreatePriorities } from "@/hooks/use-priorities";
 import { useUpdateUserState } from "@/hooks/use-user-state";
-import { ArrowRight, Loader2, Check, Languages, Send, Sparkles, ChevronRight } from "lucide-react";
+import { ArrowRight, Loader2, Check, Languages, Send, Sparkles, ChevronRight, Sun, Moon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { useLocation } from "wouter";
 
 const TOTAL_PAGES = 7;
@@ -40,7 +41,7 @@ function DumpDemo() {
           className="flex justify-end"
         >
           <div className="paper-card rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%]">
-            <p className="text-sm text-[#2b2520]">{msg.text}</p>
+            <p className="text-sm" style={{ color: 'var(--paper-fg)' }}>{msg.text}</p>
           </div>
         </motion.div>
       ))}
@@ -50,12 +51,12 @@ function DumpDemo() {
         transition={{ delay: 0.2 }}
         className="flex items-center gap-2 pt-1"
       >
-        <div className="h-px flex-1 bg-[#ddd5c8]" />
-        <div className="flex items-center gap-1 font-mono text-[0.6rem] text-[#5c4f3d] font-medium">
+        <div className="h-px flex-1" style={{ background: 'var(--paper-border)' }} />
+        <div className="flex items-center gap-1 font-mono text-[0.6rem] font-medium" style={{ color: 'var(--paper-muted)' }}>
           <Send className="w-3 h-3" />
           {t("onboarding.demo.sorting")}
         </div>
-        <div className="h-px flex-1 bg-[#ddd5c8]" />
+        <div className="h-px flex-1" style={{ background: 'var(--paper-border)' }} />
       </motion.div>
     </div>
   );
@@ -75,9 +76,9 @@ function SortDemo() {
   }, []);
 
   const tiers = [
-    { label: t("queue.focus"), color: "#5c4f3d", items: [t("onboarding.demo.sort1")] },
-    { label: t("queue.backlog"), color: "#9e9484", items: [t("onboarding.demo.sort2")] },
-    { label: t("queue.icebox"), color: "#b5a998", items: [t("onboarding.demo.sort3")] },
+    { label: t("queue.focus"), cssVar: 'var(--paper-muted)', items: [t("onboarding.demo.sort1")] },
+    { label: t("queue.backlog"), cssVar: 'var(--paper-secondary)', items: [t("onboarding.demo.sort2")] },
+    { label: t("queue.icebox"), cssVar: 'var(--paper-subtle)', items: [t("onboarding.demo.sort3")] },
   ];
 
   return (
@@ -90,11 +91,11 @@ function SortDemo() {
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tier.color }} />
-            <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px]" style={{ color: tier.color }}>{tier.label}</span>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tier.cssVar }} />
+            <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px]" style={{ color: tier.cssVar }}>{tier.label}</span>
           </div>
           <div className="paper-card rounded-lg px-4 py-3">
-            <p className="text-sm text-[#2b2520]">{tier.items[0]}</p>
+            <p className="text-sm" style={{ color: 'var(--paper-fg)' }}>{tier.items[0]}</p>
           </div>
         </motion.div>
       ))}
@@ -114,15 +115,15 @@ function NudgeDemo() {
   return (
     <div className="space-y-4 w-full max-w-[300px] mx-auto">
       <div className="paper-card rounded-lg p-4">
-        <p className="text-sm font-medium text-[#2b2520] mb-3">{t("onboarding.demo.nudgeTask")}</p>
+        <p className="text-sm font-medium mb-3" style={{ color: 'var(--paper-fg)' }}>{t("onboarding.demo.nudgeTask")}</p>
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={showNudge ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="border-l-2 border-[#2b2520] pl-3 py-1">
-            <p className="font-mono text-[0.6rem] font-medium text-[#5c4f3d] uppercase tracking-[1px] mb-1">{t("today.microStep")}</p>
-            <p className="text-sm text-[#5c4f3d]">{t("onboarding.demo.nudgeStep")}</p>
+          <div className="pl-3 py-1" style={{ borderLeft: '2px solid var(--paper-fg)' }}>
+            <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] mb-1" style={{ color: 'var(--paper-muted)' }}>{t("today.microStep")}</p>
+            <p className="text-sm" style={{ color: 'var(--paper-muted)' }}>{t("onboarding.demo.nudgeStep")}</p>
           </div>
         </motion.div>
       </div>
@@ -130,9 +131,10 @@ function NudgeDemo() {
         initial={{ opacity: 0 }}
         animate={showNudge ? { opacity: 1 } : { opacity: 0 }}
         transition={{ delay: 0.4 }}
-        className="flex items-center justify-center gap-1.5 text-xs text-[#9e9484]"
+        className="flex items-center justify-center gap-1.5 text-xs"
+        style={{ color: 'var(--paper-secondary)' }}
       >
-        <Sparkles className="w-3.5 h-3.5 text-[#5c4f3d]" />
+        <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--paper-muted)' }} />
         {t("onboarding.demo.nudgeHint")}
       </motion.div>
     </div>
@@ -155,7 +157,7 @@ function RewardDemo() {
   return (
     <div className="space-y-5 w-full max-w-[300px] mx-auto flex flex-col items-center">
       <div className="paper-card rounded-lg p-5 w-full text-center">
-        <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[1.5px] text-[#9e9484] mb-2">
+        <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--paper-secondary)' }}>
           {t("today.guiltFreeTime")}
         </p>
         <motion.div
@@ -163,10 +165,11 @@ function RewardDemo() {
           initial={{ scale: 1.3, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="text-[2rem] font-serif font-bold text-[#2b2520] tabular-nums"
+          className="text-[2rem] font-serif font-bold tabular-nums"
+          style={{ color: 'var(--paper-fg)' }}
         >
           {count}
-          <span className="text-lg text-[#9e9484] ml-1">{t("today.min")}</span>
+          <span className="text-lg ml-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.min")}</span>
         </motion.div>
       </div>
       <div className="flex gap-2">
@@ -178,11 +181,11 @@ function RewardDemo() {
             transition={{ duration: 0.3 }}
             className="w-10 h-10 rounded-lg paper-card flex items-center justify-center"
           >
-            <Check className={`w-5 h-5 ${count >= i * 10 ? "text-[#2b2520]" : "text-[#c5baa8]"}`} />
+            <Check className="w-5 h-5" style={{ color: count >= i * 10 ? 'var(--paper-fg)' : 'var(--paper-tertiary)' }} />
           </motion.div>
         ))}
       </div>
-      <p className="text-xs text-[#9e9484] text-center">{t("onboarding.demo.rewardHint")}</p>
+      <p className="text-xs text-center" style={{ color: 'var(--paper-secondary)' }}>{t("onboarding.demo.rewardHint")}</p>
     </div>
   );
 }
@@ -207,10 +210,17 @@ function StreakDemo() {
     return { active, intensity };
   });
 
+  const getStreakColor = (intensity: number) => {
+    if (intensity === 3) return 'var(--paper-fg)';
+    if (intensity === 2) return 'var(--paper-subtle)';
+    if (intensity === 1) return 'var(--paper-active)';
+    return 'var(--paper-streak-empty)';
+  };
+
   return (
     <div className="space-y-4 w-full max-w-[300px] mx-auto">
       <div className="paper-card rounded-lg p-4">
-        <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] text-[#9e9484] mb-3">{t("streak.title")}</p>
+        <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</p>
         <div className="grid grid-cols-7 gap-1.5">
           {days.map((day, i) => (
             <motion.div
@@ -219,19 +229,11 @@ function StreakDemo() {
               animate={i < revealed * 2 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
               transition={{ duration: 0.15 }}
               className="aspect-square rounded-sm"
-              style={{
-                backgroundColor: day.intensity === 3
-                  ? "#2b2520"
-                  : day.intensity === 2
-                    ? "#b5a998"
-                    : day.intensity === 1
-                      ? "#e8dfd3"
-                      : "#f0e9df",
-              }}
+              style={{ backgroundColor: getStreakColor(day.intensity) }}
             />
           ))}
         </div>
-        <div className="flex justify-between mt-3 font-mono text-[0.6rem] text-[#9e9484]">
+        <div className="flex justify-between mt-3 font-mono text-[0.6rem]" style={{ color: 'var(--paper-secondary)' }}>
           <span>15 {t("streak.daysActive")}</span>
           <span>42 {t("streak.done")}</span>
         </div>
@@ -248,6 +250,7 @@ export default function Onboarding() {
   const { mutateAsync: updateUserState } = useUpdateUserState();
   const { toast } = useToast();
   const { t, lang, toggle } = useI18n();
+  const { theme, toggleTheme } = useTheme();
   const [, setLocation] = useLocation();
 
   const isPrioritiesPage = page === TOTAL_PAGES - 1;
@@ -335,16 +338,27 @@ export default function Onboarding() {
     },
   ];
 
+  const btnClass = "flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg transition-colors";
+
   return (
-    <div className="h-screen flex flex-col bg-[#f5efe7] text-[#2b2520] relative overflow-hidden" data-testid="onboarding-page">
-      <div className="flex justify-end px-6 pt-4 relative z-10">
+    <div className="h-screen flex flex-col relative overflow-hidden" style={{ background: 'var(--paper-bg)', color: 'var(--paper-fg)' }} data-testid="onboarding-page">
+      <div className="flex justify-end px-6 pt-4 relative z-10 gap-2">
         <button
           onClick={toggle}
-          className="flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg border border-[#ddd5c8] text-[#9e9484] hover:text-[#2b2520] transition-colors"
+          className={btnClass}
+          style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-secondary)' }}
           data-testid="button-onboarding-lang-toggle"
         >
           <Languages className="w-3.5 h-3.5" />
           {lang === "en" ? "中文" : "EN"}
+        </button>
+        <button
+          onClick={toggleTheme}
+          className={btnClass}
+          style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-secondary)' }}
+          data-testid="button-onboarding-theme-toggle"
+        >
+          {theme === "light" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
         </button>
       </div>
 
@@ -373,8 +387,8 @@ export default function Onboarding() {
                     transition={{ delay: 0.1, duration: 0.4 }}
                     className="flex items-center gap-2.5"
                   >
-                    <div className="w-3 h-3 rounded-full bg-[#2b2520]" />
-                    <h1 className="text-[1.9rem] font-serif font-bold tracking-tighter text-[#2b2520]" data-testid="text-app-title">
+                    <div className="w-3 h-3 rounded-full" style={{ background: 'var(--paper-fg)' }} />
+                    <h1 className="text-[1.9rem] font-serif font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-app-title">
                       {pages[0].title}
                     </h1>
                   </motion.div>
@@ -382,7 +396,8 @@ export default function Onboarding() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className="text-lg text-[#9e9484] leading-relaxed font-medium"
+                    className="text-lg leading-relaxed font-medium"
+                    style={{ color: 'var(--paper-secondary)' }}
                     data-testid="text-catchphrase"
                   >
                     {pages[0].subtitle}
@@ -391,10 +406,10 @@ export default function Onboarding() {
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-xl font-serif font-bold tracking-tight text-[#2b2520]" data-testid={`text-feature-title-${page}`}>
+                    <h2 className="text-xl font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid={`text-feature-title-${page}`}>
                       {pages[page].title}
                     </h2>
-                    <p className="text-sm text-[#9e9484] leading-relaxed" data-testid={`text-feature-desc-${page}`}>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--paper-secondary)' }} data-testid={`text-feature-desc-${page}`}>
                       {pages[page].subtitle}
                     </p>
                   </div>
@@ -418,8 +433,8 @@ export default function Onboarding() {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h2 className="text-xl font-serif font-bold text-[#2b2520]" data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
-                <p className="text-[#9e9484] text-sm">{t("onboarding.defineTop3")}</p>
+                <h2 className="text-xl font-serif font-bold" style={{ color: 'var(--paper-fg)' }} data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
+                <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>{t("onboarding.defineTop3")}</p>
               </div>
 
               <div className="space-y-4">
@@ -435,7 +450,8 @@ export default function Onboarding() {
                       placeholder={`${t("onboarding.priority")} #${i + 1}`}
                       value={priority}
                       onChange={(e) => handlePriorityChange(i, e.target.value)}
-                      className="w-full bg-transparent border-b border-[#ddd5c8] py-4 text-lg text-[#2b2520] focus:outline-none focus:border-[#2b2520] transition-colors placeholder:text-[#c5baa8]"
+                      className="w-full bg-transparent py-4 text-lg focus:outline-none transition-colors"
+                      style={{ color: 'var(--paper-fg)', borderBottom: '1px solid var(--paper-border)' }}
                       autoFocus={i === 0}
                       data-testid={`input-priority-${i}`}
                     />
@@ -455,10 +471,10 @@ export default function Onboarding() {
                 key={i}
                 animate={{
                   width: i === page ? 24 : 6,
-                  backgroundColor: i === page ? "#2b2520" : "#ddd5c8",
                 }}
                 transition={{ duration: 0.3 }}
                 className="h-1 rounded-full"
+                style={{ background: i === page ? 'var(--paper-fg)' : 'var(--paper-border)' }}
               />
             ))}
           </div>
@@ -467,13 +483,14 @@ export default function Onboarding() {
         <div className="flex justify-between items-center">
           {!isPrioritiesPage ? (
             <>
-              <p className="font-mono text-[0.6rem] text-[#c5baa8] uppercase tracking-[1.5px]">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px]" style={{ color: 'var(--paper-tertiary)' }}>
                 {t("onboarding.swipeHint")}
               </p>
               {page < TOTAL_PAGES - 2 ? (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity text-[#2b2520]"
+                  className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity"
+                  style={{ color: 'var(--paper-fg)' }}
                   data-testid="button-next"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -481,7 +498,8 @@ export default function Onboarding() {
               ) : (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-opacity text-[#2b2520]"
+                  className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-opacity"
+                  style={{ color: 'var(--paper-fg)' }}
                   data-testid="button-lets-go"
                 >
                   {t("onboarding.letsGo")} <ArrowRight className="w-5 h-5" />

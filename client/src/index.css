@@ -38,6 +38,82 @@
   --font-sans: 'Source Serif 4', Georgia, serif;
   --font-serif: 'Source Serif 4', Georgia, serif;
   --font-mono: 'IBM Plex Mono', monospace;
+
+  --paper-bg: #f5efe7;
+  --paper-fg: #2b2520;
+  --paper-secondary: #9e9484;
+  --paper-tertiary: #c5baa8;
+  --paper-border: #ddd5c8;
+  --paper-active: #e8dfd3;
+  --paper-today-bg: #2b2520;
+  --paper-today-fg: #f6f1eb;
+  --paper-muted: #5c4f3d;
+  --paper-subtle: #b5a998;
+  --paper-track: #e0d8cc;
+  --paper-hover: #efe8dd;
+  --paper-separator: #e8e0d4;
+  --paper-card-bg: #f5efe7;
+  --paper-overlay: rgba(43, 37, 32, 0.4);
+  --paper-empty: #ccc3b5;
+  --paper-mid: #d5cabb;
+  --paper-delete-bg: #d4c4b0;
+  --paper-delete-fg: #8b4513;
+  --paper-edit-bg: #e8dfd3;
+  --paper-edit-fg: #5c4f3d;
+  --paper-streak-empty: #f0e9df;
+}
+
+.dark {
+  --background: 220 15% 10%;
+  --foreground: 36 20% 90%;
+
+  --card: 220 15% 12%;
+  --card-foreground: 36 20% 90%;
+
+  --popover: 220 15% 12%;
+  --popover-foreground: 36 20% 90%;
+
+  --primary: 36 20% 90%;
+  --primary-foreground: 220 15% 10%;
+
+  --secondary: 220 12% 18%;
+  --secondary-foreground: 36 20% 85%;
+
+  --muted: 220 12% 18%;
+  --muted-foreground: 30 10% 55%;
+
+  --accent: 36 20% 90%;
+  --accent-foreground: 220 15% 10%;
+
+  --destructive: 0 62.8% 40%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 220 12% 20%;
+  --input: 220 12% 20%;
+  --ring: 36 20% 90%;
+
+  --paper-bg: #1a1a1f;
+  --paper-fg: #e8e0d4;
+  --paper-secondary: #8a8078;
+  --paper-tertiary: #5a524a;
+  --paper-border: #2e2e35;
+  --paper-active: #2a2a32;
+  --paper-today-bg: #e8e0d4;
+  --paper-today-fg: #1a1a1f;
+  --paper-muted: #b5a998;
+  --paper-subtle: #6a6058;
+  --paper-track: #2a2a32;
+  --paper-hover: #242428;
+  --paper-separator: #2a2a32;
+  --paper-card-bg: #222228;
+  --paper-overlay: rgba(0, 0, 0, 0.6);
+  --paper-empty: #4a4a52;
+  --paper-mid: #4a4240;
+  --paper-delete-bg: #3a2020;
+  --paper-delete-fg: #e07060;
+  --paper-edit-bg: #2a2a32;
+  --paper-edit-fg: #b5a998;
+  --paper-streak-empty: #252528;
 }
 
 @layer base {
@@ -56,14 +132,14 @@
 
 @layer components {
   .paper-card {
-    background: #f5efe7;
-    border: 1px solid #ddd5c8;
+    background: var(--paper-card-bg);
+    border: 1px solid var(--paper-border);
     border-radius: 8px;
   }
 
   .paper-btn {
-    background: #2b2520;
-    color: #f6f1eb;
+    background: var(--paper-fg);
+    color: var(--paper-bg);
     transition: opacity 0.2s ease;
   }
   .paper-btn:hover {
@@ -71,7 +147,7 @@
   }
 
   .paper-border {
-    border: 1px solid #ddd5c8;
+    border: 1px solid var(--paper-border);
   }
 
   .fade-up {
@@ -97,20 +173,20 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ddd5c8;
+  background: var(--paper-border);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c5baa8;
+  background: var(--paper-tertiary);
 }
 
 #root {
   @apply w-full;
   min-height: 100dvh;
-  background: #f5efe7;
+  background: var(--paper-bg);
 }
 .app-container {
   @apply w-full relative overflow-hidden flex flex-col;
   min-height: 100dvh;
-  background: #f5efe7;
+  background: var(--paper-bg);
 }

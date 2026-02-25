@@ -67,7 +67,7 @@ export default function Today() {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#9e9484]" />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--paper-secondary)' }} />
       </div>
     );
   }
@@ -80,17 +80,17 @@ export default function Today() {
         <div className="absolute top-4 right-4 opacity-[0.06]">
           <Clock className="w-16 h-16" />
         </div>
-        <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] text-[#9e9484] mb-1">{t("today.guiltFreeTime")}</h2>
+        <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
-          <span className="text-[2rem] font-serif font-bold text-[#2b2520] tracking-tighter" data-testid="text-screen-time">
+          <span className="text-[2rem] font-serif font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
-          <span className="font-mono text-[0.65rem] text-[#9e9484]">{t("today.min")}</span>
+          <span className="font-mono text-[0.65rem]" style={{ color: 'var(--paper-secondary)' }}>{t("today.min")}</span>
         </div>
-        <div className="mt-3 h-[3px] bg-[#e0d8cc] rounded-full overflow-hidden">
+        <div className="mt-3 h-[3px] rounded-full overflow-hidden" style={{ background: 'var(--paper-track)' }}>
           <div
-            className="h-full bg-[#2b2520] rounded-full transition-all duration-500"
-            style={{ width: `${Math.min(100, ((userState?.screenTimeMinutes || 0) / 120) * 100)}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{ background: 'var(--paper-fg)', width: `${Math.min(100, ((userState?.screenTimeMinutes || 0) / 120) * 100)}%` }}
           />
         </div>
       </div>
@@ -102,15 +102,15 @@ export default function Today() {
           className="space-y-5"
         >
           <div className="text-center py-6 space-y-2">
-            <div className="text-3xl font-serif font-bold text-[#2b2520]">{t("today.allDone")}</div>
-            <p className="text-[#9e9484] text-sm">
+            <div className="text-3xl font-serif font-bold" style={{ color: 'var(--paper-fg)' }}>{t("today.allDone")}</div>
+            <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>
               {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
             </p>
           </div>
 
           {waitingTasks.length > 0 && (
             <div className="space-y-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium text-[#9e9484]">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>
                 {t("today.pickTasks")}
               </p>
               <div className="space-y-1.5">
@@ -125,25 +125,24 @@ export default function Today() {
                         return next;
                       });
                     }}
-                    className={`w-full text-left paper-card p-3 rounded-lg flex items-center gap-3 transition-all duration-150 ${
-                      selectedTaskIds.has(task.id)
-                        ? "border-[#2b2520]"
-                        : "hover:bg-[#efe8dd]"
-                    }`}
+                    className="w-full text-left paper-card p-3 rounded-lg flex items-center gap-3 transition-all duration-150"
+                    style={selectedTaskIds.has(task.id) ? { borderColor: 'var(--paper-fg)' } : undefined}
                     data-testid={`button-pick-task-${task.id}`}
                   >
-                    <div className={`w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                      selectedTaskIds.has(task.id)
-                        ? "border-[#2b2520] bg-[#2b2520]"
-                        : "border-[#c5baa8]"
-                    }`}>
+                    <div
+                      className="w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+                      style={selectedTaskIds.has(task.id)
+                        ? { borderColor: 'var(--paper-fg)', background: 'var(--paper-fg)' }
+                        : { borderColor: 'var(--paper-tertiary)' }
+                      }
+                    >
                       {selectedTaskIds.has(task.id) && (
-                        <CheckCircle2 className="w-4 h-4 text-[#f6f1eb]" />
+                        <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--paper-bg)' }} />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[1.05rem] font-normal text-[#2b2520] leading-[1.45] truncate">{task.content}</p>
-                      <span className="font-mono text-[0.6rem] uppercase tracking-[1px] text-[#b5a998]">
+                      <p className="text-[1.05rem] font-normal leading-[1.45] truncate" style={{ color: 'var(--paper-fg)' }}>{task.content}</p>
+                      <span className="font-mono text-[0.6rem] uppercase tracking-[1px]" style={{ color: 'var(--paper-subtle)' }}>
                         {task.tier === "backlog" ? t("queue.backlog") : t("queue.icebox")}
                       </span>
                     </div>
@@ -176,7 +175,8 @@ export default function Today() {
             </button>
             <button
               onClick={() => setLocation("/dump")}
-              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-card px-4 py-2.5 rounded-lg text-[#9e9484] flex items-center gap-1.5 hover:text-[#2b2520] transition-colors"
+              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-card px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors"
+              style={{ color: 'var(--paper-secondary)' }}
               data-testid="button-dump-more"
             >
               <Inbox className="w-3 h-3" />
@@ -188,15 +188,16 @@ export default function Today() {
 
       {!allDone && (
         <div className="fade-up">
-          <h3 className="font-mono text-[0.6rem] font-medium mb-4 flex items-center gap-2 uppercase tracking-[1.5px] text-[#9e9484]">
-            <span className="w-1.5 h-1.5 bg-[#2b2520] rounded-full"></span>
+          <h3 className="font-mono text-[0.6rem] font-medium mb-4 flex items-center gap-2 uppercase tracking-[1.5px]" style={{ color: 'var(--paper-secondary)' }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--paper-fg)' }}></span>
             {t("today.focus")}
           </h3>
           
           <div className="space-y-0">
             {focusTasks.length === 0 ? (
               <div
-                className="text-center py-12 text-[#c5baa8] text-sm paper-card rounded-lg border-dashed cursor-pointer hover:bg-[#efe8dd] transition-colors"
+                className="text-center py-12 text-sm paper-card rounded-lg border-dashed cursor-pointer transition-colors"
+                style={{ color: 'var(--paper-tertiary)' }}
                 onClick={() => setLocation("/dump")}
                 data-testid="button-go-to-dump"
               >
@@ -214,7 +215,8 @@ export default function Today() {
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     >
                       <div
-                        className={`py-4 border-b border-[#e8e0d4] transition-all duration-300 ${isCompleting ? "opacity-50" : ""}`}
+                        className={`py-4 transition-all duration-300 ${isCompleting ? "opacity-50" : ""}`}
+                        style={{ borderBottom: '1px solid var(--paper-separator)' }}
                         data-testid={`task-focus-${task.id}`}
                       >
                         <div className="flex items-start gap-3">
@@ -230,25 +232,29 @@ export default function Today() {
                                 animate={{ scale: 1 }}
                                 transition={{ duration: 0.2 }}
                               >
-                                <div className="w-[22px] h-[22px] rounded-full bg-[#2b2520] flex items-center justify-center">
-                                  <CheckCircle2 className="w-4 h-4 text-[#f6f1eb]" />
+                                <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center" style={{ background: 'var(--paper-fg)' }}>
+                                  <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--paper-bg)' }} />
                                 </div>
                               </motion.div>
                             ) : (
-                              <div className="w-[22px] h-[22px] rounded-full border-2 border-[#c5baa8]" />
+                              <div className="w-[22px] h-[22px] rounded-full border-2" style={{ borderColor: 'var(--paper-tertiary)' }} />
                             )}
                           </button>
                           
                           <div className="flex-1 space-y-2.5 min-w-0">
-                            <p className={`text-[1.05rem] font-normal leading-[1.45] transition-all duration-300 ${isCompleting ? "line-through text-[#b5a998]" : "text-[#2b2520]"}`}
-                              style={isCompleting ? { textDecorationColor: '#c5baa8' } : undefined}
+                            <p
+                              className={`text-[1.05rem] font-normal leading-[1.45] transition-all duration-300 ${isCompleting ? "line-through" : ""}`}
+                              style={isCompleting
+                                ? { color: 'var(--paper-subtle)', textDecorationColor: 'var(--paper-tertiary)' }
+                                : { color: 'var(--paper-fg)' }
+                              }
                             >
                               {task.content}
                             </p>
                             
                             {task.nudge && (
-                              <div className="text-sm bg-[#efe8dd] p-2.5 rounded-lg text-[#5c4f3d] border-l-2 border-[#2b2520]">
-                                <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] text-[#9e9484] mr-1">{t("today.microStep")}</span> 
+                              <div className="text-sm p-2.5 rounded-lg" style={{ background: 'var(--paper-hover)', color: 'var(--paper-muted)', borderLeft: '2px solid var(--paper-fg)' }}>
+                                <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] mr-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.microStep")}</span> 
                                 {task.nudge}
                               </div>
                             )}
@@ -259,9 +265,10 @@ export default function Today() {
                                   onClick={() => handleNudge(task.id)}
                                   disabled={activeNudgeId === task.id}
                                   data-testid={`button-nudge-${task.id}`}
-                                  className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] border border-[#ddd5c8] hover:bg-[#efe8dd] px-3 py-1.5 rounded-lg text-[#5c4f3d] flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                                  className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                                  style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-muted)' }}
                                 >
-                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse text-[#2b2520]" /> : <Zap className="w-3 h-3" />}
+                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse" style={{ color: 'var(--paper-fg)' }} /> : <Zap className="w-3 h-3" />}
                                   {t("today.nudgeMe")}
                                 </button>
                               </div>
@@ -280,12 +287,12 @@ export default function Today() {
 
       {completedToday.length > 0 && !allDone && (
         <div className="opacity-50 hover:opacity-80 transition-opacity duration-300 fade-up">
-          <h4 className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3 text-[#9e9484]">{t("today.completedToday")}</h4>
+          <h4 className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("today.completedToday")}</h4>
           <div className="space-y-2">
              {completedToday.map(task => (
-               <div key={task.id} className="flex items-center gap-3 text-sm line-through text-[#b5a998]" style={{ textDecorationColor: '#c5baa8' }}>
-                 <div className="w-4 h-4 rounded-full bg-[#2b2520] flex items-center justify-center shrink-0">
-                   <CheckCircle2 className="w-3 h-3 text-[#f6f1eb]" />
+               <div key={task.id} className="flex items-center gap-3 text-sm line-through" style={{ color: 'var(--paper-subtle)', textDecorationColor: 'var(--paper-tertiary)' }}>
+                 <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--paper-fg)' }}>
+                   <CheckCircle2 className="w-3 h-3" style={{ color: 'var(--paper-bg)' }} />
                  </div>
                  <span className="truncate">{task.content}</span>
                </div>

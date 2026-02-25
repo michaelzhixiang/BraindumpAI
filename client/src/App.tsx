@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useUserState } from "@/hooks/use-user-state";
 import { useAuth } from "@/hooks/use-auth";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeProvider } from "@/lib/theme";
 
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/Onboarding";
@@ -26,14 +27,15 @@ function LoadingScreen() {
           className="flex flex-col items-center gap-3"
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-3 h-3 rounded-full bg-[#2b2520]" />
-            <span className="text-lg font-serif font-bold tracking-tight text-[#2b2520]">BrainDump AI</span>
+            <div className="w-3 h-3 rounded-full" style={{ background: 'var(--paper-fg)' }} />
+            <span className="text-lg font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }}>BrainDump AI</span>
           </div>
           <div className="flex gap-1">
             {[0, 1, 2].map(i => (
               <motion.div
                 key={i}
-                className="w-1.5 h-1.5 rounded-full bg-[#2b2520]"
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: 'var(--paper-fg)' }}
                 animate={{ opacity: [0.2, 1, 0.2] }}
                 transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
               />
@@ -122,12 +124,14 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AppContent />
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AppContent />
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

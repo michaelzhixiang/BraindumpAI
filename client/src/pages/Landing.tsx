@@ -1,15 +1,19 @@
 import { motion } from "framer-motion";
-import { Brain, Sparkles, Timer, ArrowRight, Languages } from "lucide-react";
+import { Brain, Sparkles, Timer, ArrowRight, Languages, Sun, Moon } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 
 export default function Landing() {
   const { t, lang, toggle } = useI18n();
+  const { theme, toggleTheme } = useTheme();
 
   const features = [
     { icon: Brain, title: t("landing.feature1"), desc: t("landing.feature1.desc") },
     { icon: Sparkles, title: t("landing.feature2"), desc: t("landing.feature2.desc") },
     { icon: Timer, title: t("landing.feature3"), desc: t("landing.feature3.desc") },
   ];
+
+  const btnClass = "flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-3 py-1.5 rounded-lg transition-colors";
 
   return (
     <div className="app-container">
@@ -25,9 +29,10 @@ export default function Landing() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-              className="w-3 h-3 rounded-full bg-[#2b2520]"
+              className="w-3 h-3 rounded-full"
+              style={{ background: 'var(--paper-fg)' }}
             />
-            <h1 className="text-[1.9rem] font-serif font-bold tracking-tight text-[#2b2520]" data-testid="text-landing-title">
+            <h1 className="text-[1.9rem] font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid="text-landing-title">
               BrainDump AI
             </h1>
           </div>
@@ -36,7 +41,8 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-base text-[#2b2520] text-center max-w-[320px] mb-1.5"
+            className="text-base text-center max-w-[320px] mb-1.5"
+            style={{ color: 'var(--paper-fg)' }}
             data-testid="text-landing-tagline"
           >
             {t("landing.tagline")}
@@ -45,7 +51,8 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-sm text-[#9e9484] text-center max-w-[280px] mb-8"
+            className="text-sm text-center max-w-[280px] mb-8"
+            style={{ color: 'var(--paper-secondary)' }}
           >
             {t("landing.subtitle")}
           </motion.p>
@@ -79,28 +86,41 @@ export default function Landing() {
               className="paper-card p-4 rounded-lg flex items-start gap-3"
               data-testid={`card-feature-${i}`}
             >
-              <div className="w-9 h-9 rounded-lg bg-[#e8dfd3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <f.icon className="w-4 h-4 text-[#5c4f3d]" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'var(--paper-active)' }}>
+                <f.icon className="w-4 h-4" style={{ color: 'var(--paper-muted)' }} />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-[#2b2520] mb-0.5">{f.title}</h3>
-                <p className="text-xs text-[#9e9484] leading-relaxed">{f.desc}</p>
+                <h3 className="text-sm font-semibold mb-0.5" style={{ color: 'var(--paper-fg)' }}>{f.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--paper-secondary)' }}>{f.desc}</p>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        <motion.button
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          onClick={toggle}
-          className="flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-3 py-1.5 rounded-lg border border-[#ddd5c8] text-[#9e9484] hover:text-[#2b2520] transition-colors"
-          data-testid="button-landing-lang"
+          className="flex items-center gap-2"
         >
-          <Languages className="w-3.5 h-3.5" />
-          {lang === "en" ? "中文" : "EN"}
-        </motion.button>
+          <button
+            onClick={toggle}
+            className={btnClass}
+            style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-secondary)' }}
+            data-testid="button-landing-lang"
+          >
+            <Languages className="w-3.5 h-3.5" />
+            {lang === "en" ? "中文" : "EN"}
+          </button>
+          <button
+            onClick={toggleTheme}
+            className={btnClass}
+            style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-secondary)' }}
+            data-testid="button-landing-theme"
+          >
+            {theme === "light" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+          </button>
+        </motion.div>
       </div>
     </div>
   );

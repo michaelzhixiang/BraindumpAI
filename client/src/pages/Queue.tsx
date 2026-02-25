@@ -27,9 +27,8 @@ function DroppableTierZone({ id, children }: { id: string; children: React.React
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[48px] rounded-lg transition-all duration-150 ${
-        isOver ? "bg-[#e8dfd3] border border-dashed border-[#2b2520]/20" : ""
-      }`}
+      className="min-h-[48px] rounded-lg transition-all duration-150"
+      style={isOver ? { background: 'var(--paper-active)', border: '1px dashed var(--paper-tertiary)' } : undefined}
     >
       {children}
     </div>
@@ -120,7 +119,8 @@ function TaskItem({
             setEditValue(task.content);
             setIsEditing(true);
           }}
-          className="w-[70px] flex items-center justify-center bg-[#e8dfd3] text-[#5c4f3d]"
+          className="w-[70px] flex items-center justify-center"
+          style={{ background: 'var(--paper-edit-bg)', color: 'var(--paper-edit-fg)' }}
           data-testid={`button-edit-${task.id}`}
         >
           <div className="flex flex-col items-center gap-1">
@@ -130,7 +130,8 @@ function TaskItem({
         </button>
         <button
           onClick={() => onDelete(task.id)}
-          className="w-[70px] flex items-center justify-center bg-[#d4c4b0] text-[#8b4513]"
+          className="w-[70px] flex items-center justify-center"
+          style={{ background: 'var(--paper-delete-bg)', color: 'var(--paper-delete-fg)' }}
           data-testid={`button-delete-${task.id}`}
         >
           <div className="flex flex-col items-center gap-1">
@@ -147,14 +148,16 @@ function TaskItem({
         onDragEnd={handleSwipeEnd}
         animate={{ x: isRevealed ? -ACTION_WIDTH : 0 }}
         transition={{ type: "spring", stiffness: 500, damping: 35 }}
-        className="relative z-10 bg-[#f5efe7] py-4 px-3 flex items-center gap-2 border-b border-[#e8e0d4]"
+        className="relative z-10 py-4 px-3 flex items-center gap-2"
+        style={{ background: 'var(--paper-bg)', borderBottom: '1px solid var(--paper-separator)' }}
         onClick={() => { if (isRevealed) setIsRevealed(false); }}
       >
         <div
           ref={setActivatorNodeRef}
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-[#c5baa8] hover:text-[#9e9484] shrink-0 touch-none p-1.5 -m-1"
+          className="cursor-grab active:cursor-grabbing shrink-0 touch-none p-1.5 -m-1"
+          style={{ color: 'var(--paper-tertiary)' }}
           data-testid={`drag-handle-${task.id}`}
         >
           <GripVertical className="w-4 h-4" />
@@ -170,12 +173,14 @@ function TaskItem({
               if (e.key === "Escape") { setEditValue(task.content); setIsEditing(false); }
             }}
             onBlur={handleSaveEdit}
-            className="flex-1 bg-transparent text-[1.05rem] font-normal focus:outline-none text-[#2b2520] py-0.5"
+            className="flex-1 bg-transparent text-[1.05rem] font-normal focus:outline-none py-0.5"
+            style={{ color: 'var(--paper-fg)' }}
             data-testid={`input-edit-${task.id}`}
           />
         ) : (
           <p
-            className="flex-1 text-[1.05rem] font-normal leading-[1.45] text-[#2b2520]"
+            className="flex-1 text-[1.05rem] font-normal leading-[1.45]"
+            style={{ color: 'var(--paper-fg)' }}
             data-testid={`text-task-${task.id}`}
           >
             {task.content}
@@ -188,11 +193,11 @@ function TaskItem({
 
 function DragOverlayItem({ task }: { task: Task }) {
   return (
-    <div className="bg-[#f5efe7] border border-[#ddd5c8] p-3 rounded-lg flex items-center gap-2 max-w-[420px]">
-      <div className="text-[#c5baa8] shrink-0">
+    <div className="paper-card p-3 rounded-lg flex items-center gap-2 max-w-[420px]">
+      <div style={{ color: 'var(--paper-tertiary)' }} className="shrink-0">
         <GripVertical className="w-4 h-4" />
       </div>
-      <p className="flex-1 text-[1.05rem] font-normal text-[#2b2520]">{task.content}</p>
+      <p className="flex-1 text-[1.05rem] font-normal" style={{ color: 'var(--paper-fg)' }}>{task.content}</p>
     </div>
   );
 }
@@ -266,7 +271,7 @@ export default function Queue() {
 
   const TierSection = ({ title, icon: Icon, items, tierColor, tierId }: { title: string; icon: any; items: Task[]; tierColor: string; tierId: string }) => (
     <div className="space-y-2 fade-up">
-      <div className={`flex items-center gap-2 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] ${tierColor}`}>
+      <div className="flex items-center gap-2 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px]" style={{ color: tierColor }}>
         <Icon className="w-3.5 h-3.5" />
         {title} <span className="opacity-40 ml-1">({items.length})</span>
       </div>
@@ -274,7 +279,10 @@ export default function Queue() {
         <SortableContext items={items.map(t => t.id.toString())} strategy={verticalListSortingStrategy}>
           <div>
             {items.length === 0 ? (
-              <div className="p-4 rounded-lg border border-dashed border-[#ddd5c8] text-center font-mono text-[0.6rem] text-[#c5baa8] uppercase tracking-[1px]">
+              <div
+                className="p-4 rounded-lg border border-dashed text-center font-mono text-[0.6rem] uppercase tracking-[1px]"
+                style={{ borderColor: 'var(--paper-border)', color: 'var(--paper-tertiary)' }}
+              >
                 {t("queue.dragHere")}
               </div>
             ) : (
@@ -302,15 +310,15 @@ export default function Queue() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <TierSection title={t("queue.focus")} icon={Flame} items={focus} tierColor="text-[#5c4f3d]" tierId="tier-focus" />
+        <TierSection title={t("queue.focus")} icon={Flame} items={focus} tierColor="var(--paper-muted)" tierId="tier-focus" />
 
-        <div className="border-t border-[#ddd5c8]" />
+        <div style={{ borderTop: '1px solid var(--paper-border)' }} />
 
-        <TierSection title={t("queue.backlog")} icon={Archive} items={backlog} tierColor="text-[#9e9484]" tierId="tier-backlog" />
+        <TierSection title={t("queue.backlog")} icon={Archive} items={backlog} tierColor="var(--paper-secondary)" tierId="tier-backlog" />
 
-        <div className="border-t border-[#ddd5c8]" />
+        <div style={{ borderTop: '1px solid var(--paper-border)' }} />
 
-        <TierSection title={t("queue.icebox")} icon={Snowflake} items={icebox} tierColor="text-[#b5a998]" tierId="tier-icebox" />
+        <TierSection title={t("queue.icebox")} icon={Snowflake} items={icebox} tierColor="var(--paper-subtle)" tierId="tier-icebox" />
 
         <DragOverlay dropAnimation={{ duration: 150, easing: "ease-out" }}>
           {activeTask ? <DragOverlayItem task={activeTask} /> : null}

@@ -118,9 +118,10 @@ export default function Dump() {
             <div
               className={`max-w-[80%] px-4 py-3 rounded-2xl text-[1.05rem] leading-[1.45] ${
                 msg.sender === "user"
-                  ? "bg-[#2b2520] text-[#f6f1eb] rounded-tr-sm"
-                  : "paper-card text-[#2b2520] rounded-tl-sm"
+                  ? "rounded-tr-sm paper-btn"
+                  : "paper-card rounded-tl-sm"
               }`}
+              style={msg.sender === "system" ? { color: 'var(--paper-fg)' } : undefined}
             >
               {msg.text}
             </div>
@@ -129,7 +130,7 @@ export default function Dump() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="shrink-0 p-4 pt-2 bg-[#f5efe7]">
+      <div className="shrink-0 p-4 pt-2" style={{ background: 'var(--paper-bg)' }}>
         {userDumpTexts.length > 0 && (
            <div className="flex justify-center mb-3">
              <button
@@ -157,14 +158,15 @@ export default function Dump() {
             }}
             placeholder={t("dump.placeholder")}
             data-testid="input-dump"
-            className="w-full paper-card rounded-2xl pl-5 pr-14 py-4 text-[1.05rem] leading-[1.45] focus:outline-none focus:border-[#2b2520] resize-none min-h-[56px] text-[#2b2520] placeholder:text-[#c5baa8]"
+            className="w-full paper-card rounded-2xl pl-5 pr-14 py-4 text-[1.05rem] leading-[1.45] focus:outline-none resize-none min-h-[56px]"
+            style={{ color: 'var(--paper-fg)', borderColor: 'var(--paper-border)' }}
             rows={1}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim()}
             data-testid="button-send"
-            className="absolute right-2.5 bottom-2.5 p-2 paper-btn rounded-xl disabled:opacity-20 disabled:bg-[#e0d8cc] transition-opacity"
+            className="absolute right-2.5 bottom-2.5 p-2 paper-btn rounded-xl disabled:opacity-20 transition-opacity"
           >
             <Send className="w-4 h-4" />
           </button>
