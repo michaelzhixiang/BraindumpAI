@@ -165,7 +165,7 @@ function RewardDemo() {
           initial={{ scale: 1.3, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="text-[2rem] font-serif font-bold tabular-nums"
+          className="text-[2rem] font-heading font-bold tabular-nums"
           style={{ color: 'var(--paper-fg)' }}
         >
           {count}
@@ -307,7 +307,7 @@ export default function Onboarding() {
 
   const pages = [
     {
-      title: "BrainDump AI",
+      title: "BrainDump",
       subtitle: t("onboarding.catchphrase"),
       demo: null,
     },
@@ -388,7 +388,7 @@ export default function Onboarding() {
                     className="flex items-center gap-2.5"
                   >
                     <div className="w-3 h-3 rounded-full" style={{ background: 'var(--paper-fg)' }} />
-                    <h1 className="text-[1.9rem] font-serif font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-app-title">
+                    <h1 className="text-[1.9rem] font-heading font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-app-title">
                       {pages[0].title}
                     </h1>
                   </motion.div>
@@ -406,7 +406,7 @@ export default function Onboarding() {
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-xl font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid={`text-feature-title-${page}`}>
+                    <h2 className="text-xl font-heading font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid={`text-feature-title-${page}`}>
                       {pages[page].title}
                     </h2>
                     <p className="text-sm leading-relaxed" style={{ color: 'var(--paper-secondary)' }} data-testid={`text-feature-desc-${page}`}>
@@ -433,7 +433,7 @@ export default function Onboarding() {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h2 className="text-xl font-serif font-bold" style={{ color: 'var(--paper-fg)' }} data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
+                <h2 className="text-xl font-heading font-bold" style={{ color: 'var(--paper-fg)' }} data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
                 <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>{t("onboarding.defineTop3")}</p>
               </div>
 
@@ -510,7 +510,7 @@ export default function Onboarding() {
             <button
               onClick={handleComplete}
               disabled={isCreating}
-              className="w-full paper-btn py-4 rounded-full font-serif font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full paper-btn py-4 rounded-full font-heading font-bold flex items-center justify-center gap-2 disabled:opacity-50"
               data-testid="button-all-set"
             >
               {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Check className="w-5 h-5" /> {t("onboarding.allSet")}</>}

@@ -83,8 +83,10 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
+        sans: ["var(--font-body)"],
+        serif: ["var(--font-body)"],
+        heading: ["var(--font-heading)", "Georgia", "serif"],
+        body: ["var(--font-body)", "Georgia", "serif"],
         mono: ["var(--font-mono)"],
       },
       keyframes: {

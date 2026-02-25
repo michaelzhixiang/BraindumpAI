@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from "react";
 export type Lang = "en" | "zh";
 
 const translations: Record<string, Record<Lang, string>> = {
-  "header.title": { en: "BrainDump AI", zh: "BrainDump AI" },
+  "header.title": { en: "BrainDump", zh: "BrainDump" },
   "nav.today": { en: "Today", zh: "今日" },
   "nav.dump": { en: "Dump", zh: "脑暴" },
   "nav.queue": { en: "Queue", zh: "待办" },

@@ -79,7 +79,7 @@ export default function Today() {
       <div className="rounded-lg p-5 relative fade-up" style={{ border: '1px dashed var(--paper-border)', background: 'var(--paper-card-bg)' }} data-testid="guilt-free-card">
         <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
-          <span className="text-[2rem] font-serif font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-screen-time">
+          <span className="text-[2rem] font-heading font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
           <span className="font-mono text-[0.65rem]" style={{ color: 'var(--paper-secondary)' }}>{t("today.min")}</span>
@@ -99,7 +99,7 @@ export default function Today() {
           className="space-y-5"
         >
           <div className="text-center py-6 space-y-2">
-            <div className="text-3xl font-serif font-bold" style={{ color: 'var(--paper-fg)' }}>{t("today.allDone")}</div>
+            <div className="text-3xl font-heading font-bold" style={{ color: 'var(--paper-fg)' }}>{t("today.allDone")}</div>
             <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>
               {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
             </p>
@@ -193,7 +193,7 @@ export default function Today() {
           <div className="space-y-0">
             {focusTasks.length === 0 ? (
               <div
-                className="text-center py-12 rounded-lg border border-dashed cursor-pointer transition-colors font-serif italic"
+                className="text-center py-12 rounded-lg border border-dashed cursor-pointer transition-colors font-body italic"
                 style={{ color: 'var(--paper-subtle)', fontSize: '0.9rem', borderColor: 'var(--paper-border)', background: 'var(--paper-card-bg)' }}
                 onClick={() => setLocation("/dump")}
                 data-testid="button-go-to-dump"

@@ -28,7 +28,7 @@ function LoadingScreen() {
         >
           <div className="flex items-center gap-2.5">
             <div className="w-3 h-3 rounded-full" style={{ background: 'var(--paper-fg)' }} />
-            <span className="text-lg font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }}>BrainDump AI</span>
+            <span className="text-lg font-heading font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }}>BrainDump</span>
           </div>
           <div className="flex gap-1">
             {[0, 1, 2].map(i => (

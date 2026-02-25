@@ -1,67 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 36 28% 92%;
-  --foreground: 18 16% 14%;
+  --background: 38 25% 93%;
+  --foreground: 20 11% 9%;
 
-  --card: 36 28% 92%;
-  --card-foreground: 18 16% 14%;
+  --card: 36 22% 90%;
+  --card-foreground: 20 11% 9%;
 
-  --popover: 36 28% 92%;
-  --popover-foreground: 18 16% 14%;
+  --popover: 36 22% 90%;
+  --popover-foreground: 20 11% 9%;
 
-  --primary: 18 16% 14%;
-  --primary-foreground: 36 28% 95%;
+  --primary: 20 11% 9%;
+  --primary-foreground: 38 25% 93%;
 
-  --secondary: 33 18% 86%;
-  --secondary-foreground: 18 16% 14%;
+  --secondary: 36 22% 90%;
+  --secondary-foreground: 20 11% 9%;
 
-  --muted: 33 18% 86%;
-  --muted-foreground: 30 10% 56%;
+  --muted: 36 22% 90%;
+  --muted-foreground: 25 6% 33%;
 
-  --accent: 18 16% 14%;
-  --accent-foreground: 36 28% 95%;
+  --accent: 20 11% 9%;
+  --accent-foreground: 38 25% 93%;
 
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 33 18% 83%;
-  --input: 33 18% 83%;
-  --ring: 18 16% 14%;
+  --border: 35 18% 82%;
+  --input: 35 18% 82%;
+  --ring: 20 11% 9%;
 
   --radius: 0.5rem;
 
-  --font-sans: 'Source Serif 4', Georgia, serif;
-  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
   --font-mono: 'IBM Plex Mono', monospace;
 
-  --paper-bg: #f5efe7;
-  --paper-fg: #2b2520;
-  --paper-secondary: #9e9484;
-  --paper-tertiary: #c5baa8;
-  --paper-border: #ddd5c8;
-  --paper-active: #e8dfd3;
-  --paper-today-bg: #3c2f20;
-  --paper-today-fg: #f6f1eb;
-  --paper-muted: #5c4f3d;
-  --paper-subtle: #b5a998;
-  --paper-track: #e0d8cc;
-  --paper-hover: #efe8dd;
-  --paper-separator: #e8e0d4;
-  --paper-card-bg: #f5efe7;
-  --paper-overlay: rgba(43, 37, 32, 0.4);
-  --paper-empty: #ccc3b5;
-  --paper-mid: #d5cabb;
+  --paper-bg: #F5F0E8;
+  --paper-fg: #1C1917;
+  --paper-secondary: #57534E;
+  --paper-tertiary: #A8A29E;
+  --paper-border: #DDD6C8;
+  --paper-active: #EFE9DC;
+  --paper-today-bg: #2C2825;
+  --paper-today-fg: #F5F0E8;
+  --paper-muted: #57534E;
+  --paper-subtle: #A8A29E;
+  --paper-track: #DDD6C8;
+  --paper-hover: #EFE9DC;
+  --paper-separator: #DDD6C8;
+  --paper-card-bg: #EFE9DC;
+  --paper-overlay: rgba(28, 25, 23, 0.4);
+  --paper-empty: #DDD6C8;
+  --paper-mid: rgba(44, 40, 37, 0.3);
   --paper-delete-bg: #d4c4b0;
   --paper-delete-fg: #8b4513;
-  --paper-edit-bg: #e8dfd3;
-  --paper-edit-fg: #5c4f3d;
-  --paper-streak-empty: #f0e9df;
-  --paper-input-bg: #faf5ed;
+  --paper-edit-bg: #EFE9DC;
+  --paper-edit-fg: #57534E;
+  --paper-streak-empty: #EFE9DC;
+  --paper-input-bg: transparent;
+  --paper-accent: #2C2825;
 }
 
 .dark {
@@ -109,13 +108,14 @@
   --paper-card-bg: #242019;
   --paper-overlay: rgba(0, 0, 0, 0.6);
   --paper-empty: #4a4540;
-  --paper-mid: #4a4238;
+  --paper-mid: rgba(232, 223, 211, 0.2);
   --paper-delete-bg: #3a2520;
   --paper-delete-fg: #e07060;
   --paper-edit-bg: #332e27;
   --paper-edit-fg: #b5a998;
   --paper-streak-empty: #282420;
-  --paper-input-bg: #282420;
+  --paper-input-bg: transparent;
+  --paper-accent: #e8dfd3;
 }
 
 @layer base {
@@ -123,13 +123,29 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
+    background-color: var(--paper-bg);
+    color: var(--paper-fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    @apply overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
     @apply tracking-tight;
   }
+
+  ::selection {
+    background-color: var(--paper-border);
+    color: var(--paper-fg);
+  }
+}
+
+.small-caps {
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
 }
 
 @layer components {
@@ -140,7 +156,7 @@
   }
 
   .paper-btn {
-    background: var(--paper-fg);
+    background: var(--paper-accent);
     color: var(--paper-bg);
     transition: opacity 0.2s ease;
   }

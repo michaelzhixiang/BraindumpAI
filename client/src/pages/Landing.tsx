@@ -32,8 +32,8 @@ export default function Landing() {
               className="w-3 h-3 rounded-full"
               style={{ background: 'var(--paper-fg)' }}
             />
-            <h1 className="text-[1.9rem] font-serif font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid="text-landing-title">
-              BrainDump AI
+            <h1 className="text-[1.9rem] font-heading font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid="text-landing-title">
+              BrainDump
             </h1>
           </div>
 
@@ -64,7 +64,7 @@ export default function Landing() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full paper-btn font-serif font-bold text-base mb-10"
+          className="inline-flex items-center gap-2 px-10 py-3.5 rounded-full paper-btn font-heading font-bold text-base mb-10"
           data-testid="button-login"
         >
           {t("landing.login")}

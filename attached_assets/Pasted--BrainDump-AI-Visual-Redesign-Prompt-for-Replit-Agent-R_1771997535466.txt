@@ -1,0 +1,182 @@
+# BrainDump AI — Visual Redesign Prompt (for Replit Agent)
+
+Redesign the visual style of BrainDump AI to feel like a premium paper-and-ink literary journal. **Keep all existing functionality exactly the same** — only update styling. This app uses **Next.js 14 (App Router) + Tailwind CSS**.
+
+---
+
+## 1. FONT SETUP
+
+**Install and load via `next/font/google` in `app/layout.tsx`:**
+
+```tsx
+import { Cormorant_Garamond, EB_Garamond } from 'next/font/google';
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-cormorant',
+  display: 'swap',
+});
+
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-eb-garamond',
+  display: 'swap',
+});
+```
+
+Apply both font variables to the `<body>` className.
+
+**Extend `tailwind.config.ts`:**
+
+```ts
+theme: {
+  extend: {
+    fontFamily: {
+      heading: ['var(--font-cormorant)', 'Georgia', 'serif'],
+      body: ['var(--font-eb-garamond)', 'Georgia', 'serif'],
+    },
+  },
+}
+```
+
+**Usage rules:**
+- `font-heading`: App title "BrainDump AI", all section labels (FOCUS, CAN WAIT, NEVER MIND, MONTHLY STREAK, GUILT-FREE SOCIAL MEDIA TIME), calendar date numbers, any heading
+- `font-body`: Body text, task items, input fields, placeholder text, chat messages, metadata text
+
+---
+
+## 2. COLOR PALETTE
+
+**Replace ALL existing color values. Update `tailwind.config.ts`:**
+
+```ts
+colors: {
+  ink: {
+    DEFAULT: '#1C1917',   // primary text — headings, task titles
+    secondary: '#57534E', // labels, metadata, section icons
+    muted: '#A8A29E',     // placeholders, disabled states, inactive nav
+    accent: '#2C2825',    // today's date pill, active states, buttons
+  },
+  paper: {
+    DEFAULT: '#F5F0E8',   // page background
+    card: '#EFE9DC',      // card/surface background
+    border: '#DDD6C8',    // all borders, dividers
+  },
+}
+```
+
+Then go through every component and replace existing color classes:
+- All `bg-*` backgrounds → `bg-paper` or `bg-paper-card`
+- All text colors → `text-ink`, `text-ink-secondary`, `text-ink-muted`
+- All borders → `border-paper-border`
+- All buttons/accents → `bg-ink-accent text-paper`
+
+---
+
+## 3. TYPOGRAPHY CHANGES
+
+**Add to `globals.css`:**
+
+```css
+.small-caps {
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  text-transform: lowercase; /* required for font-variant to work */
+}
+```
+
+**Apply these changes in components:**
+- ALL section labels (FOCUS, CAN WAIT, NEVER MIND, MONTHLY STREAK, GUILT-FREE SOCIAL MEDIA TIME) → remove `uppercase` / `text-transform: uppercase`, add the `small-caps` class instead
+- All placeholder text ("drag tasks here", "Type anything...", "No focus tasks. Dump some thoughts first.") → add `italic`
+- Base font sizes: section labels → `text-sm` (13-14px), body/task text → `text-base` to `text-lg` (16-17px)
+
+---
+
+## 4. CARDS & BORDERS
+
+- **Remove ALL box-shadows** from cards and surfaces — no `shadow-*` classes anywhere
+- Replace with: `border border-paper-border` (1px solid #DDD6C8)
+- Dashed-border cards (the "drag tasks here" drop zones) → `border border-dashed border-paper-border`
+- Section dividers → single `border-t border-paper-border` line
+
+---
+
+## 5. SPECIFIC COMPONENT UPDATES
+
+### Bottom Navigation (Today / Dump / Queue tabs)
+- Inactive tab: icon and label in `text-ink-muted` (#A8A29E)
+- Active tab: icon and label in `text-ink` (#1C1917)
+- Active tab background: `bg-paper-card` with `border border-paper-border rounded-xl`
+
+### Calendar (Monthly Streak)
+- Date numbers: `font-heading text-ink-secondary`
+- Today's selected date: dark pill `bg-ink-accent` with number in `text-paper`
+- Month/year heading: `font-heading text-ink`
+- Heat map squares: use opacity variants of `ink-accent` (#2C2825 at 20%, 40%, 60%, 80%, 100%)
+
+### Dump Tab — Input Field
+- Remove full rounded border and background fill
+- Style as: `border-b border-paper-border bg-transparent` — bottom border only
+- Text: `font-body text-ink text-lg`
+- Placeholder: `text-ink-muted italic`
+
+### Queue Tab — Drop Zones
+- The "drag tasks here" placeholder areas: `border border-dashed border-paper-border rounded-lg`
+- Placeholder text: `font-body text-ink-muted italic`
+
+### Section Icons (flame, archive, snowflake)
+- Color: `text-ink-secondary` (#57534E)
+
+### "Guilt-Free Social Media Time" Section
+- "0 min" number: `font-heading text-ink text-4xl font-light`
+- "min" label: `font-body text-ink-secondary`
+- Slider track: `bg-paper-border`
+
+### App Title "BrainDump AI"
+- `font-heading text-ink font-semibold` — make sure it uses Cormorant Garamond
+- Language toggle and other header icons: `text-ink-secondary`, border `border-paper-border`
+
+### Chat Bubble (Dump tab "What's on your mind?" prompt)
+- Background: `bg-paper-card`
+- Border: `border border-paper-border`
+- Text: `font-body text-ink text-lg`
+
+---
+
+## 6. GLOBAL CLEANUP
+
+In `globals.css` or wherever the base styles live:
+```css
+body {
+  background-color: #F5F0E8;
+  color: #1C1917;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #DDD6C8;
+  color: #1C1917;
+}
+```
+
+---
+
+## CHECKLIST — Verify all three tabs look correct:
+
+- [ ] **Today tab**: Calendar uses Cormorant Garamond for dates, small-caps labels, no shadows, paper palette
+- [ ] **Dump tab**: Input has bottom-border-only, chat bubble styled, serif fonts throughout
+- [ ] **Queue tab**: Focus/Can Wait/Never Mind sections use small-caps, dashed borders for drop zones, correct icon colors
+- [ ] **Header**: Title in Cormorant Garamond, icons in secondary color
+- [ ] **Navigation**: Inactive = muted, active = dark ink
+- [ ] **No functionality changed** — all routing, data, AI features work exactly as before
+
+---
+
+## DO NOT CHANGE:
+- Any routing or page structure
+- Any data logic, API calls, or Supabase queries
+- Any component structure or state management
+- The i18n system or language toggle functionality
+- Any drag-and-drop or interaction behavior

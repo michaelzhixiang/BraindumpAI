@@ -16,7 +16,7 @@ export function Header() {
   return (
     <>
       <div className="flex justify-between items-center px-6 pt-4 pb-2 relative z-10 shrink-0" style={{ borderBottom: '1px solid var(--paper-border)' }}>
-        <h1 className="text-[1.9rem] font-bold tracking-tight font-serif" style={{ color: 'var(--paper-fg)' }} data-testid="text-header-title">
+        <h1 className="text-[1.9rem] font-bold tracking-tight font-heading" style={{ color: 'var(--paper-fg)' }} data-testid="text-header-title">
           {t("header.title")}
         </h1>
         <div className="flex items-center gap-2">
