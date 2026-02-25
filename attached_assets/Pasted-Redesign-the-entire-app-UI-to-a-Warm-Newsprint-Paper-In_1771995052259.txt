@@ -1,0 +1,81 @@
+Redesign the entire app UI to a "Warm Newsprint / Paper & Ink" aesthetic. Keep ALL existing functionality, routes, API calls, Supabase logic, and features exactly the same — only change the visual styling.
+Here is the complete design system to follow:
+Background & Colors:
+
+Page background: #f5efe7 (warm cream paper)
+Card/section borders: #ddd5c8
+Primary text (ink): #2b2520 (dark espresso brown, NOT pure black)
+Secondary text: #9e9484
+Tertiary/disabled text: #c5baa8
+Completed task text: #b5a998 with line-through, textDecorationColor: #c5baa8
+Active calendar day fill: #e8dfd3
+Today's calendar cell: background #2b2520, text #f6f1eb (inverted)
+Progress/reward bar: #2b2520 on #e0d8cc track
+Checkbox done state: background #2b2520, checkmark #f6f1eb
+Checkbox undone: transparent with #c5baa8 border
+
+Typography:
+
+Headings/title: 'Source Serif 4', Georgia, serif — weight 700 for app title (1.9rem), weight 600 for section numbers
+Body text / task items: 'Source Serif 4', Georgia, serif — weight 400, size 1.05rem, line-height 1.45
+Labels, dates, metadata, tags: 'IBM Plex Mono', monospace — weight 400-500, size 0.6-0.72rem, letter-spacing 0.5-1.5px
+Import fonts: @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
+
+Layout & Spacing:
+
+Max content width: 480px, centered with margin: 0 auto
+Container padding: 24px horizontal, 28px vertical
+Section margin-bottom: 24px
+Task padding: 16px vertical, separated by 1px #e8e0d4 bottom borders
+Generous whitespace between sections
+
+Calendar/Streak Grid:
+
+7-column grid, gap 3px
+Day headers: IBM Plex Mono, 0.6rem, color #b5a998, weight 500
+Day numbers: IBM Plex Mono, 0.65rem
+Active days: background #e8dfd3, text #5c4f3d
+Today: background #2b2520, text #f6f1eb, border-radius 6px
+Inactive days: transparent, text #ccc3b5
+
+Reward Section:
+
+Bordered card: 1px solid #ddd5c8, border-radius 8px, padding 18px 20px
+Label: IBM Plex Mono 0.65rem #9e9484
+Number: Source Serif 4, 2rem, weight 700, color #2b2520
+Unit: IBM Plex Mono 0.65rem #9e9484
+Bar: 3px height, #e0d8cc background, #2b2520 fill
+
+Task Items:
+
+Checkboxes: 22px circles, 2px border, border-radius 50%
+Task text: Source Serif 4, 1.05rem, weight 400, line-height 1.45
+Priority tags: IBM Plex Mono, 0.6rem, color #b5a998
+Completed: text color #b5a998, line-through with #c5baa8 decoration color
+
+Bottom Navigation:
+
+Background: #f5efe7
+Border-top: 1px solid #ddd5c8
+Active tab: color #2b2520
+Inactive tab: color #c5baa8
+Labels: IBM Plex Mono, 0.6rem, letter-spacing 0.5px
+
+Dividers:
+
+Thin horizontal rules: 1px solid #ddd5c8
+Use between major sections
+
+Animations:
+
+Subtle fade-up on section load: opacity 0→1, translateY 8px→0, 0.4s ease
+Checkbox check animation: stroke-dashoffset for SVG checkmark
+
+General Rules:
+
+NO shadows anywhere. Use borders only for separation.
+NO gradients on backgrounds (only on progress bar if needed).
+NO rounded corners on cards beyond 8px. Checkboxes are circles.
+Remove all dark mode / dark theme CSS completely.
+Remove any neon, glow, or saturated color effects.
+The overall feel should be: a beautiful cream paper notebook with dark brown fountain pen ink. Elegant, quiet, warm, and very readable.
