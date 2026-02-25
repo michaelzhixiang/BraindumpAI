@@ -77,12 +77,12 @@ export default function Today() {
       <MonthlyStreak tasks={tasks || []} />
 
       <div className="rounded-lg p-5 relative fade-up" style={{ border: '1px dashed var(--paper-border)', background: 'var(--paper-card-bg)' }} data-testid="guilt-free-card">
-        <h2 className="font-mono text-[0.65rem] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.guiltFreeTime")}</h2>
+        <h2 className="font-mono text-[0.75rem] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.guiltFreeTime")}</h2>
         <div className="flex items-baseline gap-2">
           <span className="text-[2rem] font-heading font-bold tracking-tighter" style={{ color: 'var(--paper-fg)' }} data-testid="text-screen-time">
             {userState?.screenTimeMinutes || 0}
           </span>
-          <span className="font-mono text-[0.65rem]" style={{ color: 'var(--paper-secondary)' }}>{t("today.min")}</span>
+          <span className="font-mono text-[0.75rem]" style={{ color: 'var(--paper-secondary)' }}>{t("today.min")}</span>
         </div>
         <div className="mt-3 h-[3px] rounded-full overflow-hidden" style={{ background: 'var(--paper-track)' }}>
           <div
@@ -100,14 +100,14 @@ export default function Today() {
         >
           <div className="text-center py-6 space-y-2">
             <div className="text-3xl font-heading font-bold" style={{ color: 'var(--paper-fg)' }}>{t("today.allDone")}</div>
-            <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>
+            <p className="text-base" style={{ color: 'var(--paper-secondary)' }}>
               {t("today.youEarned")} {completedToday.length * 10} {t("today.earned")}
             </p>
           </div>
 
           {waitingTasks.length > 0 && (
             <div className="space-y-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>
+              <p className="font-mono text-[0.72rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>
                 {t("today.pickTasks")}
               </p>
               <div className="space-y-1.5">
@@ -139,7 +139,7 @@ export default function Today() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[1.05rem] font-normal leading-[1.45] truncate" style={{ color: 'var(--paper-fg)' }}>{task.content}</p>
-                      <span className="font-mono text-[0.6rem] uppercase tracking-[1px]" style={{ color: 'var(--paper-subtle)' }}>
+                      <span className="font-mono text-[0.72rem] uppercase tracking-[1px]" style={{ color: 'var(--paper-subtle)' }}>
                         {task.tier === "backlog" ? t("queue.backlog") : t("queue.icebox")}
                       </span>
                     </div>
@@ -162,7 +162,7 @@ export default function Today() {
                   setLocation("/queue");
                 }
               }}
-              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-btn px-5 py-2.5 rounded-lg flex items-center gap-1.5"
+              className="font-mono text-[0.72rem] uppercase font-medium tracking-[1px] paper-btn px-5 py-2.5 rounded-lg flex items-center gap-1.5"
               data-testid="button-view-queue"
             >
               <Plus className="w-3 h-3" />
@@ -172,7 +172,7 @@ export default function Today() {
             </button>
             <button
               onClick={() => setLocation("/dump")}
-              className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] paper-card px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors"
+              className="font-mono text-[0.72rem] uppercase font-medium tracking-[1px] paper-card px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors"
               style={{ color: 'var(--paper-secondary)' }}
               data-testid="button-dump-more"
             >
@@ -185,7 +185,7 @@ export default function Today() {
 
       {!allDone && (
         <div className="fade-up">
-          <h3 className="font-mono text-[0.6rem] font-medium mb-4 flex items-center gap-2 uppercase tracking-[1.5px]" style={{ color: 'var(--paper-secondary)' }}>
+          <h3 className="font-mono text-[0.72rem] font-medium mb-4 flex items-center gap-2 uppercase tracking-[1.5px]" style={{ color: 'var(--paper-secondary)' }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--paper-fg)' }}></span>
             {t("today.focus")}
           </h3>
@@ -250,8 +250,8 @@ export default function Today() {
                             </p>
                             
                             {task.nudge && (
-                              <div className="text-sm p-2.5 rounded-lg" style={{ background: 'var(--paper-hover)', color: 'var(--paper-muted)', borderLeft: '2px solid var(--paper-fg)' }}>
-                                <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] mr-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.microStep")}</span> 
+                              <div className="text-[0.95rem] p-2.5 rounded-lg" style={{ background: 'var(--paper-hover)', color: 'var(--paper-muted)', borderLeft: '2px solid var(--paper-fg)' }}>
+                                <span className="font-mono text-[0.72rem] font-medium uppercase tracking-[1px] mr-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.microStep")}</span> 
                                 {task.nudge}
                               </div>
                             )}
@@ -262,7 +262,7 @@ export default function Today() {
                                   onClick={() => handleNudge(task.id)}
                                   disabled={activeNudgeId === task.id}
                                   data-testid={`button-nudge-${task.id}`}
-                                  className="font-mono text-[0.6rem] uppercase font-medium tracking-[1px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                                  className="font-mono text-[0.72rem] uppercase font-medium tracking-[1px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-40"
                                   style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-muted)' }}
                                 >
                                   {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse" style={{ color: 'var(--paper-fg)' }} /> : <Zap className="w-3 h-3" />}
@@ -284,7 +284,7 @@ export default function Today() {
 
       {completedToday.length > 0 && !allDone && (
         <div className="opacity-50 hover:opacity-80 transition-opacity duration-300 fade-up">
-          <h4 className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("today.completedToday")}</h4>
+          <h4 className="font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("today.completedToday")}</h4>
           <div className="space-y-2">
              {completedToday.map(task => (
                <div key={task.id} className="flex items-center gap-3 text-sm line-through" style={{ color: 'var(--paper-subtle)', textDecorationColor: 'var(--paper-tertiary)' }}>

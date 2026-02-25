@@ -11,7 +11,7 @@ export function Header() {
   const { theme, toggleTheme } = useTheme();
   const [showExitDialog, setShowExitDialog] = useState(false);
 
-  const btnClass = "flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg transition-colors";
+  const btnClass = "flex items-center gap-1.5 font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg transition-colors";
 
   return (
     <>
@@ -69,13 +69,13 @@ export function Header() {
               onClick={(e) => e.stopPropagation()}
               data-testid="dialog-exit"
             >
-              <p className="text-sm font-medium mb-5" style={{ color: 'var(--paper-fg)' }}>
+              <p className="text-base font-medium mb-5" style={{ color: 'var(--paper-fg)' }}>
                 {t("exit.confirm")}
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowExitDialog(false)}
-                  className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors"
+                  className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors"
                   style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-secondary)' }}
                   data-testid="button-exit-cancel"
                 >
@@ -83,7 +83,7 @@ export function Header() {
                 </button>
                 <a
                   href="/api/logout"
-                  className="flex-1 py-2.5 rounded-lg text-xs font-bold paper-btn text-center"
+                  className="flex-1 py-2.5 rounded-lg text-sm font-bold paper-btn text-center"
                   data-testid="button-exit-confirm"
                 >
                   {t("exit.yes")}

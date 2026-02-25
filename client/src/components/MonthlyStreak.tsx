@@ -59,20 +59,20 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
   return (
     <div className="paper-card rounded-lg p-4 max-w-[600px] mx-auto" data-testid="monthly-streak">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="font-mono text-[0.6rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</h2>
-        <div className="flex items-center gap-3 font-mono text-[0.6rem]" style={{ color: 'var(--paper-secondary)' }}>
+        <h2 className="font-mono text-[0.72rem] uppercase tracking-[1.5px] font-medium" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</h2>
+        <div className="flex items-center gap-3 font-mono text-[0.72rem]" style={{ color: 'var(--paper-secondary)' }}>
           <span>{totalCompleted} {t("streak.done")}</span>
           <span>{activeDays} {t("streak.daysActive")}</span>
         </div>
       </div>
 
       <div className="mb-2">
-        <span className="text-xs font-medium" style={{ color: 'var(--paper-muted)' }}>{monthName} {year}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--paper-muted)' }}>{monthName} {year}</span>
       </div>
 
       <div className="grid grid-cols-7 gap-[2px]">
         {["S","M","T","W","T","F","S"].map((d, i) => (
-          <div key={i} className="font-mono text-[0.55rem] text-center font-medium pb-0.5" style={{ color: 'var(--paper-subtle)' }}>{d}</div>
+          <div key={i} className="font-mono text-[0.7rem] text-center font-medium pb-0.5" style={{ color: 'var(--paper-subtle)' }}>{d}</div>
         ))}
         {cells.map((day, i) => {
           if (day === null) {
@@ -90,14 +90,14 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
               }
               title={`${monthName} ${day}: ${count} ${count !== 1 ? t("streak.tasks") : t("streak.task")}`}
             >
-              <span className="font-mono text-[0.6rem]">{day}</span>
+              <span className="font-mono text-[0.7rem]">{day}</span>
             </div>
           );
         })}
       </div>
 
       <div className="flex items-center gap-1.5 mt-2 justify-end">
-        <span className="font-mono text-[0.55rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.less")}</span>
+        <span className="font-mono text-[0.7rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.less")}</span>
         {[0, 2, 5, 8, 10].map((n, i) => (
           <div
             key={i}
@@ -108,7 +108,7 @@ export function MonthlyStreak({ tasks }: { tasks: Task[] }) {
             }}
           />
         ))}
-        <span className="font-mono text-[0.55rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.more")}</span>
+        <span className="font-mono text-[0.7rem]" style={{ color: 'var(--paper-subtle)' }}>{t("streak.more")}</span>
       </div>
     </div>
   );

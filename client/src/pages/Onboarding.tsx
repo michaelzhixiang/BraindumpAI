@@ -52,7 +52,7 @@ function DumpDemo() {
         className="flex items-center gap-2 pt-1"
       >
         <div className="h-px flex-1" style={{ background: 'var(--paper-border)' }} />
-        <div className="flex items-center gap-1 font-mono text-[0.6rem] font-medium" style={{ color: 'var(--paper-muted)' }}>
+        <div className="flex items-center gap-1 font-mono text-[0.72rem] font-medium" style={{ color: 'var(--paper-muted)' }}>
           <Send className="w-3 h-3" />
           {t("onboarding.demo.sorting")}
         </div>
@@ -92,7 +92,7 @@ function SortDemo() {
         >
           <div className="flex items-center gap-2 mb-1.5">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tier.cssVar }} />
-            <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px]" style={{ color: tier.cssVar }}>{tier.label}</span>
+            <span className="font-mono text-[0.72rem] font-medium uppercase tracking-[1px]" style={{ color: tier.cssVar }}>{tier.label}</span>
           </div>
           <div className="paper-card rounded-lg px-4 py-3">
             <p className="text-sm" style={{ color: 'var(--paper-fg)' }}>{tier.items[0]}</p>
@@ -122,7 +122,7 @@ function NudgeDemo() {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="pl-3 py-1" style={{ borderLeft: '2px solid var(--paper-fg)' }}>
-            <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1px] mb-1" style={{ color: 'var(--paper-muted)' }}>{t("today.microStep")}</p>
+            <p className="font-mono text-[0.72rem] font-medium uppercase tracking-[1px] mb-1" style={{ color: 'var(--paper-muted)' }}>{t("today.microStep")}</p>
             <p className="text-sm" style={{ color: 'var(--paper-muted)' }}>{t("onboarding.demo.nudgeStep")}</p>
           </div>
         </motion.div>
@@ -157,7 +157,7 @@ function RewardDemo() {
   return (
     <div className="space-y-5 w-full max-w-[300px] mx-auto flex flex-col items-center">
       <div className="paper-card rounded-lg p-5 w-full text-center">
-        <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--paper-secondary)' }}>
+        <p className="font-mono text-[0.75rem] font-medium uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--paper-secondary)' }}>
           {t("today.guiltFreeTime")}
         </p>
         <motion.div
@@ -220,7 +220,7 @@ function StreakDemo() {
   return (
     <div className="space-y-4 w-full max-w-[300px] mx-auto">
       <div className="paper-card rounded-lg p-4">
-        <p className="font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</p>
+        <p className="font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--paper-secondary)' }}>{t("streak.title")}</p>
         <div className="grid grid-cols-7 gap-1.5">
           {days.map((day, i) => (
             <motion.div
@@ -233,7 +233,7 @@ function StreakDemo() {
             />
           ))}
         </div>
-        <div className="flex justify-between mt-3 font-mono text-[0.6rem]" style={{ color: 'var(--paper-secondary)' }}>
+        <div className="flex justify-between mt-3 font-mono text-[0.72rem]" style={{ color: 'var(--paper-secondary)' }}>
           <span>15 {t("streak.daysActive")}</span>
           <span>42 {t("streak.done")}</span>
         </div>
@@ -338,7 +338,7 @@ export default function Onboarding() {
     },
   ];
 
-  const btnClass = "flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg transition-colors";
+  const btnClass = "flex items-center gap-1.5 font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px] px-2.5 py-1.5 rounded-lg transition-colors";
 
   return (
     <div className="h-screen flex flex-col relative overflow-hidden" style={{ background: 'var(--paper-bg)', color: 'var(--paper-fg)' }} data-testid="onboarding-page">
@@ -396,7 +396,7 @@ export default function Onboarding() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className="text-lg leading-relaxed font-medium"
+                    className="text-xl leading-relaxed font-medium"
                     style={{ color: 'var(--paper-secondary)' }}
                     data-testid="text-catchphrase"
                   >
@@ -409,7 +409,7 @@ export default function Onboarding() {
                     <h2 className="text-xl font-heading font-bold tracking-tight" style={{ color: 'var(--paper-fg)' }} data-testid={`text-feature-title-${page}`}>
                       {pages[page].title}
                     </h2>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--paper-secondary)' }} data-testid={`text-feature-desc-${page}`}>
+                    <p className="text-base leading-relaxed" style={{ color: 'var(--paper-secondary)' }} data-testid={`text-feature-desc-${page}`}>
                       {pages[page].subtitle}
                     </p>
                   </div>
@@ -434,7 +434,7 @@ export default function Onboarding() {
             >
               <div className="space-y-2">
                 <h2 className="text-xl font-heading font-bold" style={{ color: 'var(--paper-fg)' }} data-testid="text-priorities-title">{t("onboarding.whatMatters")}</h2>
-                <p className="text-sm" style={{ color: 'var(--paper-secondary)' }}>{t("onboarding.defineTop3")}</p>
+                <p className="text-base" style={{ color: 'var(--paper-secondary)' }}>{t("onboarding.defineTop3")}</p>
               </div>
 
               <div className="space-y-4">
@@ -450,7 +450,7 @@ export default function Onboarding() {
                       placeholder={`${t("onboarding.priority")} #${i + 1}`}
                       value={priority}
                       onChange={(e) => handlePriorityChange(i, e.target.value)}
-                      className="w-full bg-transparent py-4 text-lg focus:outline-none transition-colors"
+                      className="w-full bg-transparent py-4 text-xl focus:outline-none transition-colors"
                       style={{ color: 'var(--paper-fg)', borderBottom: '1px solid var(--paper-border)' }}
                       autoFocus={i === 0}
                       data-testid={`input-priority-${i}`}
@@ -483,7 +483,7 @@ export default function Onboarding() {
         <div className="flex justify-between items-center">
           {!isPrioritiesPage ? (
             <>
-              <p className="font-mono text-[0.6rem] uppercase tracking-[1.5px]" style={{ color: 'var(--paper-tertiary)' }}>
+              <p className="font-mono text-[0.72rem] uppercase tracking-[1.5px]" style={{ color: 'var(--paper-tertiary)' }}>
                 {t("onboarding.swipeHint")}
               </p>
               {page < TOTAL_PAGES - 2 ? (

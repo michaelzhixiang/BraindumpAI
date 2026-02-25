@@ -137,7 +137,7 @@ export default function Dump() {
                onClick={handleSort}
                disabled={isProcessing}
                data-testid="button-sort"
-               className="paper-btn px-5 py-2.5 rounded-full font-mono text-[0.65rem] font-medium uppercase tracking-[1px] flex items-center gap-2 transition-opacity"
+               className="paper-btn px-5 py-2.5 rounded-full font-mono text-[0.75rem] font-medium uppercase tracking-[1px] flex items-center gap-2 transition-opacity"
              >
                {isProcessing ? <Sparkles className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                {isProcessing ? t("dump.sorting") : t("dump.sortButton")}

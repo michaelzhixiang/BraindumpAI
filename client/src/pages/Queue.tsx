@@ -125,7 +125,7 @@ function TaskItem({
         >
           <div className="flex flex-col items-center gap-1">
             <Pencil className="w-4 h-4" />
-            <span className="font-mono text-[0.55rem] font-medium uppercase">{t("queue.edit")}</span>
+            <span className="font-mono text-[0.7rem] font-medium uppercase">{t("queue.edit")}</span>
           </div>
         </button>
         <button
@@ -136,7 +136,7 @@ function TaskItem({
         >
           <div className="flex flex-col items-center gap-1">
             <Trash2 className="w-4 h-4" />
-            <span className="font-mono text-[0.55rem] font-medium uppercase">{t("queue.delete")}</span>
+            <span className="font-mono text-[0.7rem] font-medium uppercase">{t("queue.delete")}</span>
           </div>
         </button>
       </div>
@@ -271,7 +271,7 @@ export default function Queue() {
 
   const TierSection = ({ title, icon: Icon, items, tierColor, tierId }: { title: string; icon: any; items: Task[]; tierColor: string; tierId: string }) => (
     <div className="space-y-2 fade-up">
-      <div className="flex items-center gap-2 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px]" style={{ color: tierColor }}>
+      <div className="flex items-center gap-2 font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px]" style={{ color: tierColor }}>
         <Icon className="w-3.5 h-3.5" />
         {title} <span className="opacity-40 ml-1">({items.length})</span>
       </div>
@@ -280,7 +280,7 @@ export default function Queue() {
           <div>
             {items.length === 0 ? (
               <div
-                className="p-4 rounded-lg border border-dashed text-center font-body italic text-sm"
+                className="p-4 rounded-lg border border-dashed text-center font-body italic text-base"
                 style={{ borderColor: 'var(--paper-border)', color: 'var(--paper-tertiary)' }}
               >
                 {t("queue.dragHere")}

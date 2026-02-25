@@ -19,8 +19,8 @@ All colors use CSS custom properties (--paper-*) defined in index.css for automa
 ### Light Mode
 - **Background**: #F5F0E8 (warm cream paper)
 - **Primary text**: #1C1917 (near-black ink)
-- **Secondary text**: #57534E (warm gray)
-- **Tertiary/disabled**: #A8A29E
+- **Secondary text**: #44403C (dark warm gray, ~7:1 contrast)
+- **Tertiary/disabled**: #78716C (~4.5:1 contrast)
 - **Borders**: #DDD6C8
 - **Card bg**: #EFE9DC
 - **Accent (buttons)**: #2C2825
@@ -30,8 +30,9 @@ All colors use CSS custom properties (--paper-*) defined in index.css for automa
 - **Background**: #1c1915 (warm dark brown)
 - **Card backgrounds**: #242019
 - **Primary text**: #e8dfd3
-- **Secondary text**: #8a7e6e
-- **Tertiary/disabled**: #5c5347
+- **Secondary text**: #a89d8e (~5:1 contrast)
+- **Tertiary/disabled**: #7a6e62
+- **Muted**: #c8bfb0 (high contrast for labels)
 - **Borders**: #332e27
 - **Accent (buttons)**: #e8dfd3 (inverted)
 - **Today cell**: bg #e8dfd3, text #1c1915 (inverted)
@@ -39,7 +40,7 @@ All colors use CSS custom properties (--paper-*) defined in index.css for automa
 ### Typography
 - **Headings**: Cormorant Garamond (--font-heading, Tailwind: font-heading) — weight 500-600
 - **Body text**: EB Garamond (--font-body, Tailwind: font-body) — weight 400-500, 1.05rem, line-height 1.45
-- **Labels/metadata**: IBM Plex Mono (--font-mono, Tailwind: font-mono) — 0.6-0.72rem, weight 300-500, letter-spacing 0.5-1.5px
+- **Labels/metadata**: IBM Plex Mono (--font-mono, Tailwind: font-mono) — 0.7-0.75rem, weight 300-500, letter-spacing 0.5-1.5px
 
 ### Styling Pattern
 - All theme-sensitive colors use `style={{ color: 'var(--paper-fg)' }}` inline styles (not Tailwind color classes)
@@ -93,10 +94,11 @@ All endpoints require authentication (isAuthenticated middleware). Data is scope
 - `/api/login`, `/api/logout`, `/api/callback` - Auth flow routes
 
 ## Recent Changes
+- Improved readability: boosted contrast on secondary/tertiary/muted/subtle colors in both light and dark mode
+- Increased font sizes: labels from 0.6rem→0.72rem, metadata from 0.55rem→0.7rem, descriptions from text-sm→text-base
+- Nav icons increased from w-4→w-5, nav labels from 0.6rem→0.72rem
 - Renamed app from "BrainDump AI" to "BrainDump" everywhere (i18n, Landing, Onboarding, App loading)
 - Updated typography: Cormorant Garamond (headings), EB Garamond (body), IBM Plex Mono (labels)
-- Updated color palette: ink #1C1917, secondary #57534E, accent #2C2825, paper #F5F0E8, card #EFE9DC
-- All font-serif references replaced with font-heading or font-body as appropriate
 - Full dark mode with warm leather tones (not blue-gray)
 - ThemeProvider context with Moon/Sun toggle persisted to localStorage
 

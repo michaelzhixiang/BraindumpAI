@@ -13,7 +13,7 @@ export default function Landing() {
     { icon: Timer, title: t("landing.feature3"), desc: t("landing.feature3.desc") },
   ];
 
-  const btnClass = "flex items-center gap-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[1.5px] px-3 py-1.5 rounded-lg transition-colors";
+  const btnClass = "flex items-center gap-1.5 font-mono text-[0.72rem] font-medium uppercase tracking-[1.5px] px-3 py-1.5 rounded-lg transition-colors";
 
   return (
     <div className="app-container">
@@ -41,7 +41,7 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-base text-center max-w-[320px] mb-1.5"
+            className="text-lg text-center max-w-[320px] mb-1.5"
             style={{ color: 'var(--paper-fg)' }}
             data-testid="text-landing-tagline"
           >
@@ -51,7 +51,7 @@ export default function Landing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-sm text-center max-w-[280px] mb-8"
+            className="text-base text-center max-w-[280px] mb-8"
             style={{ color: 'var(--paper-secondary)' }}
           >
             {t("landing.subtitle")}
@@ -90,8 +90,8 @@ export default function Landing() {
                 <f.icon className="w-4 h-4" style={{ color: 'var(--paper-muted)' }} />
               </div>
               <div>
-                <h3 className="text-sm font-semibold mb-0.5" style={{ color: 'var(--paper-fg)' }}>{f.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--paper-secondary)' }}>{f.desc}</p>
+                <h3 className="text-base font-semibold mb-0.5" style={{ color: 'var(--paper-fg)' }}>{f.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--paper-secondary)' }}>{f.desc}</p>
               </div>
             </motion.div>
           ))}
