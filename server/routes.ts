@@ -189,21 +189,73 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       const task = allTasks.find(t => t.id === Number(req.params.id));
       if (!task) return res.status(404).json({ message: "Task not found" });
 
-      const nudgeNum = (task.nudgeCount || 0) + 1;
-      const previousNudge = task.nudge || "";
+      const currentCount = task.nudgeCount || 0;
+      if (currentCount >= 5) {
+        return res.json({ nudge: task.nudge || "", nudgeCount: currentCount, nudgeHistory: (task as any).nudgeHistory || [] });
+      }
+      const nudgeNum = currentCount + 1;
+      const nudgeHistory: string[] = (task as any).nudgeHistory || [];
+
+      const otherTasks = allTasks
+        .filter(t => t.id !== task.id && t.status === "pending" && (t.tier === "focus" || t.tier === "backlog"))
+        .map(t => `- ${t.content}`)
+        .join("\n");
 
       let systemPrompt: string;
       if (nudgeNum === 1) {
-        systemPrompt = `You are a productivity coach. Give the absolute smallest first step for this task. Something so easy the user can't say no. Two minutes or less. Answer with just the step, no intro or explanation.`;
-      } else if (nudgeNum >= 5) {
-        systemPrompt = `You are a productivity coach. This is nudge #${nudgeNum} for this task. The user has been working through progressive steps. The previous step was: "${previousNudge}". Now give them the step that brings this task to roughly 60% completion. Assume they completed all previous steps. This should be a meaningful next action that gets the bulk of the work done. Answer with just the step, no intro.`;
+        systemPrompt = `You are a productivity coach helping someone take immediate action on a task. The user tends to overthink and get stuck in analysis paralysis, so your job is to unblock them with the single most useful next micro-action they can do in under 2 minutes.
+
+CONTEXT — here are their other active tasks (use these to infer intent):
+${otherTasks || "(no other tasks)"}
+
+The task they want a nudge on: "${task.content}"
+
+Before responding, think through these steps internally (do NOT include this reasoning in your response):
+1. What is the REAL intent behind this task, given their other tasks as context?
+2. What would "done" look like for this task?
+3. What prerequisites might they be missing or assuming they've handled?
+4. What is the most common blocker for someone with this type of task?
+5. What is the smallest concrete action they can do RIGHT NOW in under 2 minutes to make progress?
+
+RULES:
+- Start your response with a verb (an action word).
+- If there's a likely prerequisite they haven't handled, address that FIRST before the main action.
+- Keep it to 2-3 sentences max. Be conversational, not robotic.
+- Be specific: mention actual tools, apps, or websites when relevant.
+- Never state the obvious (e.g., don't say "open your browser"). Start from where real friction begins.
+- If the task is ambiguous, make your best inference from context and go with it.`;
       } else {
-        systemPrompt = `You are a productivity coach. This is nudge #${nudgeNum} for this task. The user already completed the previous step: "${previousNudge}". Now give them the NEXT logical step that builds on what they've already done. Each nudge should progress the task further toward completion. By nudge 5, the task should be roughly 60% done. Answer with just the next step, no intro or explanation.`;
+        const nudgeHistoryText = nudgeHistory.map((n, i) => `${i + 1}. ${n}`).join("\n");
+        systemPrompt = `You are a productivity coach helping someone make progress on a task through a series of small nudges. Each nudge should be a micro-action completable in under 2 minutes.
+
+CONTEXT — their other active tasks:
+${otherTasks || "(no other tasks)"}
+
+The task: "${task.content}"
+
+Previous nudges you've already given (they've completed or acknowledged these):
+${nudgeHistoryText || "(none)"}
+
+This is nudge ${nudgeNum} of 5. By nudge 5, the user should be roughly 60% done with the overall task — meaning all the preparation, research, and setup is handled, and what remains is just the core execution.
+
+Progression guide:
+- Nudge 1: Address the earliest prerequisite or blocker
+- Nudge 2: Gather or prepare the key materials/information needed
+- Nudge 3: Set up the environment or draft the core deliverable
+- Nudge 4: Refine or review what they've prepared
+- Nudge 5: Position them to execute the final action (send, submit, publish, etc.)
+
+RULES:
+- Start with a verb.
+- 2-3 sentences max, conversational tone.
+- Don't repeat any action from previous nudges.
+- Be specific to THIS task — reference actual tools, files, or steps.
+- Account for what they've likely already done based on the previous nudges.`;
       }
 
       const response = await anthropic.messages.create({
         model: "claude-haiku-4-5",
-        max_tokens: 8192,
+        max_tokens: 512,
         system: systemPrompt,
         messages: [
           { role: "user", content: task.content }
@@ -211,10 +263,11 @@ Be concise with task content. Extract distinct actionable items only. Return ONL
       });
 
       const nudge = response.content[0]?.type === "text" ? response.content[0].text : "Just open the file.";
+      const updatedHistory = [...nudgeHistory, nudge];
       
-      await storage.updateTask(userId, task.id, { nudge, nudgeCount: nudgeNum });
+      await storage.updateTask(userId, task.id, { nudge, nudgeCount: nudgeNum, nudgeHistory: updatedHistory });
       
-      res.json({ nudge });
+      res.json({ nudge, nudgeCount: nudgeNum, nudgeHistory: updatedHistory });
     } catch (err) {
       console.error("Error generating nudge:", err);
       res.status(500).json({ message: "Error generating nudge" });

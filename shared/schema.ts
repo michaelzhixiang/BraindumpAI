@@ -28,12 +28,13 @@ export const tasks = pgTable("tasks", {
   completedAt: timestamp("completed_at"),
   nudge: text("nudge"),
   nudgeCount: integer("nudge_count").notNull().default(0),
+  nudgeHistory: text("nudge_history").array(),
   parentId: integer("parent_id"),
 });
 
 export const insertUserStateSchema = createInsertSchema(userState);
 export const insertPrioritySchema = createInsertSchema(priorities).omit({ id: true, userId: true });
-export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true, completedAt: true, nudge: true, nudgeCount: true, parentId: true, userId: true });
+export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true, completedAt: true, nudge: true, nudgeCount: true, nudgeHistory: true, parentId: true, userId: true });
 
 export type UserState = typeof userState.$inferSelect;
 export type Priority = typeof priorities.$inferSelect;
@@ -45,10 +46,10 @@ export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type UpdateUserStateRequest = Partial<UserState>;
 export type CreatePriorityRequest = InsertPriority;
 export type CreateTaskRequest = InsertTask;
-export type UpdateTaskRequest = Partial<InsertTask> & { status?: "pending" | "completed", nudge?: string, nudgeCount?: number, parentId?: number };
+export type UpdateTaskRequest = Partial<InsertTask> & { status?: "pending" | "completed", nudge?: string, nudgeCount?: number, nudgeHistory?: string[], parentId?: number };
 export type ProcessBrainDumpRequest = { dumpText: string, priorities: string[] };
 
 export type AIProcessedTasksResponse = {
   tasks: Array<{ content: string; tier: "focus" | "backlog" | "icebox" }>;
 };
-export type NudgeResponse = { nudge: string };
+export type NudgeResponse = { nudge: string; nudgeCount: number; nudgeHistory: string[] };

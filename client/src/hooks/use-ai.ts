@@ -39,7 +39,7 @@ export function useGenerateNudge() {
     onSuccess: (data) => {
       queryClient.setQueryData<Task[]>([api.tasks.list.path], (old) => {
         if (!old) return old;
-        return old.map(t => t.id === data.taskId ? { ...t, nudge: data.nudge } : t);
+        return old.map(t => t.id === data.taskId ? { ...t, nudge: data.nudge, nudgeCount: data.nudgeCount, nudgeHistory: data.nudgeHistory } : t);
       });
     },
     onError: (_err, _taskId, context) => {

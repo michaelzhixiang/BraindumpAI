@@ -9,6 +9,7 @@ import {
   DragOverlay,
   PointerSensor,
   TouchSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
@@ -17,6 +18,7 @@ import {
   pointerWithin,
   rectIntersection,
 } from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useDroppable } from "@dnd-kit/core";
@@ -193,7 +195,14 @@ function TaskItem({
 
 function DragOverlayItem({ task }: { task: Task }) {
   return (
-    <div className="paper-card p-3 rounded-lg flex items-center gap-2 max-w-[420px]">
+    <div
+      className="paper-card p-3 rounded-lg flex items-center gap-2 max-w-[420px]"
+      style={{
+        transform: 'scale(1.03)',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+        transition: 'box-shadow 200ms ease, transform 200ms ease',
+      }}
+    >
       <div style={{ color: 'var(--paper-tertiary)' }} className="shrink-0">
         <GripVertical className="w-4 h-4" />
       </div>
@@ -218,10 +227,13 @@ export default function Queue() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
+      activationConstraint: { distance: 8 },
     }),
     useSensor(TouchSensor, {
       activationConstraint: { delay: 150, tolerance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
@@ -320,7 +332,7 @@ export default function Queue() {
 
         <TierSection title={t("queue.icebox")} icon={Snowflake} items={icebox} tierColor="var(--paper-subtle)" tierId="tier-icebox" />
 
-        <DragOverlay dropAnimation={{ duration: 150, easing: "ease-out" }}>
+        <DragOverlay dropAnimation={{ duration: 200, easing: "cubic-bezier(0.25, 0.1, 0.25, 1)" }}>
           {activeTask ? <DragOverlayItem task={activeTask} /> : null}
         </DragOverlay>
       </DndContext>

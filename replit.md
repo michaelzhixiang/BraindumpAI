@@ -60,13 +60,14 @@ All colors use CSS custom properties (--paper-*) defined in index.css for automa
 ## Key Features
 1. **Authentication**: Replit Auth with Google SSO, GitHub, Apple, email/password. Landing page for logged-out users.
 2. **Onboarding**: 7-page swipeable onboarding with animated demos, then set top 3 priorities — per user
-3. **Dump Tab**: Chat-like interface to dump thoughts. AI auto-processes and saves tasks. No confirmation screens.
-4. **Queue Tab**: View tasks in Focus/Backlog/Icebox tiers with drag-and-drop reordering. Inline editing. Swipe-to-reveal edit/delete.
-5. **Today Tab**: Focus tasks with progressive Nudge (micro-step). Completing tasks earns guilt-free social media time.
-6. **Reward System**: +10 min social media time per completed task, displayed prominently with progress bar.
-7. **Language Toggle**: EN/中文 switch in header, persisted to localStorage
-8. **Dark Mode Toggle**: Moon/Sun icon next to language button in Header, Landing, Onboarding — persisted to localStorage
-9. **Monthly Streak**: GitHub-style calendar heatmap showing completed tasks per day
+3. **Dump Tab**: Chat-like interface to dump thoughts. AI auto-processes and saves tasks. Fixed-bottom input bar stays visible when mobile keyboard opens (visualViewport API).
+4. **Queue Tab**: View tasks in Focus/Backlog/Icebox tiers with drag-and-drop reordering. Touch-friendly sensors (PointerSensor distance:8, TouchSensor delay:150ms, KeyboardSensor). Inline editing. Swipe-to-reveal edit/delete.
+5. **Today Tab**: Focus tasks with iterative 5-nudge progressive system. Collapsible nudge text with expand/collapse animation. Progress dots (1/5 to 5/5). "Got it, what's next?" button. Completion message at nudge 5.
+6. **AI Nudges**: Context-aware — considers other active tasks to infer intent. Progressive: 5 nudges get user ~60% through any task. Nudge history persisted in database.
+7. **Reward System**: +10 min social media time per completed task, displayed prominently with progress bar.
+8. **Language Toggle**: EN/中文 switch in header, persisted to localStorage
+9. **Dark Mode Toggle**: Moon/Sun icon next to language button in Header, Landing, Onboarding — persisted to localStorage
+10. **Monthly Streak**: GitHub-style calendar heatmap showing completed tasks per day
 
 ## Project Structure
 ```
@@ -94,13 +95,15 @@ All endpoints require authentication (isAuthenticated middleware). Data is scope
 - `/api/login`, `/api/logout`, `/api/callback` - Auth flow routes
 
 ## Recent Changes
+- Fix: Dump page input now uses fixed-bottom bar with visualViewport keyboard offset (iOS mobile keyboard fix)
+- Fix: Collapsible nudge text with CSS max-height transition (.nudge-text / .nudge-text.expanded classes)
+- Feature: Iterative 5-nudge progressive system — nudgeHistory text array stored in DB, progress dots UI, "Got it, what's next?" flow
+- Feature: Context-aware nudge prompts — AI considers other active tasks to infer intent and prerequisites
+- Fix: Queue drag-and-drop — PointerSensor distance 8, KeyboardSensor added, improved DragOverlay with scale+shadow
+- Schema: Added nudgeHistory text array column to tasks table
 - Improved readability: boosted contrast on secondary/tertiary/muted/subtle colors in both light and dark mode
 - Increased font sizes: labels from 0.6rem→0.72rem, metadata from 0.55rem→0.7rem, descriptions from text-sm→text-base
-- Nav icons increased from w-4→w-5, nav labels from 0.6rem→0.72rem
-- Renamed app from "BrainDump AI" to "BrainDump" everywhere (i18n, Landing, Onboarding, App loading)
-- Updated typography: Cormorant Garamond (headings), EB Garamond (body), IBM Plex Mono (labels)
 - Full dark mode with warm leather tones (not blue-gray)
-- ThemeProvider context with Moon/Sun toggle persisted to localStorage
 
 ## Running
 `npm run dev` starts Express backend + Vite frontend on port 5000.

@@ -123,7 +123,7 @@ export const api = {
       method: 'POST' as const,
       path: '/api/ai/nudge/:id' as const,
       responses: {
-        200: z.object({ nudge: z.string() }),
+        200: z.object({ nudge: z.string(), nudgeCount: z.number(), nudgeHistory: z.array(z.string()) }),
         404: errorSchemas.notFound
       }
     },

@@ -19,13 +19,13 @@ export default function Dump() {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [userDumpTexts, setUserDumpTexts] = useState<string[]>([]);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputBarRef = useRef<HTMLDivElement>(null);
   const { mutateAsync: processDump } = useProcessDump();
   const { toast } = useToast();
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,14 +33,11 @@ export default function Dump() {
 
   useEffect(() => {
     const viewport = window.visualViewport;
-    if (!viewport || !containerRef.current) return;
+    if (!viewport) return;
 
     const onResize = () => {
-      if (containerRef.current) {
-        const offsetTop = viewport.offsetTop;
-        containerRef.current.style.height = `${viewport.height}px`;
-        containerRef.current.style.transform = `translateY(${offsetTop}px)`;
-      }
+      const offsetBottom = window.innerHeight - viewport.height - viewport.offsetTop;
+      setKeyboardOffset(Math.max(0, offsetBottom));
     };
 
     viewport.addEventListener("resize", onResize);
@@ -104,9 +101,14 @@ export default function Dump() {
     }
   };
 
+  const inputBarHeight = inputBarRef.current?.offsetHeight || 120;
+
   return (
-    <div ref={containerRef} className="flex flex-col flex-1" data-testid="dump-page">
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-4">
+    <div className="flex flex-col flex-1 relative" data-testid="dump-page">
+      <div
+        className="flex-1 overflow-y-auto p-4 space-y-3"
+        style={{ paddingBottom: `${inputBarHeight + 16}px` }}
+      >
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -130,7 +132,15 @@ export default function Dump() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="shrink-0 p-4 pt-2" style={{ background: 'var(--paper-bg)' }}>
+      <div
+        ref={inputBarRef}
+        className="fixed left-0 right-0 p-4 pt-2 z-50"
+        style={{
+          bottom: `${keyboardOffset}px`,
+          background: 'var(--paper-bg)',
+          transition: 'bottom 0.1s ease-out',
+        }}
+      >
         {userDumpTexts.length > 0 && (
            <div className="flex justify-center mb-3">
              <button

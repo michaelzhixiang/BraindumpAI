@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Circle, Zap, Loader2, Plus, Inbox } from "lucide-react";
+import { CheckCircle2, Zap, Loader2, Plus, Inbox, ChevronUp, ChevronDown } from "lucide-react";
 import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
 import { useUserState, useUpdateUserState } from "@/hooks/use-user-state";
 import { useGenerateNudge } from "@/hooks/use-ai";
@@ -22,6 +22,7 @@ export default function Today() {
   const [activeNudgeId, setActiveNudgeId] = useState<number | null>(null);
   const [completingIds, setCompletingIds] = useState<Set<number>>(new Set());
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
+  const [expandedNudges, setExpandedNudges] = useState<Set<number>>(new Set());
 
   const focusTasks = tasks?.filter(t => t.tier === "focus" && t.status === "pending" && !t.parentId) || [];
   const completedToday = tasks?.filter(t => 
@@ -54,6 +55,32 @@ export default function Today() {
   };
 
   const handleNudge = async (id: number) => {
+    const task = tasks?.find(t => t.id === id);
+    if (task?.nudge && !expandedNudges.has(id)) {
+      setExpandedNudges(prev => new Set(prev).add(id));
+      return;
+    }
+    if (task?.nudge && expandedNudges.has(id) && (task.nudgeCount || 0) > 0) {
+      setExpandedNudges(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      return;
+    }
+
+    setActiveNudgeId(id);
+    try {
+      await generateNudge(id);
+      setExpandedNudges(prev => new Set(prev).add(id));
+    } catch (e) {
+      toast({ title: "Failed to generate nudge", variant: "destructive" });
+    } finally {
+      setActiveNudgeId(null);
+    }
+  };
+
+  const handleNextNudge = async (id: number) => {
     setActiveNudgeId(id);
     try {
       await generateNudge(id);
@@ -62,6 +89,15 @@ export default function Today() {
     } finally {
       setActiveNudgeId(null);
     }
+  };
+
+  const toggleNudgeVisibility = (id: number) => {
+    setExpandedNudges(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
   if (isLoading) {
@@ -204,6 +240,12 @@ export default function Today() {
               <AnimatePresence>
                 {focusTasks.map((task) => {
                   const isCompleting = completingIds.has(task.id);
+                  const isNudgeExpanded = expandedNudges.has(task.id);
+                  const nudgeCount = task.nudgeCount || 0;
+                  const nudgeHistory = task.nudgeHistory || [];
+                  const hasNudge = !!task.nudge;
+                  const isMaxNudges = nudgeCount >= 5;
+                  
                   return (
                     <motion.div
                       key={task.id}
@@ -249,10 +291,69 @@ export default function Today() {
                               {task.content}
                             </p>
                             
-                            {task.nudge && (
-                              <div className="text-[0.95rem] p-2.5 rounded-lg" style={{ background: 'var(--paper-hover)', color: 'var(--paper-muted)', borderLeft: '2px solid var(--paper-fg)' }}>
-                                <span className="font-mono text-[0.72rem] font-medium uppercase tracking-[1px] mr-1" style={{ color: 'var(--paper-secondary)' }}>{t("today.microStep")}</span> 
-                                {task.nudge}
+                            {hasNudge && (
+                              <div
+                                className={`nudge-text rounded-lg px-3 ${isNudgeExpanded ? "expanded" : ""}`}
+                                style={{ background: 'var(--paper-hover)', borderLeft: '2px solid var(--paper-fg)' }}
+                              >
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono text-[0.72rem] font-medium uppercase tracking-[1px]" style={{ color: 'var(--paper-secondary)' }}>
+                                      {t("today.microStep")}
+                                    </span>
+                                    {nudgeCount > 0 && (
+                                      <div className="flex items-center gap-1">
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                          <div
+                                            key={i}
+                                            className="w-1.5 h-1.5 rounded-full transition-colors"
+                                            style={{ background: i <= nudgeCount ? 'var(--paper-fg)' : 'var(--paper-border)' }}
+                                          />
+                                        ))}
+                                        <span className="font-mono text-[0.65rem] ml-1" style={{ color: 'var(--paper-tertiary)' }}>
+                                          {nudgeCount}/5
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-[0.95rem] leading-[1.45]" style={{ color: 'var(--paper-muted)' }}>
+                                  {task.nudge}
+                                </p>
+                                
+                                {isMaxNudges && (
+                                  <p className="text-[0.85rem] mt-2 font-medium" style={{ color: 'var(--paper-secondary)' }}>
+                                    {t("today.nudgeComplete")}
+                                  </p>
+                                )}
+
+                                <div className="flex gap-2 mt-2">
+                                  {!isMaxNudges && (
+                                    <button
+                                      onClick={() => handleNextNudge(task.id)}
+                                      disabled={activeNudgeId === task.id}
+                                      className="font-mono text-[0.7rem] uppercase font-medium tracking-[0.5px] px-2.5 py-1 rounded flex items-center gap-1 transition-colors disabled:opacity-40"
+                                      style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-muted)' }}
+                                      data-testid={`button-next-nudge-${task.id}`}
+                                    >
+                                      {activeNudgeId === task.id ? (
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                      ) : (
+                                        <Zap className="w-3 h-3" />
+                                      )}
+                                      {t("today.whatsNext")}
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => toggleNudgeVisibility(task.id)}
+                                    className="font-mono text-[0.7rem] uppercase font-medium tracking-[0.5px] px-2.5 py-1 rounded flex items-center gap-1 transition-colors"
+                                    style={{ color: 'var(--paper-tertiary)' }}
+                                    data-testid={`button-hide-nudge-${task.id}`}
+                                  >
+                                    <ChevronUp className="w-3 h-3" />
+                                    {t("today.hideNudge")}
+                                  </button>
+                                </div>
                               </div>
                             )}
                             
@@ -265,8 +366,20 @@ export default function Today() {
                                   className="font-mono text-[0.72rem] uppercase font-medium tracking-[1px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-40"
                                   style={{ border: '1px solid var(--paper-border)', color: 'var(--paper-muted)' }}
                                 >
-                                  {activeNudgeId === task.id ? <Zap className="w-3 h-3 animate-pulse" style={{ color: 'var(--paper-fg)' }} /> : <Zap className="w-3 h-3" />}
-                                  {t("today.nudgeMe")}
+                                  {activeNudgeId === task.id ? (
+                                    <Zap className="w-3 h-3 animate-pulse" style={{ color: 'var(--paper-fg)' }} />
+                                  ) : hasNudge && isNudgeExpanded ? (
+                                    <ChevronUp className="w-3 h-3" />
+                                  ) : hasNudge ? (
+                                    <ChevronDown className="w-3 h-3" />
+                                  ) : (
+                                    <Zap className="w-3 h-3" />
+                                  )}
+                                  {hasNudge && isNudgeExpanded
+                                    ? t("today.hideNudge")
+                                    : hasNudge
+                                      ? t("today.microStep")
+                                      : t("today.nudgeMe")}
                                 </button>
                               </div>
                             )}
