@@ -34,3 +34,4 @@ replit.md
 # Logs
 *.log
 npm-debug.log*
+.env
