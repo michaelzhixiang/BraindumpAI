@@ -105,5 +105,8 @@ All endpoints require authentication (isAuthenticated middleware). Data is scope
 - Increased font sizes: labels from 0.6rem→0.72rem, metadata from 0.55rem→0.7rem, descriptions from text-sm→text-base
 - Full dark mode with warm leather tones (not blue-gray)
 
+## Documentation
+- `docs/PRD.md` — Comprehensive Product Requirements Document covering all features, AI prompts, schema, design system, and roadmap
+
 ## Running
 `npm run dev` starts Express backend + Vite frontend on port 5000.

@@ -1,0 +1,83 @@
+# Prompt to Paste into Replit
+
+Copy everything below this line and paste it into Replit's AI chat:
+
+---
+
+I need you to analyze the entire codebase and generate a comprehensive Product Requirements Document (PRD) for this app. Save it as `docs/PRD.md` in the project root.
+
+Before writing, scan every file in the project to understand the full architecture, features, screens, API routes, database schema, AI prompts, and UI components. The PRD should reflect what's ACTUALLY built, not just what's planned.
+
+Structure the PRD with these sections:
+
+## 1. Product Overview
+- What the app does in 2-3 sentences
+- Who it's for (target user)
+- The core insight / why this exists
+- Key differentiators vs other todo apps
+
+## 2. Core User Flow
+Walk through the complete user journey step by step:
+- Onboarding (priority anchoring)
+- Brain Dump (instant feedback, batch extraction)
+- AI Triage (3-tier sorting: Focus / Can Wait / Never Mind)
+- Today view (daily focus list)
+- Queue view (full task inventory with drag-and-drop)
+- Task completion (rewards system)
+
+## 3. The Nudge System
+This is the app's most important AI feature. Document:
+- The design philosophy (think backwards from completion, not forwards from task)
+- How context-aware nudges work (sibling tasks as context)
+- The exact system prompts used for nudge generation
+- The progressive "5 Nudges to 60%" iterative system — how each nudge builds on the last
+- The nudge UI (collapsible, progress indicator, caching)
+
+## 4. AI Prompts
+Extract and document ALL AI prompts used in the codebase:
+- Brain dump batch extraction prompt
+- Triage/sorting prompt
+- Nudge prompt (initial)
+- Iterative nudge prompt (nudges 2-5)
+- "Break It Down" chat prompt
+- Any other AI prompts found in the code
+
+For each prompt, explain what it does and why it's designed that way.
+
+## 5. Daily Usage Features
+Document any of these that are implemented (and note which are planned):
+- Daily reset / morning flow
+- Quick-add
+- End-of-day review
+- Heat map dashboard
+- Time horizons (Today / This Week / This Month)
+- Recurring tasks
+- Procrastination check (when moving tasks out of Focus)
+
+## 6. Technical Architecture
+- Tech stack (frameworks, libraries, APIs)
+- Database schema (tables, relationships)
+- API routes (full list with methods)
+- Key components and their responsibilities
+- AI integration details (which model, how prompts are called)
+- Bilingual support (EN/ZH) implementation
+
+## 7. Design System
+- Color palette and theme
+- Typography
+- Component patterns
+- Animation/interaction patterns
+- Design reference apps that influenced the UI
+
+## 8. Known Issues & Planned Fixes
+List any TODOs, known bugs, or incomplete features you find in the code (comments, placeholder components, etc.)
+
+## 9. What's NOT Built (Current Scope Boundaries)
+List features explicitly excluded from the current version.
+
+## 10. Roadmap
+Based on what's built vs what's planned, create a phased roadmap.
+
+---
+
+Format the PRD cleanly with proper markdown. Use tables where appropriate. Include code blocks for the AI prompts. Make it something a new developer could read and fully understand the product.
